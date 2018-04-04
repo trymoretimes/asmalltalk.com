@@ -27,42 +27,38 @@ module.exports = [
     method: 'GET',
     handler: async (ctx, dal) => {
       const query = ctx.query
-      const comments = await dal.find(query)
-      ctx.body = appendUniqueName(comments).map(appendModFlag)
+      const users = await dal.find(query)
+      ctx.body = users
     },
   },
   {
     path: '/users',
     method: 'POST',
     handler: async (ctx, dal, hooks) => {
-      const { user, uri, text, parents } = ctx.request.body
+      const {
+        userId,
+        email,
+        needHelp,
+        canHelp,
+        keywords,
+        matchGuys,
+        emailed,
+      } = ctx.request.body
 
       let error = null
-      if (parents && parents.length > 0) {
-        for (const parent of parents) {
-          try {
-            await dal.create({
-              user,
-              uri,
-              text,
-              parent,
-              date: (new Date()).toISOString(),
-            }, hooks)
-          } catch (e) {
-            error = e
-          }
-        }
-      } else {
-        try {
-          await dal.create({
-            user,
-            uri,
-            text,
-            date: (new Date()).toISOString(),
-          }, hooks)
-        } catch (e) {
-          error = e
-        }
+      try {
+        await dal.create({
+          userId,
+          email,
+          needHelp,
+          canHelp,
+          keywords,
+          matchGuys,
+          emailed,
+          date: (new Date()).toISOString(),
+        }, hooks)
+      } catch (e) {
+        error = e
       }
 
       if (error === null) {

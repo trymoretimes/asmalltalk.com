@@ -58,10 +58,8 @@ class Server {
 
     routes.forEach((route) => {
       const handler = async (ctx) => {
-        if (route.path && route.path.startsWith('/comments')) {
+        if (route.path && route.path.startsWith('/users')) {
           await route.handler(ctx, this.dals.comments, this.hooks)
-        } else if (route.path && route.path.startsWith('/admin')) {
-          await route.handler(ctx, this.dals.comments)
         }
       }
 
