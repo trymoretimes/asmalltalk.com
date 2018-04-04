@@ -1,17 +1,28 @@
+const fetch = require('node-fetch');
 const auth = require('../auth')
 const { setToken } = require('../token')
-const { appendUniqueName } = require('../utils')
 const CONFIG = require('../../config.json')
 
 const YOYO_ADMIN_USERNAME = process.env.YOYO_ADMIN_USERNAME || CONFIG.env.YOYO_ADMIN_USERNAME
 const YOYO_ADMIN_PASSWORD = process.env.YOYO_ADMIN_PASSWORD || CONFIG.env.YOYO_ADMIN_PASSWORD
 
-const appendModFlag = (comment) => {
-  if (comment.user === CONFIG.adminEmail) {
-    return Object.assign(comment, { mod: true })
+async function isValidUser(username) {
+  const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
+  const resp = await fetch(url)
+  const data = await resp.json()
+  return data.status === 'found'
+}
+
+async function rigister(username, code) {
+  const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
+  const resp = await fetch(url);
+  const data = resp.json();
+  const { bio } = data;
+  if (bio.contains(code)) {
+    return true;
   }
 
-  return Object.assign(comment, { mod: false })
+  return false;
 }
 
 module.exports = [
@@ -23,13 +34,22 @@ module.exports = [
     },
   },
   {
+    path: '/users/valid',
+    method: 'GET',
+    handler: async (ctx, dal) => {
+      const { userId } = ctx.request.body
+      const valid = await isValidUser(userId)
+      ctx.body = valid
+    }
+  },
+  {
     path: '/users',
     method: 'GET',
     handler: async (ctx, dal) => {
       const query = ctx.query
       const users = await dal.find(query)
       ctx.body = users
-    },
+    }
   },
   {
     path: '/users',
@@ -63,6 +83,7 @@ module.exports = [
 
       if (error === null) {
         ctx.status = 201
+        ctx.body = Math.random()
       } else {
         ctx.status = 500
         ctx.message = `comment created met some errors: ${error}`
