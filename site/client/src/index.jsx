@@ -28,25 +28,28 @@ class App extends React.Component {
     this.state = {
       email: '',
       username: '',
-      code: '',
+      code: ''
     }
   }
 
   componentDidMount () {
   }
 
-  onUserNameChange(evt) {
-    const username = evt.value;
-    this.setState({
-      username,
-    });
+  onUserNameChange (evt) {
+    const username = evt.target.value
+    this.setState({ username }, async () => {
+      const valid = await api.isValidUser({ username })
+      if (valid) {
+        const code = await api.getCode(username)
+        console.log(code)
+        this.setState({ code })
+      }
+    })
   }
 
-  onEmailChange(evt) {
-    const email = evt.value;
-    this.setState({
-      email,
-    })
+  onEmailChange (evt) {
+    const email = evt.target.value
+    this.setState({ email })
   }
 
   async handleSubmit() {

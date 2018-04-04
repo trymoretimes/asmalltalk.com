@@ -8,6 +8,7 @@ const YOYO_ADMIN_PASSWORD = process.env.YOYO_ADMIN_PASSWORD || CONFIG.env.YOYO_A
 
 async function isValidUser(username) {
   const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
+  console.log(url)
   const resp = await fetch(url)
   const data = await resp.json()
   return data.status === 'found'
@@ -37,9 +38,9 @@ module.exports = [
     path: '/users/valid',
     method: 'GET',
     handler: async (ctx, dal) => {
-      const { userId } = ctx.request.body
+      const { userId } = ctx.request.query
       const valid = await isValidUser(userId)
-      ctx.body = valid
+      ctx.body = { valid }
     }
   },
   {
