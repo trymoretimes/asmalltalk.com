@@ -8,7 +8,7 @@ class API {
   }
 
   async submit (payload) {
-    const url = `${API_HOST}/comments`
+    const url = `${API_HOST}/users`
     const opt = {
       method: 'POST',
       headers: {

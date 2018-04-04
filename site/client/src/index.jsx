@@ -49,13 +49,13 @@ class App extends React.Component {
     })
   }
 
-  handleSubmit() {
-    // alert('sumbite');
-    // TODO
-    // get code from backend
+  async handleSubmit() {
+    const { username } = this.state;
+    const resp = await api.submit({ username })
+    const code = await resp.json();
     this.setState({
-      code: `${Math.random()}`,
-    });
+      code,
+    })
   }
 
   render () {
