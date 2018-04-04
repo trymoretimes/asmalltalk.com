@@ -27,144 +27,52 @@ class App extends React.Component {
 
     this.state = {
       email: '',
-      publishing: false,
-      list: [],
-      parents: [],
-      suggestions: [],
-      editorState: EditorState.createEmpty()
+      username: '',
+      code: '',
     }
   }
 
   componentDidMount () {
-    this.fetchCommentList()
   }
 
-  fetchCommentList () {
-    api.query(window.location.href)
-      .then((res) => {
-        if (res.status === 200) {
-          return res.json()
-        }
-        return new Error(`${res.statusText}`)
-      })
-      .then((data) => {
-        const commentToMention = (c) => ({ name: c.name, avatar: '', _id: c._id })
-        this.setState({
-          list: data,
-          suggestions: data.map(commentToMention).filter((c) => c !== null)
-        })
-      })
-      .catch((e) => {
-        console.warn(e)
-      })
-  }
-
-  commentEmailChange (e) {
-    const value = e.target.value
+  onUserNameChange(evt) {
+    const username = evt.value;
     this.setState({
-      email: value
+      username,
+    });
+  }
+
+  onEmailChange(evt) {
+    const email = evt.value;
+    this.setState({
+      email,
     })
   }
 
-  submit () {
-    const {
-      email,
-      parents,
-      list,
-      editorState
-    } = this.state
-
-    const text = editorState.getCurrentContent().getPlainText()
-    const item = {
-      user: email,
-      date: (new Date()).toISOString(),
-      uri: window.location.href,
-      parents,
-      text
-    }
+  handleSubmit() {
+    // alert('sumbite');
+    // TODO
+    // get code from backend
     this.setState({
-      list: [...list, item],
-    })
-    api.submit(item).then((res) => {
-        if (res.status === 201) {
-          setTimeout(() => {
-            this.fetchCommentList()
-          }, 0)
-          this.reset()
-        }
-        return new Error(`${res.statusText}`)
-      })
-      .catch((e) => {
-        console.error(`YoYo Got something wrong: ${e}, feedback to h.minghe@gmail.com would be great`)
-      })
-  }
-
-  reset () {
-    const editorState = EditorState.push(this.state.editorState, ContentState.createFromText(''))
-    this.setState({ editorState, publishing: false })
-  }
-
-  publish () {
-    const {
-      email,
-      editorState,
-      publishing
-    } = this.state
-
-    if (!publishing) {
-      const text = editorState.getCurrentContent().getPlainText()
-      if (!maybeEmailAddress(email)) {
-        window.alert(`'${email}' is not a valid email`)
-      } else if (!validateComment(text)) {
-        window.alert(`'${text}' is not a valid comment`)
-      } else {
-        this.setState({ publishing: true }, () => {
-          this.submit()
-        })
-      }
-    }
-  }
-
-  mention (id) {
-    const { parents } = this.state
-
-    if (parents.indexOf(id) === -1) {
-      this.setState({ parents: [...parents, id] })
-    }
-  }
-
-  editorStateChange (editorState) {
-    this.setState({ editorState })
+      code: `${Math.random()}`,
+    });
   }
 
   render () {
-    const {
-      list,
-      email,
-      suggestions,
-      editorState
-    } = this.state
-
-    const immutabaleSuggestions = fromJS(suggestions)
+    const { code } = this.state
 
     return (
-      <div className={styles.YoYoContainer}>
-        <div className={styles.YoYoBoxContainer}>
-          <CommentBox
-            editorState={editorState}
-            onEditorStateChange={this.editorStateChange.bind(this)}
-            suggestions={immutabaleSuggestions}
-            onAddMention={this.mention.bind(this)}
-          />
-          <SubmitButton
-            email={email}
-            onEmailChange={this.commentEmailChange.bind(this)}
-            onPublish={this.publish.bind(this)}
-          />
-        </div>
-        {
-          list.length > 0 ? <CommentList list={list} /> : null
-        }
+      <div>
+        <input
+          placeholder="v2ex username"
+          onChange={ this.onUserNameChange.bind(this)}>
+        </input>
+        <input placeholder="code" value="">${code}</input>
+        <input
+          placeholder="email"
+          onChange={ this.onEmailChange.bind(this)}>
+        </input>
+        <button onClick={ this.handleSubmit.bind(this) }> Submit </button>
       </div>
     )
   }
