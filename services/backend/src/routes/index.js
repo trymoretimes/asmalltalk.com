@@ -93,7 +93,7 @@ module.exports = [
 
       if (error === null) {
         ctx.status = 201
-        ctx.body = Math.random()
+        ctx.body = { created: 'OK' }
       } else {
         ctx.status = 500
         ctx.message = `comment created met some errors: ${error}`

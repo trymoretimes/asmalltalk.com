@@ -26,7 +26,9 @@ class App extends React.Component {
       const { valid, code } = await api.isValidUser({ username })
       if (valid) {
         this.setState({ code }, () => {
-          this.onCodeChange()
+          setInterval(() => {
+            this.onCodeChange()
+          }, 2000)
         })
       } else {
         this.setState({ code: '' })
@@ -48,10 +50,11 @@ class App extends React.Component {
   }
 
   async handleSubmit () {
-    const { username } = this.state
-    const resp = await api.submit({ username })
-    const code = await resp.json()
-    this.setState({ code })
+    const { username, email, code } = this.state
+    const created = await api.submit({ username, email, code })
+    if (created) {
+      alert('You are all set')
+    }
   }
 
   render () {

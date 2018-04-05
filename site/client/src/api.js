@@ -16,7 +16,8 @@ class API {
       },
       body: JSON.stringify(payload)
     }
-    return fetch(url, opt)
+    const resp = await fetch(url, opt)
+    return resp.status === 201
   }
 
   async isValidUser (payload) {
