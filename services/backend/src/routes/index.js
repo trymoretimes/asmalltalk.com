@@ -14,12 +14,12 @@ async function isValidUser(username) {
   return data.status === 'found'
 }
 
-async function rigister(username, code) {
+async function isValidCode(username, code) {
   const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
   const resp = await fetch(url);
   const data = resp.json();
   const { bio } = data;
-  if (bio.contains(code)) {
+  if (bio && bio.contains(code)) {
     return true;
   }
 
@@ -32,6 +32,20 @@ module.exports = [
     method: 'GET',
     handler: async (ctx) => {
       ctx.body = 'OK'
+    },
+  },
+  {
+    path: '/users/verifycode',
+    method: 'GET',
+    handler: async (ctx, dal) => {
+      const { userId } = ctx.request.query
+      const { code } = ctx.request.query
+      //if (code && userId) {
+        ctx.body = 'fff'
+        ctx.body = await isValidCode(userId, code)
+      //} else {
+       //   ctx.body = 'Not OK'
+     // }
     },
   },
   {
