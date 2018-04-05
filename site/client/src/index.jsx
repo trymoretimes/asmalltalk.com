@@ -1,25 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { EditorState, ContentState } from 'draft-js'
-import { fromJS } from 'immutable'
 
 import api from './api'
 import styles from './styles.css'
-import CommentBox from './components/CommentBox'
-import CommentItem from './components/CommentItem'
-import SubmitButton from './components/SubmitButton'
-import {
-  maybeEmailAddress,
-  validateComment
-} from './utils'
-
-const CommentList = ({ list }) => (
-  <div className={styles.YoYoCommentListContainer} >
-    {
-      list.map(c => <CommentItem comment={c} />)
-    }
-  </div>
-)
+import { maybeEmailAddress } from './utils'
 
 class App extends React.Component {
   constructor () {
@@ -41,24 +25,25 @@ class App extends React.Component {
       const valid = await api.isValidUser({ username })
       if (valid) {
         const code = await api.getCode(username)
-        console.log(code)
         this.setState({ code })
+      } else {
+        this.setState({ code: '' })
       }
     })
   }
 
   onEmailChange (evt) {
     const email = evt.target.value
-    this.setState({ email })
+    if (maybeEmailAddress(email)) {
+      this.setState({ email })
+    }
   }
 
-  async handleSubmit() {
-    const { username } = this.state;
+  async handleSubmit () {
+    const { username } = this.state
     const resp = await api.submit({ username })
-    const code = await resp.json();
-    this.setState({
-      code,
-    })
+    const code = await resp.json()
+    this.setState({ code })
   }
 
   render () {
@@ -67,15 +52,24 @@ class App extends React.Component {
     return (
       <div>
         <input
-          placeholder="v2ex username"
-          onChange={ this.onUserNameChange.bind(this)}>
-        </input>
-        <input placeholder="code" value="">${code}</input>
+          placeholder='v2ex username'
+          type='text'
+          className={styles.UserNameInput}
+          onChange={this.onUserNameChange.bind(this)}
+        />
         <input
-          placeholder="email"
-          onChange={ this.onEmailChange.bind(this)}>
-        </input>
-        <button onClick={ this.handleSubmit.bind(this) }> Submit </button>
+          placeholder='code'
+          type='text'
+          className={styles.CodeInput}
+          value={code}
+        />
+        <input
+          placeholder='email'
+          type='email'
+          className={styles.EmailInput}
+          onChange={this.onEmailChange.bind(this)}
+        />
+        <button onClick={this.handleSubmit.bind(this)}> Submit </button>
       </div>
     )
   }
