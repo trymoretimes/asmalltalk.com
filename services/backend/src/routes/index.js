@@ -20,6 +20,8 @@ async function isValidCode (username, code) {
   return false
 }
 
+const generateCode = () => Math.floor(Math.random() * 10000)
+
 module.exports = [
   {
     path: '/health',
@@ -37,7 +39,7 @@ module.exports = [
       if (userId && code) {
         isVerifiedUser = await isValidCode(userId, code)
       }
-      ctx.body = isVerifiedUser
+      ctx.body = { verified: isVerifiedUser }
     }
   },
   {
@@ -46,7 +48,8 @@ module.exports = [
     handler: async (ctx, dal) => {
       const { userId } = ctx.request.query
       const valid = await isValidUser(userId)
-      ctx.body = { valid }
+      const code = generateCode()
+      ctx.body = { valid, code }
     }
   },
   {
