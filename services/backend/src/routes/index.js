@@ -1,12 +1,6 @@
-const fetch = require('node-fetch');
-const auth = require('../auth')
-const { setToken } = require('../token')
-const CONFIG = require('../../config.json')
+const fetch = require('node-fetch')
 
-const YOYO_ADMIN_USERNAME = process.env.YOYO_ADMIN_USERNAME || CONFIG.env.YOYO_ADMIN_USERNAME
-const YOYO_ADMIN_PASSWORD = process.env.YOYO_ADMIN_PASSWORD || CONFIG.env.YOYO_ADMIN_PASSWORD
-
-async function isValidUser(username) {
+async function isValidUser (username) {
   const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
   console.log(url)
   const resp = await fetch(url)
@@ -14,16 +8,16 @@ async function isValidUser(username) {
   return data.status === 'found'
 }
 
-async function isValidCode(username, code) {
+async function isValidCode (username, code) {
   const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
-  const resp = await fetch(url);
-  const data = resp.json();
-  const { bio } = data;
-  if (bio && bio.contains(code)) {
-    return true;
+  const resp = await fetch(url)
+  const data = await resp.json()
+  const { bio } = data
+  if (bio && bio.includes(code)) {
+    return true
   }
 
-  return false;
+  return false
 }
 
 module.exports = [
@@ -32,21 +26,19 @@ module.exports = [
     method: 'GET',
     handler: async (ctx) => {
       ctx.body = 'OK'
-    },
+    }
   },
   {
     path: '/users/verifycode',
     method: 'GET',
     handler: async (ctx, dal) => {
-      const { userId } = ctx.request.query
-      const { code } = ctx.request.query
-      //if (code && userId) {
-        ctx.body = 'fff'
-        ctx.body = await isValidCode(userId, code)
-      //} else {
-       //   ctx.body = 'Not OK'
-     // }
-    },
+      const { userId, code } = ctx.request.query
+      let isVerifiedUser = false
+      if (userId && code) {
+        isVerifiedUser = await isValidCode(userId, code)
+      }
+      ctx.body = isVerifiedUser
+    }
   },
   {
     path: '/users/valid',
@@ -77,7 +69,7 @@ module.exports = [
         canHelp,
         keywords,
         matchGuys,
-        emailed,
+        emailed
       } = ctx.request.body
 
       let error = null
@@ -90,7 +82,7 @@ module.exports = [
           keywords,
           matchGuys,
           emailed,
-          date: (new Date()).toISOString(),
+          date: (new Date()).toISOString()
         }, hooks)
       } catch (e) {
         error = e
@@ -103,7 +95,7 @@ module.exports = [
         ctx.status = 500
         ctx.message = `comment created met some errors: ${error}`
       }
-    },
+    }
   },
   {
     path: '/users',
@@ -120,7 +112,7 @@ module.exports = [
               uri,
               text,
               parent,
-              date: (new Date()).toISOString(),
+              date: (new Date()).toISOString()
             }, hooks)
           } catch (e) {
             error = e
@@ -132,7 +124,7 @@ module.exports = [
             user,
             uri,
             text,
-            date: (new Date()).toISOString(),
+            date: (new Date()).toISOString()
           }, hooks)
         } catch (e) {
           error = e
@@ -145,6 +137,6 @@ module.exports = [
         ctx.status = 500
         ctx.message = `comment created met some errors: ${error}`
       }
-    },
-  },
+    }
+  }
 ]
