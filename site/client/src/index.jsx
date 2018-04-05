@@ -55,7 +55,7 @@ class App extends React.Component {
   }
 
   render () {
-    const { code, verified } = this.state
+    const { code, verified, email } = this.state
 
     return (
       <div>
@@ -78,7 +78,12 @@ class App extends React.Component {
           className={styles.EmailInput}
           onChange={this.onEmailChange.bind(this)}
         />
-        <button onClick={this.handleSubmit.bind(this)}> Submit </button>
+        <button
+          type='button'
+          disabled={!verified && !!email}
+          onClick={this.handleSubmit.bind(this)}
+        > Submit
+        </button>
       </div>
     )
   }
