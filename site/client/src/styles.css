@@ -1,39 +1,16 @@
-.YoYoContainer {
-  display: flex;
-  flex-direction: column;
+.BasicInput {
+  display: block;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  margin: auto;
 }
 
-.YoYoBoxContainer {
-  border: 1px solid #F5F5F5;
-  padding: 16px;
-  border-radius: 2px;
+.UserNameInput {
+  composes: BasicInput;
 }
 
-.YoYoCommentListContainer {
-  /* width: 100%; */
-  /* border: 1px solid; */
-  border: 1px solid #F5F5F5;
-  padding: 16px;
-  border-radius: 2px;
+.CodeInput {
+  composes: BasicInput;
 }
 
-.YoYoCommentItemUserAndDate {
-}
-
-
-.YoYoLabelTitleBase {
-  margin: auto;
-  flex: 1 1 auto;
-  font-size: 12px;
-  color: lightgrey;
-}
-
-.YoYoLabelTitle {
-  composes: YoYoLabelTitleBase;
-}
-
-.YoYoReplyButtonContainer {
-  text-align: right;
+.EmailInput {
+  composes: BasicInput;
 }
