@@ -24,12 +24,16 @@ class API {
     const url = `${API_HOST}/users/valid?userId=${username}`
     const resp = await fetch(url)
     const data = await resp.json()
-    return data.valid
+    const { valid, code } = data
+    return { valid, code }
   }
 
-  async getCode (username) {
-    // TODO get code from backend
-    return Math.random()
+  async verify (payload) {
+    const { username, code } = payload
+    const url = `${API_HOST}/users/verifycode?userId=${username}&code=${code}`
+    const resp = await fetch(url)
+    const data = await resp.json()
+    return data.verified
   }
 }
 

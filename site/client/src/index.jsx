@@ -12,7 +12,8 @@ class App extends React.Component {
     this.state = {
       email: '',
       username: '',
-      code: ''
+      code: '',
+      verified: false
     }
   }
 
@@ -22,10 +23,11 @@ class App extends React.Component {
   onUserNameChange (evt) {
     const username = evt.target.value
     this.setState({ username }, async () => {
-      const valid = await api.isValidUser({ username })
+      const { valid, code } = await api.isValidUser({ username })
       if (valid) {
-        const code = await api.getCode(username)
-        this.setState({ code })
+        this.setState({ code }, () => {
+          this.onCodeChange()
+        })
       } else {
         this.setState({ code: '' })
       }
@@ -39,6 +41,12 @@ class App extends React.Component {
     }
   }
 
+  async onCodeChange () {
+    const { username, code } = this.state
+    const verified = await api.verify({ username, code })
+    this.setState({ verified })
+  }
+
   async handleSubmit () {
     const { username } = this.state
     const resp = await api.submit({ username })
@@ -47,7 +55,7 @@ class App extends React.Component {
   }
 
   render () {
-    const { code } = this.state
+    const { code, verified } = this.state
 
     return (
       <div>
@@ -66,6 +74,7 @@ class App extends React.Component {
         <input
           placeholder='email'
           type='email'
+          disabled={!verified}
           className={styles.EmailInput}
           onChange={this.onEmailChange.bind(this)}
         />
