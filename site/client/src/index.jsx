@@ -71,33 +71,38 @@ class App extends React.Component {
     const { code, verified, email, loading } = this.state
 
     return (
-      <div>
-        <input
-          placeholder='v2ex username'
-          type='text'
-          className={styles.UserNameInput}
-          onChange={this.onUserNameChange.bind(this)}
-        />
-        <input
-          placeholder='code'
-          type='text'
-          className={styles.CodeInput}
-          value={code}
-        />
-        <p> { loading }</p>
-        <input
-          placeholder='email'
-          type='email'
-          disabled={!verified}
-          className={styles.EmailInput}
-          onChange={this.onEmailChange.bind(this)}
-        />
-        <button
-          type='button'
-          disabled={!verified && !!email}
-          onClick={this.handleSubmit.bind(this)}
-        > Submit
-        </button>
+      <div className={styles.MainContainer}>
+          <h2 className={styles.CenterText}>Yoo</h2>
+          <h4 className={styles.CenterText}>在 V2EX 认识好朋友</h4>
+          <div className={styles.FormContainer}>
+            <input
+              placeholder='v2ex username'
+              type='text'
+              className={styles.UserNameInput}
+              onChange={this.onUserNameChange.bind(this)}
+            />
+            <input
+              placeholder='code'
+              type='text'
+              className={styles.CodeInput}
+              value={code}
+            />
+            <p> { loading }</p>
+            <input
+              placeholder='email'
+              type='email'
+              disabled={!verified}
+              className={styles.EmailInput}
+              onChange={this.onEmailChange.bind(this)}
+            />
+            <button
+              type='button'
+              disabled={!verified && !!email}
+              onClick={this.handleSubmit.bind(this)}
+              className={styles.SubmitBtn}
+            > Submit
+            </button>
+          </div>
       </div>
     )
   }
