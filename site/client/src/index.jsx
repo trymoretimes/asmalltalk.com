@@ -13,7 +13,8 @@ class App extends React.Component {
       email: '',
       username: '',
       code: '',
-      verified: false
+      verified: false,
+      loading: ''
     }
   }
 
@@ -26,9 +27,7 @@ class App extends React.Component {
       const { valid, code } = await api.isValidUser({ username })
       if (valid) {
         this.setState({ code }, () => {
-          setInterval(() => {
-            this.onCodeChange()
-          }, 2000)
+          this.verifyCode()
         })
       } else {
         this.setState({ code: '' })
@@ -36,17 +35,28 @@ class App extends React.Component {
     })
   }
 
+  async verifyCode () {
+    const st = setTimeout(async () => {
+      const { username, code } = this.state
+      const verified = await api.verify({ username, code })
+      this.setState({ verified })
+
+      if (!verified) {
+        this.verifyCode()
+
+        const { loading } = this.state
+        this.setState({ loading: `${loading}.` })
+      } else {
+        clearTimeout(st)
+      }
+    }, 1000)
+  }
+
   onEmailChange (evt) {
     const email = evt.target.value
     if (maybeEmailAddress(email)) {
       this.setState({ email })
     }
-  }
-
-  async onCodeChange () {
-    const { username, code } = this.state
-    const verified = await api.verify({ username, code })
-    this.setState({ verified })
   }
 
   async handleSubmit () {
@@ -58,7 +68,7 @@ class App extends React.Component {
   }
 
   render () {
-    const { code, verified, email } = this.state
+    const { code, verified, email, loading } = this.state
 
     return (
       <div>
@@ -74,6 +84,7 @@ class App extends React.Component {
           className={styles.CodeInput}
           value={code}
         />
+        <p> { loading }</p>
         <input
           placeholder='email'
           type='email'
