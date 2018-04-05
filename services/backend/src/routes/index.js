@@ -1,23 +1,38 @@
 const fetch = require('node-fetch')
+const scrapeIt = require('scrape-it')
 
-async function isValidUser (username) {
-  const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
-  console.log(url)
-  const resp = await fetch(url)
-  const data = await resp.json()
-  return data.status === 'found'
-}
-
-async function isValidCode (username, code) {
+async function getUserInfo (username) {
   const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
   const resp = await fetch(url)
-  const data = await resp.json()
-  const { bio } = data
-  if (bio && bio.includes(code)) {
-    return true
+  const info = { valid: false, bio: '' }
+  if (resp.status === 200) {
+    const data = await resp.json()
+    console.log(resp, data)
+    info.valid = data.status === 'found'
+    info.bio = data.bio
+  } else {
+    const sInfo = await spider(username)
+    info.valid = sInfo.valid
+    info.bio = sInfo.bio
   }
 
-  return false
+  return info
+}
+
+async function spider (username) {
+  const url = `https://www.v2ex.com/member/${username}`
+  const info = { valid: false, bio: '' }
+
+  const { data, response } = await scrapeIt(url, {
+    profile: {
+      listItem: '#Main .box .cell'
+    }
+  })
+  if (response.statusCode === 200) {
+    info.valid = true
+    info.bio = data.profile[1]
+  }
+  return info
 }
 
 const generateCode = () => Math.floor(Math.random() * 10000)
@@ -35,11 +50,19 @@ module.exports = [
     method: 'GET',
     handler: async (ctx, dal) => {
       const { userId, code } = ctx.request.query
-      let isVerifiedUser = false
       if (userId && code) {
-        isVerifiedUser = await isValidCode(userId, code)
+        const info = await getUserInfo(userId)
+        if (info.valid) {
+          ctx.status = 200
+          ctx.body = { verified: info.bio.includes(code) }
+        } else {
+          ctx.status = 200
+          ctx.body = { verified: false, info: 'username is not valid' }
+        }
+      } else {
+        ctx.status = 400
+        ctx.body = { info: 'username missing' }
       }
-      ctx.body = { verified: isVerifiedUser }
     }
   },
   {
@@ -47,9 +70,17 @@ module.exports = [
     method: 'GET',
     handler: async (ctx, dal) => {
       const { userId } = ctx.request.query
-      const valid = await isValidUser(userId)
-      const code = generateCode()
-      ctx.body = { valid, code }
+      if (userId) {
+        const info = await getUserInfo(userId)
+        console.log(info)
+        ctx.body = {
+          valid: info.valid,
+          code: info.valid ? generateCode() : ''
+        }
+      } else {
+        ctx.status = 400
+        ctx.body = { info: 'username missing' }
+      }
     }
   },
   {
