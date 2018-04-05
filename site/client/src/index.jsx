@@ -25,8 +25,9 @@ class App extends React.Component {
       const valid = await api.isValidUser({ username })
       if (valid) {
         const code = await api.getCode(username)
-        console.log(code)
         this.setState({ code })
+      } else {
+        this.setState({ code: '' })
       }
     })
   }
@@ -52,17 +53,19 @@ class App extends React.Component {
       <div>
         <input
           placeholder='v2ex username'
+          type='text'
           className={styles.UserNameInput}
           onChange={this.onUserNameChange.bind(this)}
         />
         <input
           placeholder='code'
+          type='text'
           className={styles.CodeInput}
-        >
-          ${code}
-        </input>
+          value={code}
+        />
         <input
           placeholder='email'
+          type='email'
           className={styles.EmailInput}
           onChange={this.onEmailChange.bind(this)}
         />
