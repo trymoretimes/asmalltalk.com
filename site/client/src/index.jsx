@@ -15,7 +15,8 @@ class App extends React.Component {
       username: '',
       code: '',
       verified: false,
-      loading: ''
+      loading: '',
+      error: ''
     }
   }
 
@@ -31,7 +32,7 @@ class App extends React.Component {
           this.verifyCode()
         })
       } else {
-        this.setState({ code: '' })
+        this.setState({ error: '无效的用户名' })
       }
     })
   }
@@ -69,7 +70,7 @@ class App extends React.Component {
   }
 
   render () {
-    const { code, verified, email, loading } = this.state
+    const { code, verified, email, loading, error} = this.state
 
     document.body.style = 'background: #b8e5f8;';
 
@@ -102,6 +103,7 @@ class App extends React.Component {
               className={styles.EmailInput}
               onChange={this.onEmailChange.bind(this)}
             />
+            <p className={styles.ErrorText}>{error}</p>
             <button
               type='button'
               disabled={!verified && !!email}
