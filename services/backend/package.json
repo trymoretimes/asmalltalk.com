@@ -31,7 +31,8 @@
     "mandrill-api": "^1.0.45",
     "mongodb": "^2.2.19",
     "node-fetch": "^2.1.2",
-    "nodemailer": "^4.0.1"
+    "nodemailer": "^4.0.1",
+    "scrape-it": "^5.0.3"
   },
   "devDependencies": {
     "babel-preset-stage-2": "^6.24.1",
