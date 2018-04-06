@@ -2,19 +2,21 @@ const fetch = require('node-fetch')
 const scrapeIt = require('scrape-it')
 
 async function getUserInfo (username) {
-  const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
-  const resp = await fetch(url)
+  // const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
+  // const resp = await fetch(url)
   const info = { valid: false, bio: '' }
+  /*
   if (resp.status === 200) {
     const data = await resp.json()
     console.log(resp, data)
     info.valid = data.status === 'found'
     info.bio = data.bio
   } else {
+  */
     const sInfo = await spider(username)
     info.valid = sInfo.valid
     info.bio = sInfo.bio
-  }
+  //}
 
   return info
 }
@@ -30,12 +32,12 @@ async function spider (username) {
   })
   if (response.statusCode === 200) {
     info.valid = true
-    info.bio = data.profile[1]
+    info.bio = data.profile[1] ? data.profile[1] : ''
   }
   return info
 }
 
-const generateCode = () => Math.floor(Math.random() * 10000)
+const generateCode = () => "bz" + Math.floor(Math.random() * 10000)
 
 module.exports = [
   {

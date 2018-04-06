@@ -15,8 +15,8 @@ class App extends React.Component {
       username: '',
       code: '',
       verified: false,
-      loading: '',
-      error: ''
+      verifyNameTip: '',
+      loadingTip: '',
     }
   }
 
@@ -24,15 +24,17 @@ class App extends React.Component {
   }
 
   onUserNameChange (evt) {
+    this.setState({ verifyNameTip: '' })
     const username = evt.target.value
     this.setState({ username }, async () => {
       const { valid, code } = await api.isValidUser({ username })
       if (valid) {
+        this.setState({ verifyNameTip: '有效的账号' })
         this.setState({ code }, () => {
           this.verifyCode()
         })
       } else {
-        this.setState({ error: '无效的用户名' })
+        this.setState({ verifyNameTip: '无效的用户名' })
       }
     })
   }
@@ -40,18 +42,22 @@ class App extends React.Component {
   async verifyCode () {
     const st = setTimeout(async () => {
       const { username, code } = this.state
+
+      let tipText = this.state.loadingTip
+        tipText = tipText.length > 2 ? "." : (tipText+".")
+        console.log("hi" + tipText);
+        this.setState({ loadingTip: tipText })
+
       const verified = await api.verify({ username, code })
       this.setState({ verified })
 
       if (!verified) {
         this.verifyCode()
-
-        const { loading } = this.state
-        this.setState({ loading: `${loading}.` })
       } else {
         clearTimeout(st)
+        this.setState({ loadingTip: "账号验证成功" })
       }
-    }, 1000)
+    }, 3000)
   }
 
   onEmailChange (evt) {
@@ -70,7 +76,7 @@ class App extends React.Component {
   }
 
   render () {
-    const { code, verified, email, loading, error} = this.state
+    const { code, verified, email, loadingTip, verifyNameTip} = this.state
 
     document.body.style = 'background: #b8e5f8;';
 
@@ -86,6 +92,7 @@ class App extends React.Component {
               className={styles.UserNameInput}
               onChange={this.onUserNameChange.bind(this)}
             />
+            <p className={styles.ErrorText}>{verifyNameTip}</p>
             2. 把下面的验证码添加到 V2EX 个人简介 (?)
             <input
               placeholder='自动生成验证码'
@@ -94,7 +101,7 @@ class App extends React.Component {
               className={styles.CodeInput}
               value={code}
             />
-            <p> { loading }</p>
+            <p> { loadingTip }</p>
             3. 输入你的邮箱
             <input
               placeholder='email'
@@ -103,7 +110,6 @@ class App extends React.Component {
               className={styles.EmailInput}
               onChange={this.onEmailChange.bind(this)}
             />
-            <p className={styles.ErrorText}>{error}</p>
             <button
               type='button'
               disabled={!verified && !!email}
@@ -115,7 +121,7 @@ class App extends React.Component {
           <div className={styles.introContainer}>
               <p className={styles.CenterText}>· · ·</p>
               <h4 className={styles.CenterText}>How does it work?</h4>
-              <p>本周会话每周为你匹配一位 V2EX 好友，然后发送一封包括他个人介绍的邮件到你的邮箱。</p>
+              <p>本周对话每周为你匹配一位 V2EX 好友，然后发送一封包括他个人介绍的邮件到你的邮箱。</p>
               <p className={styles.CenterText}>· · ·</p>
               <img className={styles.Screenshot} src={screenshot} />
           </div>
