@@ -17,6 +17,8 @@ class App extends React.Component {
       verified: false,
       verifyNameTip: '',
       loadingTip: '',
+      usernameTimer: null,
+      codeTimer: null,
     }
   }
 
@@ -24,23 +26,28 @@ class App extends React.Component {
   }
 
   onUserNameChange (evt) {
-    this.setState({ verifyNameTip: '' })
+    clearTimeout(this.state.usernameTimer)
     const username = evt.target.value
-    this.setState({ username }, async () => {
-      const { valid, code } = await api.isValidUser({ username })
-      if (valid) {
-        this.setState({ verifyNameTip: '✓ 账号有效' })
-        this.setState({ code }, () => {
-          this.verifyCode()
+    let st = setTimeout(async () => {
+        this.setState({ verifyNameTip: '' })
+        this.setState({ username }, async () => {
+          const { valid, code } = await api.isValidUser({ username })
+          if (valid) {
+            this.setState({ verifyNameTip: '✓ 账号有效' })
+            this.setState({ code }, () => {
+              this.verifyCode()
+            })
+          } else {
+            this.setState({ verifyNameTip: '无效的用户名' })
+          }
         })
-      } else {
-        this.setState({ verifyNameTip: '无效的用户名' })
-      }
-    })
+    }, 500)
+    this.setState( {usernameTimer: st})
   }
 
   async verifyCode () {
-    const st = setTimeout(async () => {
+    clearTimeout(this.state.codeTimer)
+    let st = setTimeout(async () => {
       const { username, code } = this.state
 
       let tipText = this.state.loadingTip
@@ -57,6 +64,7 @@ class App extends React.Component {
         this.setState({ loadingTip: "账号验证成功" })
       }
     }, 3000)
+    this.setState( {codeTimer: st} )
   }
 
   onEmailChange (evt) {
