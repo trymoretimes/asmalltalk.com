@@ -29,7 +29,7 @@ class App extends React.Component {
     this.setState({ username }, async () => {
       const { valid, code } = await api.isValidUser({ username })
       if (valid) {
-        this.setState({ verifyNameTip: '有效的账号' })
+        this.setState({ verifyNameTip: '✓ 账号有效' })
         this.setState({ code }, () => {
           this.verifyCode()
         })
@@ -45,7 +45,6 @@ class App extends React.Component {
 
       let tipText = this.state.loadingTip
         tipText = tipText.length > 2 ? "." : (tipText+".")
-        console.log("hi" + tipText);
         this.setState({ loadingTip: tipText })
 
       const verified = await api.verify({ username, code })
