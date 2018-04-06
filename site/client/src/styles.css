@@ -62,6 +62,12 @@
 .ErrorText {
     color: red;
 }
+.PassText {
+    color: green;
+}
+.InactiveText {
+    color: #ccc;
+}
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
 color: #ccc;
 opacity: 1; /* Firefox */

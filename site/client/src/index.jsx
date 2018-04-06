@@ -15,10 +15,22 @@ class App extends React.Component {
       username: '',
       code: '',
       verified: false,
+      nameVerified: false,
       verifyNameTip: '',
-      loadingTip: '',
+      loadingCount: 0,
       usernameTimer: null,
       codeTimer: null,
+    }
+  }
+
+  verifyCodeTip () {
+    const { verified, loadingCount } = this.state
+    if (verified) {
+        return "✓ 账号验证成功"
+    } else if (loadingCount > 0) {
+         return "验证中" + ".".repeat(loadingCount%4)
+    } else {
+        return '';
     }
   }
 
@@ -26,6 +38,8 @@ class App extends React.Component {
   }
 
   onUserNameChange (evt) {
+    this.setState({ nameVerified: false })
+    this.setState({ verifyNameTip: '' })
     clearTimeout(this.state.usernameTimer)
     const username = evt.target.value
     let st = setTimeout(async () => {
@@ -33,6 +47,7 @@ class App extends React.Component {
         this.setState({ username }, async () => {
           const { valid, code } = await api.isValidUser({ username })
           if (valid) {
+            this.setState({ nameVerified: true })
             this.setState({ verifyNameTip: '✓ 账号有效' })
             this.setState({ code }, () => {
               this.verifyCode()
@@ -50,9 +65,7 @@ class App extends React.Component {
     let st = setTimeout(async () => {
       const { username, code } = this.state
 
-      let tipText = this.state.loadingTip
-        tipText = tipText.length > 2 ? "." : (tipText+".")
-        this.setState({ loadingTip: tipText })
+        this.setState({ loadingCount: this.state.loadingCount+1 })
 
       const verified = await api.verify({ username, code })
       this.setState({ verified })
@@ -62,6 +75,7 @@ class App extends React.Component {
       } else {
         clearTimeout(st)
         this.setState({ loadingTip: "账号验证成功" })
+        this.setState({ loadingCount: 0})
       }
     }, 3000)
     this.setState( {codeTimer: st} )
@@ -83,7 +97,7 @@ class App extends React.Component {
   }
 
   render () {
-    const { code, verified, email, loadingTip, verifyNameTip} = this.state
+    const { code, verified, email, loadingCount, nameVerified, verifyNameTip} = this.state
 
     document.body.style = 'background: #b8e5f8;';
 
@@ -92,15 +106,17 @@ class App extends React.Component {
           <h2 className={styles.CenterText}>本周对话</h2>
           <h4 className={styles.CenterText}>轻松拓展你的朋友圈</h4>
           <div className={styles.FormContainer}>
-            1. 输入你的 V2EX 用户名
+            <p>1. 输入你的 V2EX 用户名</p>
             <input
               placeholder='用户名'
               type='text'
               className={styles.UserNameInput}
               onChange={this.onUserNameChange.bind(this)}
             />
-            <p className={styles.ErrorText}>{verifyNameTip}</p>
-            2. 把下面的验证码添加到 V2EX 个人简介 (?)
+            <p className={ nameVerified ? styles.PassText : styles.ErrorText}>{verifyNameTip}</p>
+            <p className={ nameVerified ? "" : styles.InactiveText} >
+                2. 把下面的验证码添加到 V2EX 个人简介 (?)
+            </p>
             <input
               placeholder='自动生成验证码'
               type='text'
@@ -108,8 +124,10 @@ class App extends React.Component {
               className={styles.CodeInput}
               value={code}
             />
-            <p> { loadingTip }</p>
-            3. 输入你的邮箱
+            <p> {this.verifyCodeTip()}</p>
+            <p className={ nameVerified&&verified ? "" : styles.InactiveText} >
+                3. 输入你的邮箱
+            </p>
             <input
               placeholder='email'
               type='email'
