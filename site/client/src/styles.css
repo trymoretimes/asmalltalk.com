@@ -1,27 +1,40 @@
-.CenterText
-{
+.CenterText {
     text-align: center;
 }
 .FormContainer {
-    width: 400px;
-    padding: 10px;
+    width: 60%;
     margin: 0 auto;
-    background-color: #0084ff;
-    border-radius: 10px;
+    margin-bottom: 50px;
+    color: #778087;
+    font-size: 14px;
+}
+.introContainer {
+    width: 100%;
+    background-color: #f6f6f6;
 }
 .MainContainer {
-    padding-top: 50px;
+    width: 500px;
+    margin: 0 auto;
+    padding: 30px 0px;
     background-color: white;
+    font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    box-sizing: border-box;
 }
 .BasicInput {
   display: block;
   font-size: 14px;
   margin: 15px auto;
   height: 30px;
-  width: 200px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  width: 100%;
+  color: black;
 }
-
+.Screenshot {
+    width: 404px;
+    display: block;
+    margin: 0 auto;
+}
 .UserNameInput {
   composes: BasicInput;
 }
@@ -37,4 +50,14 @@
 .SubmitBtn {
   composes: BasicInput;
   margin-top: 10px;
+  border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+  border-style: solid;
+  border-width: 1px;
+  padding: 1px 7px 2px;
+  color: white;
+  background-color: #0084ff;
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+color: #ccc;
+opacity: 1; /* Firefox */
 }
