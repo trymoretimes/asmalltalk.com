@@ -5,6 +5,7 @@ import api from './api'
 import styles from './styles.css'
 import { maybeEmailAddress } from './utils'
 import screenshot from './screenshot.png'
+import DetailComponent from './components/DetailComponent'
 
 class App extends React.Component {
   constructor () {
@@ -20,6 +21,7 @@ class App extends React.Component {
       loadingCount: 0,
       usernameTimer: null,
       codeTimer: null,
+      created: false
     }
   }
 
@@ -91,15 +93,27 @@ class App extends React.Component {
   async handleSubmit () {
     const { username, email, code } = this.state
     const created = await api.submit({ username, email, code })
-    if (created) {
-      alert('You are all set')
-    }
+    this.setState({ created })
   }
 
   render () {
-    const { code, verified, email, loadingCount, nameVerified, verifyNameTip} = this.state
+    const {
+      code,
+      verified,
+      email,
+      loadingCount,
+      nameVerified,
+      verifyNameTip,
+      created
+    } = this.state
 
     document.body.style = 'background: #b8e5f8;';
+
+    if (created) {
+      return (
+        <DetailComponent />
+      )
+    }
 
     return (
       <div className={styles.MainContainer}>
