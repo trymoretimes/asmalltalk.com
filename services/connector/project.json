@@ -1,5 +1,5 @@
 {
-  "name": "node",
+  "name": "ff-v2ex-connector",
   "description": "Node.js 4.3.2 example project",
   "role": "arn:aws:iam::735685238621:role/fff",
   "environment": {
