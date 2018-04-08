@@ -1,5 +1,8 @@
-const exec = require('child_process').exec
-console.log(exec)
+const fetch = require('node-fetch')
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+const HttpsProxyAgent = require('https-proxy-agent');
+const url = require('url');
 
 const userAgents = [
   'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12',
@@ -27,8 +30,44 @@ const cookie = 'Cookie:PB3_SESSION="2|1:0|10:1523104228|11:PB3_SESSION|40:djJleD
 
 const index = Math.floor(Math.random() * userAgents.length)
 const ua = userAgents[index]
-const cmd = `http https://www.v2ex.com/member/metrue 'User-Agent:${ua}'`
-console.log(cmd)
-exec(cmd, (err, stdout, stderr) => {
-  console.log(err, stdout, stderr)
-})
+const url = `https://www.v2ex.com/member/metrue`
+const proxy = 'http://180.173.5.62:8060';
+const options = url.parse(proxy);
+const agent = new HttpsProxyAgent(options);
+const opt = {
+    method: 'GET',
+    headers: {
+        'User-Agent': ua,
+    },
+    agent: agent,
+}
+
+function parseBio(str) {
+    const dom = new JSDOM(str);
+    const items = dom.window.document.querySelectorAll('#Main .box .cell')
+    console.log((new Date()).toString(), items[1].textContent); // "Hello wor
+}
+
+
+function main(i) {
+    console.log(i++)
+    fetch(url, opt)
+        .then((res) => {
+            if (res.status === 200) {
+                return res.text()
+            } else {
+                console.log('Error', res.status)
+            }
+        })
+        .then((data) => {
+            parseBio(data)
+            setTimeout(() => {
+                main(i)
+            }, 5000)
+        })
+        .catch((e) => {
+            console.log(e)
+        })
+}
+
+main(0);
