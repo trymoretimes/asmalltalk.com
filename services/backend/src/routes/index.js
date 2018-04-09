@@ -2,21 +2,36 @@ const fetch = require('node-fetch')
 const scrapeIt = require('scrape-it')
 
 async function getUserInfo (username) {
-  // const url = `https://www.v2ex.com/api/members/show.json?username=${username}&timestamp=${Math.random()}`
-  // const resp = await fetch(url)
-  const info = { valid: false, bio: '' }
-  /*
-  if (resp.status === 200) {
-    const data = await resp.json()
-    console.log(resp, data)
-    info.valid = data.status === 'found'
-    info.bio = data.bio
-  } else {
-  */
+  const urls = [
+    'https://yeaxt3l4hk.execute-api.us-east-1.amazonaws.com/production',
+    'https://3gyn4qlhxd.execute-api.us-east-1.amazonaws.com/production',
+    'https://ag04n2w1s5.execute-api.us-east-1.amazonaws.com/production',
+    'https://bqnc005g2i.execute-api.us-east-1.amazonaws.com/production',
+    'https://ftgvr8utp1.execute-api.us-east-1.amazonaws.com/production',
+  ]
+  const info = {}
+  for (const url of urls) {
+    const opt = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username })
+    }
+    const resp = await fetch(url, opt)
+    if (resp.status === 200) {
+      const data = await resp.json()
+      info.valid = data.status === 'found'
+      info.bio = data.bio
+      break
+    }
+  }
+
+  if (info.valid === undefined && info.bio === undefined) {
     const sInfo = await spider(username)
     info.valid = sInfo.valid
     info.bio = sInfo.bio
-  //}
+  }
 
   return info
 }
