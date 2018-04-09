@@ -2,7 +2,7 @@ const fetch = require('node-fetch')
 
 exports.handle = function (e, ctx, cb) {
   if (e.username) {
-    const url = 'https://www.v2ex.com/api/members/show.json?username=' + e.name
+    const url = 'https://www.v2ex.com/api/members/show.json?username=' + e.username + '&timestamp=' + Math.random()
     fetch(url).then((res) => {
       if (res.status === 200) {
         return res.json()
