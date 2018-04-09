@@ -9,6 +9,7 @@ async function getUserInfo (username) {
     'https://bqnc005g2i.execute-api.us-east-1.amazonaws.com/production',
     'https://ftgvr8utp1.execute-api.us-east-1.amazonaws.com/production',
   ]
+
   const info = {}
   for (const url of urls) {
     const opt = {
@@ -16,14 +17,19 @@ async function getUserInfo (username) {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ username })
+      body: JSON.stringify({ username: username })
     }
     const resp = await fetch(url, opt)
+    // TODO refactor needed
     if (resp.status === 200) {
       const data = await resp.json()
-      info.valid = data.status === 'found'
-      info.bio = data.bio
-      break
+      if (!data.error) {
+          info.valid = data.status === 'found'
+          info.bio = data.bio
+          break
+      } else {
+        console.log(data.error, 'try next service: ', url.split('api')[0])
+      }
     }
   }
 
