@@ -7,27 +7,7 @@ const cors = require('koa-cors')
 const serve = require('koa-static')
 
 const routes = require('./routes')
-const auth = require('./auth')
-const hooks = require('./hooks')
 const Dal = require('./dal')
-const { getToken } = require('./token')
-
-const authMiddleware = async (ctx, next) => {
-  const req = ctx.request
-  const shouldAuth = req.url.startsWith('/v1/api/admin') &&
-                     req.url !== '/v1/api/admin/login'
-  if (shouldAuth) {
-    const token = getToken(ctx)
-    try {
-      auth.verify(token)
-    } catch (e) {
-      ctx.status = 401
-      ctx.message = 'invalid token'
-      return
-    }
-  }
-  await next()
-}
 
 class Server {
   constructor (config) {
@@ -37,11 +17,9 @@ class Server {
     this.port = config.port || 5000
 
     this.dals = new Dal(config.mongo)
-    this.hooks = hooks(config)
 
     this.app = new Koa()
     this.enableCORS()
-    this.app.use(authMiddleware)
     this.app.use(compress())
     this.app.use(logger())
     this.app.use(bodyParser())
@@ -59,7 +37,7 @@ class Server {
     routes.forEach((route) => {
       const handler = async (ctx) => {
         if (route.path && route.path.startsWith('/users')) {
-          await route.handler(ctx, this.dals.comments, this.hooks)
+          await route.handler(ctx, this.dals.comments)
         }
       }
 
