@@ -1,15 +1,8 @@
 const fetch = require('node-fetch')
 const scrapeIt = require('scrape-it')
+const urls = require('./urls')
 
 async function getUserInfo (username) {
-  const urls = [
-    'https://yeaxt3l4hk.execute-api.us-east-1.amazonaws.com/production',
-    'https://3gyn4qlhxd.execute-api.us-east-1.amazonaws.com/production',
-    'https://ag04n2w1s5.execute-api.us-east-1.amazonaws.com/production',
-    'https://bqnc005g2i.execute-api.us-east-1.amazonaws.com/production',
-    'https://ftgvr8utp1.execute-api.us-east-1.amazonaws.com/production',
-  ]
-
   const info = {}
   for (const url of urls) {
     const opt = {
@@ -31,12 +24,6 @@ async function getUserInfo (username) {
         console.log(data.error, 'try next service: ', url.split('api')[0])
       }
     }
-  }
-
-  if (info.valid === undefined && info.bio === undefined) {
-    const sInfo = await spider(username)
-    info.valid = sInfo.valid
-    info.bio = sInfo.bio
   }
 
   return info
