@@ -17,9 +17,9 @@ async function getUserInfo (username) {
     if (resp.status === 200) {
       const data = await resp.json()
       if (!data.error) {
-          info.valid = data.status === 'found'
-          info.bio = data.bio
-          break
+        info.valid = data.status === 'found'
+        info.bio = data.bio
+        break
       } else {
         console.log(data.error, 'try next service: ', url.split('api')[0])
       }
@@ -45,7 +45,7 @@ async function spider (username) {
   return info
 }
 
-const generateCode = () => "bz" + Math.floor(Math.random() * 10000)
+const generateCode = () => 'bz' + Math.floor(Math.random() * 10000)
 
 module.exports = [
   {
@@ -105,7 +105,7 @@ module.exports = [
   {
     path: '/users',
     method: 'POST',
-    handler: async (ctx, dal, hooks) => {
+    handler: async (ctx, dal) => {
       const {
         userId,
         email,
@@ -127,7 +127,7 @@ module.exports = [
           matchGuys,
           emailed,
           date: (new Date()).toISOString()
-        }, hooks)
+        })
       } catch (e) {
         error = e
       }
@@ -144,7 +144,7 @@ module.exports = [
   {
     path: '/users',
     method: 'PUT',
-    handler: async (ctx, dal, hooks) => {
+    handler: async (ctx, dal) => {
       const { user, uri, text, parents } = ctx.request.body
 
       let error = null
@@ -157,7 +157,7 @@ module.exports = [
               text,
               parent,
               date: (new Date()).toISOString()
-            }, hooks)
+            })
           } catch (e) {
             error = e
           }
@@ -169,7 +169,7 @@ module.exports = [
             uri,
             text,
             date: (new Date()).toISOString()
-          }, hooks)
+          })
         } catch (e) {
           error = e
         }
