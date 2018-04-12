@@ -1,20 +1,21 @@
 const MongoClient = require('mongodb').MongoClient
 
 class Database {
-  constructor() {
+  constructor () {
     this.db = null
     this.collection = null
   }
 
-  async init(options) {
+  async init (options) {
     if (this.db === null) {
       const { host, port, db } = options
-      this.db = await MongoClient.connect(`mongodb://${host}:${port}/${db}`)
+      const client = await MongoClient.connect(`mongodb://${host}:${port}`)
+      this.db = client.db(db)
     }
 
     const { collection } = options
     if (this.collection === null) {
-      this.collection = await this.db.collection(collection)
+      this.collection = this.db.collection(collection)
     }
   }
 }

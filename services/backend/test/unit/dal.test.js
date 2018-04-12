@@ -30,7 +30,6 @@ describe('Dal', () => {
 
       const ret = await database.collection.find(obj).toArray()
       // eslint-disable-next-line
-      console.log(ret)
       const { _id, ...createdUser } = ret[0]
       expect(createdUser).toEqual(obj)
 
@@ -65,7 +64,7 @@ describe('Dal', () => {
 
     afterAll(async () => {
       await database.collection.remove()
-      await database.db.close()
+      await database.client.close()
     })
   })
 })
