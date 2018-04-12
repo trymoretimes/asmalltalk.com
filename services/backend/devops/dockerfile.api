@@ -2,8 +2,7 @@ FROM node:alpine
 
 WORKDIR /opt/backend
 COPY package.json .
-RUN npm install \
- && npm cache clean
+RUN npm install
 
 COPY . .
 

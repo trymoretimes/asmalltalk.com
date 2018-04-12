@@ -2,7 +2,7 @@
   "host": "127.0.0.1",
   "port": 5002,
   "mongo": {
-    "uri":'mongodb+srv://iiiiili_tokyo:***REMOVED***@cluster0-iteff.mongodb.net',
+    "uri": "mongodb+srv://iiiiili_tokyo:***REMOVED***@cluster0-iteff.mongodb.net",
     "db": "users"
   },
   "mail": {
