@@ -8,6 +8,7 @@ const serve = require('koa-static')
 
 const routes = require('./routes')
 const Dal = require('./dal')
+const setupMatcher = require('./jobs/matcher')
 
 class Server {
   constructor (config) {
@@ -29,6 +30,8 @@ class Server {
     // TODO testing on this
     const staticRoot = `${__dirname}/../public`
     this.app.use(serve(staticRoot))
+
+    this.matcher = setupMatcher(this.dals.comments)
   }
 
   setupHandlers () {
@@ -83,6 +86,7 @@ class Server {
   async start () {
     try {
       this._server = await this.app.listen(this.port)
+      this.matcher.start()
     } catch (e) {
       console.warn(e.stack)
     }
