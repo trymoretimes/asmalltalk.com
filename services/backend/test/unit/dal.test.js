@@ -1,18 +1,18 @@
 // TODO
 // this is a serious issue between /lib and /src (need to figrure out)
 const Dal = require('../../src/dal')
-const { mockComment } = require('../helpers/mock')
+const { mockUser } = require('../helpers/mock')
 const Database = require('../helpers/db')
 
 describe('Dal', () => {
-  describe('Comments', () => {
+  describe('Users', () => {
     let dal = null
     let database = null
 
     const config = {
       host: 'localhost',
       port: 27017,
-      db: 'YoYo-test',
+      db: 'YoYo-test'
     }
 
     beforeAll(async () => {
@@ -20,39 +20,28 @@ describe('Dal', () => {
       database = new Database()
       await database.init({
         ...config,
-        collection: 'Comments',
+        collection: 'Comments'
       })
     })
 
-    it('create', async () => {
-      const obj = mockComment()
+    it('create -> fetch matchGuys -> updateMatchGuys', async () => {
+      const obj = mockUser()
       await dal.create({ ...obj })
 
       const ret = await database.collection.find(obj).toArray()
       // eslint-disable-next-line
-      const { _id, ...createdComment } = ret[0]
-      expect(createdComment).toEqual(obj)
-    })
+      console.log(ret)
+      const { _id, ...createdUser } = ret[0]
+      expect(createdUser).toEqual(obj)
 
-    it('create with hooks', async () => {
-      const comment = mockComment()
-      const appendModFlag = (obj) => ({ ...obj, mod: true })
-      const hooks = { preCreate: [appendModFlag] }
-      await dal.create(comment, hooks)
+      const matchGuys = await dal.fetchMatchGuys(_id)
+      expect(matchGuys).toEqual([])
 
-      const ret = await database.collection.find(comment).toArray()
-      // eslint-disable-next-line
-      const { _id, ...createdComment } = ret[0]
-      expect(createdComment).toEqual({ ...comment, mod: true })
-    })
+      const matchId = Math.random()
+      await dal.updateMatchGuys(_id, matchId)
 
-    it('find', async () => {
-      const obj = mockComment()
-      await database.collection.insert(obj)
-      const ret = await dal.find(obj)
-      expect(ret).toBeInstanceOf(Array)
-      expect(ret.length === 1).toBe(true)
-      expect(ret[0]).toEqual(obj)
+      const newMatchGuys = await dal.fetchMatchGuys(_id)
+      expect(newMatchGuys).toEqual([matchId])
     })
 
     afterAll(async () => {
