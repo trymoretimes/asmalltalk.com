@@ -18,6 +18,26 @@ class Comments extends BaseDal {
               .limit(limit)
               .toArray()
   }
+
+  async updateMatchGuys (id, matchId) {
+    const col = await this.collection()
+
+    const matchGuys = await this.fetchMatchGuys(id)
+    if (matchGuys.indexOf(matchId) === -1) {
+      matchGuys.push(matchId)
+    }
+
+    return col.updateOne({ _id: id }, { $set: { matchGuys } })
+  }
+
+  async fetchMatchGuys (id) {
+    const user = await this.findOne({ _id: id })
+    if (user) {
+      return user.matchGuys
+    }
+
+    throw new Error('no such user')
+  }
 }
 
 module.exports = Comments
