@@ -30,6 +30,26 @@ class Comments extends BaseDal {
     return col.updateOne({ _id: id }, { $set: { matchGuys } })
   }
 
+  async updateMailed (id, mailedId) {
+    const col = await this.collection()
+
+    const emailed = await this.fetchMailedGuys(id)
+    if (emailed.indexOf(mailedId) === -1) {
+      emailed.push(mailedId)
+    }
+
+    return col.updateOne({ _id: id }, { $set: { emailed } })
+  }
+
+  async fetchMailedGuys (id) {
+    const user = await this.findOne({ _id: id })
+    if (user) {
+      return user.emailed
+    }
+
+    throw new Error('no such user')
+  }
+
   async fetchMatchGuys (id) {
     const user = await this.findOne({ _id: id })
     if (user) {
