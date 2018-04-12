@@ -8,8 +8,8 @@ class Database {
 
   async init (options) {
     if (this.db === null) {
-      const { host, port, db } = options
-      const client = await MongoClient.connect(`mongodb://${host}:${port}`)
+      const { uri, db } = options
+      const client = await MongoClient.connect(uri)
       this.db = client.db(db)
     }
 
