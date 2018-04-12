@@ -44,6 +44,25 @@ describe('Dal', () => {
       expect(newMatchGuys).toEqual([matchId])
     })
 
+    it('create -> fetch emailed -> update emailed', async () => {
+      const obj = mockUser()
+      await dal.create({ ...obj })
+
+      const ret = await database.collection.find(obj).toArray()
+      // eslint-disable-next-line
+      const { _id, ...createdUser } = ret[0]
+      expect(createdUser).toEqual(obj)
+
+      const emailed = await dal.fetchMailedGuys(_id)
+      expect(emailed).toEqual([])
+
+      const matchId = Math.random()
+      await dal.updateMailed(_id, matchId)
+
+      const newEmailed = await dal.fetchMailedGuys(_id)
+      expect(newEmailed).toEqual([matchId])
+    })
+
     afterAll(async () => {
       await database.collection.remove()
       await database.db.close()
