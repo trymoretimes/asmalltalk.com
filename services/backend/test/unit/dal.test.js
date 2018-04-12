@@ -10,8 +10,7 @@ describe('Dal', () => {
     let database = null
 
     const config = {
-      host: 'localhost',
-      port: 27017,
+      uri: 'mongodb+srv://iiiiili_tokyo:***REMOVED***@cluster0-iteff.mongodb.net',
       db: 'YoYo-test'
     }
 
