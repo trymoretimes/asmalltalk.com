@@ -13,25 +13,26 @@ function buidQuery(query = {}) {
 }
 
 class BaseDal {
-  constructor(config) {
+  constructor (config) {
     const { host, port, db, collectionName } = config
     const goodToGo = host && port && db && collectionName
     if (!goodToGo) {
       throw new Error('host, port, db, and collection name are required')
     }
 
-    this.url = `mongodb://${host}:${port}/${db}`
+    this.url = `mongodb://${host}:${port}`
+    this.dbName = db
     this.collectionName = collectionName
   }
 
-  async collection() {
+  async collection () {
     if (!mongo.isConnected()) {
-      await mongo.connect(this.url)
+      await mongo.connect(this.url, this.dbName)
     }
-    return await mongo.collection(this.collectionName)
+    return mongo.collection(this.collectionName)
   }
 
-  async create(obj) {
+  async create (obj) {
     const col = await this.collection()
     // TODO figure out why create insert operation modifies the origin obj
     return await col.insert(obj)

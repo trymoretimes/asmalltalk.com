@@ -30,7 +30,7 @@
     "koa-static": "^3.0.0",
     "koa-unless": "1.0.0",
     "mandrill-api": "^1.0.45",
-    "mongodb": "^2.2.19",
+    "mongodb": "^3.0.6",
     "node-fetch": "^2.1.2",
     "nodemailer": "^4.0.1",
     "scrape-it": "^5.0.3"

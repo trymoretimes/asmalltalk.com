@@ -1,37 +1,40 @@
 const { MongoClient } = require('mongodb')
 
 class Mongo {
-  constructor() {
+  constructor () {
+    this.client = null
     this.db = null
   }
 
-  async connect(url) {
+  async connect (url, dbName) {
     return new Promise((resolve, reject) => {
-      MongoClient.connect(url, (err, db) => {
+      MongoClient.connect(url, (err, client) => {
         if (err) {
           reject(err)
         } else {
-          this.db = db
-          resolve(db)
+          this.client = client
+          this.db = client.db(dbName)
+          resolve(this.client)
         }
       })
     })
   }
 
-  isConnected() {
+  isConnected () {
     return this.db !== null
   }
 
-  async collection(name) {
-    return await this.db.collection(name)
+  collection (name) {
+    const col = this.db.collection(name)
+    return col
   }
 
-  async close() {
-    await this.db.close()
+  async close () {
+    await this.client.close()
     this.db = null
   }
 
-  async _dropDB() {
+  async _dropDB () {
     await this.db.dropDatabase()
   }
 }
