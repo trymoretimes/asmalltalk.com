@@ -1,0 +1,16 @@
+.editor {
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  cursor: text;
+  padding: 16px;
+  border-radius: 2px;
+  background: #fefefe;
+}
+
+@media (max-width: 600px) {
+  font-size: 2.6vmin;
+}
+
+.editor :global(.public-DraftEditor-content) {
+  min-height: 50px;
+}

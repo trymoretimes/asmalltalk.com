@@ -1,0 +1,74 @@
+.CenterText {
+    text-align: center;
+}
+.FormContainer {
+    width: 60%;
+    margin: 0 auto;
+    margin-bottom: 50px;
+    color: #778087;
+    font-size: 14px;
+}
+.introContainer {
+    width: 100%;
+    background-color: #f6f6f6;
+    box-sizing: border-box;
+    padding: 5px 30px 50px 30px;
+}
+.MainContainer {
+    width: 500px;
+    margin: 0 auto;
+    padding-top: 30px;
+    background-color: white;
+    font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    box-sizing: border-box;
+}
+.BasicInput {
+  display: block;
+  font-size: 14px;
+  margin: 15px auto;
+  height: 30px;
+  width: 100%;
+  color: black;
+}
+.Screenshot {
+    width: 404px;
+    display: block;
+    margin: 0 auto;
+}
+.UserNameInput {
+  composes: BasicInput;
+}
+
+.CodeInput {
+  composes: BasicInput;
+}
+
+.EmailInput {
+  composes: BasicInput;
+}
+
+.SubmitBtn {
+  composes: BasicInput;
+  margin-top: 10px;
+  border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+  border-style: solid;
+  border-width: 1px;
+  padding: 1px 7px 2px;
+  color: white;
+  background-color: #0084ff;
+}
+.ErrorText {
+    color: red;
+}
+.PassText {
+    color: green;
+}
+.InactiveText {
+    color: #ccc;
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+color: #ccc;
+opacity: 1; /* Firefox */
+}
