@@ -17,7 +17,7 @@ jobs:
           command: echo 'no test yet'
       - run:
           name: Test SSH
-          command: ssh root@172.104.86.178 "echo hello_linode"
+          command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "echo hello_linode"
 
   deploy:
     machine:
