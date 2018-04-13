@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:7.10
+    working_directory: ~/circleci-ff-workflows
+    steps:
+      - checkout
+      - run:
+          name: build client
+          command: cd client && npm install && npm run build  # install dependencies
+      - run:
+          name: build server
+          command: cd server && npm install  # setup database
+      - run:
+          name: Run tests
+          command: echo 'no test yet'
+      - run:
+          name: Test SSH
+          command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "echo hello_linode"
+      - run:
+          name: Deploy
+          command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "cd ff && git pull && ./devops/deploy.sh"
