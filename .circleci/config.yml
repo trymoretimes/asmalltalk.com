@@ -15,6 +15,9 @@ jobs:
       - run:
           name: Run tests
           command: echo 'no test yet'
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:80nHPLh7vHkBmXCIx++6Pks0+mshfk3tfZ6v7pV+2FU root@localhost"
 
   deploy:
     machine:
