@@ -117,7 +117,7 @@ class App extends React.Component {
 
     return (
       <div className={styles.MainContainer}>
-          <h2 className={styles.CenterText}>本周对话</h2>
+          <h2 className={styles.CenterText}>小对话</h2>
           <h4 className={styles.CenterText}>轻松拓展你的朋友圈</h4>
           <div className={styles.FormContainer}>
             <p>1. 输入你的 V2EX 用户名</p>
