@@ -1,6 +1,0 @@
-node_modules
-lib
-public/*/dist
-coverage
-*.swp
-*.swo
