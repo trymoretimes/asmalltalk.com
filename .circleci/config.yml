@@ -7,14 +7,14 @@ jobs:
     steps:
       - checkout
       - run:
-        name: build client
-        command: cd client && npm install && npm run build  # install dependencies
+          name: build client
+          command: cd client && npm install && npm run build  # install dependencies
       - run:
-        name: build server
-        command: cd server && npm install  # setup database
+          name: build server
+          command: cd server && npm install  # setup database
       - run:
-        name: Run tests
-        command: echo 'no test yet'
+          name: Run tests
+          command: echo 'no test yet'
 
   deploy:
     machine:
