@@ -20,4 +20,4 @@ jobs:
           command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "echo hello_linode"
       - run:
           name: Deploy
-          command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "cd ff && ./devops/deploy.sh"
+          command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "cd ff && git pull && ./devops/deploy.sh"
