@@ -1,7 +1,7 @@
 #!/bin/bash
 
 target='root@172.104.86.178'
-ssh ${target} <<END
+ssh -o "StrictHostKeyChecking no" ${target} <<END
   docker rmi \$(docker images --filter "dangling=true" -q --no-trunc)
   cd ~/ff
   docker build -f devops/dockerfile.client -t ff-client .
