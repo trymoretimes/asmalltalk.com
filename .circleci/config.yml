@@ -18,27 +18,6 @@ jobs:
       - run:
           name: Test SSH
           command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "echo hello_linode"
-
-  deploy:
-    machine:
-        enabled: true
-    working_directory: ~/circleci-ff-workflows
-    steps:
-      - checkout
       - run:
-          name: deploy to linode
-          command: bash devops/deploy.sh
-
-workflows:
-  version: 2
-  build-and-deploy:
-    jobs:
-      - build
-      - deploy:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - deploy
-                - master
+          name: Deploy
+          command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "cd ff && ./devops/deploy.sh"
