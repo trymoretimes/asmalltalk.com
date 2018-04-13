@@ -8,7 +8,8 @@ WORKDIR /opt/client
 COPY client/package.json .
 RUN npm install
 COPY client/ .
+COPY devops/run.sh .
 
 EXPOSE 80
 
-CMD ["/sbin/tini", "--", "/opt/client/devops/run.sh"]
+CMD ["/sbin/tini", "--", "/opt/client/run.sh"]
