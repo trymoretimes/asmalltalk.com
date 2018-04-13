@@ -13,8 +13,8 @@ jobs:
         name: build server
         command: cd server && npm install  # setup database
       - run:
-          name: Run tests
-          command: echo 'no test yet'
+        name: Run tests
+        command: echo 'no test yet'
 
   deploy:
     machine:
