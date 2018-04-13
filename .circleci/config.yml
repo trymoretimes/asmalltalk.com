@@ -2,41 +2,38 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
       - image: circleci/node:7.10
-
-    working_directory: ~/repo
-
+    working_directory: ~/circleci-ff-workflows
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
       - run:
         name: build client
-        commmand: cd client && npm install && npm run build
-
+        command: cd client && npm install && npm run build  # install dependencies
       - run:
         name: build server
-        command: cd server && npm install
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-
-      # run tests!
+        command: cd server && npm install  # setup database
       - run:
-        name: run test
-        command: cd server && ./node_modules/.bin/jest ./test/unit/dal.test.js
+          name: Run tests
+          command: echo 'no test yet'
 
-  deployment:
-    production:
-      branch: deploy
-      commands:
-        - ./devops/deploy.sh
+  deploy:
+    machine:
+        enabled: true
+    working_directory: ~/circleci-ff-workflows
+    steps:
+      - checkout
+      - run:
+          name: deploy to linode
+          command: bash devops/deploy.sh
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: sequential-branch-filter
