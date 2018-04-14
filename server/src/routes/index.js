@@ -142,44 +142,45 @@ module.exports = [
     }
   },
   {
-    path: '/users',
-    method: 'PUT',
+    path: '/users/:id',
+    method: 'GET',
     handler: async (ctx, dal) => {
-      const { user, uri, text, parents } = ctx.request.body
-
+      const { id } = ctx.params
       let error = null
-      if (parents && parents.length > 0) {
-        for (const parent of parents) {
-          try {
-            await dal.create({
-              user,
-              uri,
-              text,
-              parent,
-              date: (new Date()).toISOString()
-            })
-          } catch (e) {
-            error = e
-          }
-        }
-      } else {
-        try {
-          await dal.create({
-            user,
-            uri,
-            text,
-            date: (new Date()).toISOString()
-          })
-        } catch (e) {
-          error = e
-        }
+      let user = null
+      try {
+        user = await dal.fetch(id)
+      } catch (e) {
+        error = e
       }
 
       if (error === null) {
-        ctx.status = 201
+        ctx.status = 200
+        ctx.body = user
       } else {
         ctx.status = 500
-        ctx.message = `comment created met some errors: ${error}`
+        ctx.message = `errors: ${error}`
+      }
+    }
+  },
+  {
+    path: '/users/:id',
+    method: 'PUT',
+    handler: async (ctx, dal) => {
+      const { id } = ctx.params
+      const { canHelp, needHelp, extraInfo } = ctx.request.body
+      let error = null
+      try {
+        await dal.update({ id, canHelp, needHelp, extraInfo })
+      } catch (e) {
+        error = e
+      }
+
+      if (error === null) {
+        ctx.status = 202
+      } else {
+        ctx.status = 500
+        ctx.message = `user update met some errors: ${error}`
       }
     }
   }

@@ -1,10 +1,22 @@
 const BaseDal = require('./base_dal')
+const { ObjectID } = require('mongodb')
 
 class Comments extends BaseDal {
   async create (obj) {
     let comment = Object.assign({}, obj)
     const col = await this.collection()
     await col.insert(comment)
+  }
+
+  async update (obj) {
+    const { id, canHelp, needHelp, extraInfo } = obj
+    const col = await this.collection()
+    return col.updateOne({ _id: ObjectID(id) }, { $set: { canHelp, needHelp, extraInfo } })
+  }
+
+  async fetch (id) {
+    const col = await this.collection()
+    return col.findOne({ _id: ObjectID(id) })
   }
 
   async queryWithUri (q = {}) {
