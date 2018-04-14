@@ -19,8 +19,6 @@ class App extends React.Component {
       nameVerified: false,
       verifyNameTip: '',
       loadingCount: 0,
-      usernameTimer: null,
-      codeTimer: null,
       created: false
     }
   }
@@ -39,28 +37,20 @@ class App extends React.Component {
   componentDidMount () {
   }
 
-  onUserNameChange (evt) {
-    this.setState({ nameVerified: false })
-    this.setState({ verifyNameTip: '' })
-    clearTimeout(this.state.usernameTimer)
+  async onUserNameChange (evt) {
     const username = evt.target.value
-    const st = setTimeout(async () => {
-      this.setState({ verifyNameTip: '' })
-      this.setState({ username }, async () => {
-        this.setState({ verifyNameTip: '正在验证用户名' })
-        const { valid, code } = await api.isValidUser({ username })
-        if (valid) {
-          clearTimeout(st)
-          this.setState({
-            nameVerified: true,
-            verifyNameTip: '✓ 账号有效',
-            code
-          })
-        } else {
-          this.setState({ verifyNameTip: '无效的用户名' })
-        }
+
+    this.setState({ verifyNameTip: '正在验证用户名' })
+    const { valid, code } = await api.isValidUser({ username })
+    if (valid) {
+      this.setState({
+        nameVerified: true,
+        verifyNameTip: '✓ 账号有效',
+        code
       })
-    }, 500)
+    } else {
+      this.setState({ verifyNameTip: '无效的用户名' })
+    }
   }
 
   async verifyCode () {
