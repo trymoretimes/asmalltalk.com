@@ -47,6 +47,7 @@ class App extends React.Component {
     let st = setTimeout(async () => {
         this.setState({ verifyNameTip: '' })
         this.setState({ username }, async () => {
+          this.setState({ verifyNameTip: '正在验证用户名' })
           const { valid, code } = await api.isValidUser({ username })
           if (valid) {
             this.setState({ nameVerified: true })
@@ -129,32 +130,32 @@ class App extends React.Component {
             />
             <p className={ nameVerified ? styles.PassText : styles.ErrorText}>{verifyNameTip}</p>
             <p className={ nameVerified ? "" : styles.InactiveText} >
-                2. 把下面的验证码添加到 V2EX 个人简介 (?)
-            </p>
-            <input
-              placeholder='自动生成验证码'
-              type='text'
-              disabled='true'
-              className={styles.CodeInput}
-              value={code}
-            />
-            <p> {this.verifyCodeTip()}</p>
-            <p className={ nameVerified&&verified ? "" : styles.InactiveText} >
-                3. 输入你的邮箱
+                2. 输入你的邮箱
             </p>
             <input
               placeholder='email'
               type='email'
-              disabled={!verified}
+              disabled={!nameVerified}
               className={styles.EmailInput}
               onChange={this.onEmailChange.bind(this)}
             />
+            <p className={ nameVerified && !!email ? "" : styles.InactiveText} >
+                3. 把下面的验证码添加到 V2EX 个人简介 (?)
+            </p>
+            <input
+              placeholder='自动生成验证码'
+              type='text'
+              disabled={ !nameVerified || !email }
+              className={styles.CodeInput}
+              value={code}
+            />
+            <p> {this.verifyCodeTip()}</p>
             <button
               type='button'
-              disabled={!verified && !!email}
+              disabled="true"
               onClick={this.handleSubmit.bind(this)}
-              className={styles.SubmitBtn}
-            > 注册使用
+              className={ (!nameVerified || !email) ? styles.SubmitBtn + " " + styles.BtnDisable : styles.SubmitBtn}
+            > 注册
             </button>
           </div>
           <div className={styles.introContainer}>

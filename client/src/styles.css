@@ -28,7 +28,7 @@
 .BasicInput {
   display: block;
   font-size: 14px;
-  margin: 15px auto;
+  margin: 0px auto;
   height: 34px;
   width: 100%;
   color: black;
@@ -48,24 +48,26 @@
 .CodeInput {
   composes: BasicInput;
 }
-
 .EmailInput {
   composes: BasicInput;
 }
-
-.SubmitBtn {
+.BasicBtn {
   font-size: 14px;
   display: block;
-  margin: 20px auto;
   padding: 1px 7px 2px;
   color: white;
   background-color: #0084ff;
   border-radius: 4px;
   padding: 10px 30px;
   vertical-align: middle;
-  line-height: 17px;
 }
-
+.SubmitBtn {
+  composes: BasicBtn;
+  margin: 20px auto;
+}
+.BtnDisable {
+    background-color: #f6f6f6;
+}
 .ErrorText {
     color: red;
 }
