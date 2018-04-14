@@ -44,44 +44,38 @@ class App extends React.Component {
     this.setState({ verifyNameTip: '' })
     clearTimeout(this.state.usernameTimer)
     const username = evt.target.value
-    let st = setTimeout(async () => {
-        this.setState({ verifyNameTip: '' })
-        this.setState({ username }, async () => {
-          this.setState({ verifyNameTip: '正在验证用户名' })
-          const { valid, code } = await api.isValidUser({ username })
-          if (valid) {
-            this.setState({ nameVerified: true })
-            this.setState({ verifyNameTip: '✓ 账号有效' })
-            this.setState({ code }, () => {
-              this.verifyCode()
-            })
-          } else {
-            this.setState({ verifyNameTip: '无效的用户名' })
-          }
-        })
+    const st = setTimeout(async () => {
+      this.setState({ verifyNameTip: '' })
+      this.setState({ username }, async () => {
+        this.setState({ verifyNameTip: '正在验证用户名' })
+        const { valid, code } = await api.isValidUser({ username })
+        if (valid) {
+          clearTimeout(st)
+          this.setState({
+            nameVerified: true,
+            verifyNameTip: '✓ 账号有效',
+            code
+          })
+        } else {
+          this.setState({ verifyNameTip: '无效的用户名' })
+        }
+      })
     }, 500)
-    this.setState( {usernameTimer: st})
   }
 
   async verifyCode () {
-    clearTimeout(this.state.codeTimer)
-    let st = setTimeout(async () => {
-      const { username, code } = this.state
-
-        this.setState({ loadingCount: this.state.loadingCount+1 })
-
-      const verified = await api.verify({ username, code })
-      this.setState({ verified })
-
-      if (!verified) {
-        this.verifyCode()
-      } else {
-        clearTimeout(st)
-        this.setState({ loadingTip: "账号验证成功" })
-        this.setState({ loadingCount: 0})
-      }
-    }, 3000)
-    this.setState( {codeTimer: st} )
+    const { username, code } = this.state
+    this.setState({ loadingCount: this.state.loadingCount + 1 })
+    const verified = await api.verify({ username, code })
+    this.setState({ verified })
+    if (!verified) {
+      await this.verifyCode()
+    } else {
+      this.setState({
+        loadingTip: '账号验证成功',
+        loadingCount: 0
+      })
+    }
   }
 
   onEmailChange (evt) {
@@ -93,6 +87,7 @@ class App extends React.Component {
 
   async handleSubmit () {
     const { username, email, code } = this.state
+    await this.verifyCode()
     const created = await api.submit({ username, email, code })
     this.setState({ created })
   }
@@ -100,16 +95,13 @@ class App extends React.Component {
   render () {
     const {
       code,
-      verified,
       email,
-      loadingCount,
       nameVerified,
       verifyNameTip,
       created
     } = this.state
 
-    document.body.style = 'background: #b8e5f8;';
-
+    const enableSubmit = email.length > 0 && code.length > 0
     if (created) {
       return (
         <DetailComponent />
@@ -139,20 +131,20 @@ class App extends React.Component {
               className={styles.EmailInput}
               onChange={this.onEmailChange.bind(this)}
             />
-            <p className={ nameVerified && !!email ? "" : styles.InactiveText} >
+            <p className={ nameVerified && !!email ? '' : styles.InactiveText} >
                 3. 把下面的验证码添加到 V2EX 个人简介 (?)
             </p>
             <input
               placeholder='自动生成验证码'
               type='text'
-              disabled={ !nameVerified || !email }
+              disabled={!nameVerified || !email}
               className={styles.CodeInput}
               value={code}
             />
             <p> {this.verifyCodeTip()}</p>
             <button
               type='button'
-              disabled="true"
+              disabled={!enableSubmit}
               onClick={this.handleSubmit.bind(this)}
               className={ (!nameVerified || !email) ? styles.SubmitBtn + " " + styles.BtnDisable : styles.SubmitBtn}
             > 注册
