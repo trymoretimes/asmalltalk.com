@@ -177,7 +177,7 @@ module.exports = [
       }
 
       if (error === null) {
-        ctx.status = 202
+        ctx.status = 204
       } else {
         ctx.status = 500
         ctx.message = `user update met some errors: ${error}`
