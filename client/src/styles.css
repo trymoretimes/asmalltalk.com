@@ -15,7 +15,8 @@
     padding: 5px 30px 50px 30px;
 }
 .MainContainer {
-    width: 500px;
+    min-width: 300px;
+	max-width: 500px;
     margin: 0 auto;
     padding-top: 30px;
     background-color: white;
@@ -28,12 +29,15 @@
   display: block;
   font-size: 14px;
   margin: 15px auto;
-  height: 30px;
+  height: 34px;
   width: 100%;
   color: black;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 12px;
 }
 .Screenshot {
-    width: 404px;
+    width: 90%;
     display: block;
     margin: 0 auto;
 }
@@ -50,15 +54,18 @@
 }
 
 .SubmitBtn {
-  composes: BasicInput;
-  margin-top: 10px;
-  border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
-  border-style: solid;
-  border-width: 1px;
+  font-size: 14px;
+  display: block;
+  margin: 20px auto;
   padding: 1px 7px 2px;
   color: white;
   background-color: #0084ff;
+  border-radius: 4px;
+  padding: 10px 30px;
+  vertical-align: middle;
+  line-height: 17px;
 }
+
 .ErrorText {
     color: red;
 }
