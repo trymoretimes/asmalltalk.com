@@ -3,9 +3,9 @@ const { ObjectID } = require('mongodb')
 
 class Comments extends BaseDal {
   async create (obj) {
-    let comment = Object.assign({}, obj)
     const col = await this.collection()
-    await col.insert(comment)
+    const ret = await col.insert(Object.assign({}, obj))
+    return ret.ops[0]
   }
 
   async update (obj) {

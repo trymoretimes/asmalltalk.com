@@ -117,8 +117,9 @@ module.exports = [
       } = ctx.request.body
 
       let error = null
+      let user = null
       try {
-        await dal.create({
+        user = await dal.create({
           userId,
           email,
           needHelp,
@@ -134,7 +135,7 @@ module.exports = [
 
       if (error === null) {
         ctx.status = 201
-        ctx.body = { created: 'OK' }
+        ctx.body = user
       } else {
         ctx.status = 500
         ctx.message = `comment created met some errors: ${error}`
