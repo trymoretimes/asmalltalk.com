@@ -19,12 +19,14 @@ class App extends React.Component {
       nameVerified: false,
       verifyNameTip: '',
       loadingCount: 0,
-      created: false
+      created: false,
+      updated: false
     }
 
     this.onUserNameChange = this.onUserNameChange.bind(this)
     this.onEmailChange = this.onEmailChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleUpdateInfo = this.handleUpdateInfo.bind(this)
   }
 
   verifyCodeTip () {
@@ -44,7 +46,7 @@ class App extends React.Component {
   async onUserNameChange (evt) {
     const username = evt.target.value
 
-    this.setState({ verifyNameTip: '正在验证用户名' })
+    this.setState({ verifyNameTip: '正在验证用户名', username })
     const { valid, code } = await api.isValidUser({ username })
     if (valid) {
       this.setState({
@@ -82,8 +84,20 @@ class App extends React.Component {
   async handleSubmit () {
     const { username, email, code } = this.state
     await this.verifyCode()
-    const created = await api.submit({ username, email, code })
-    this.setState({ created })
+    const user = await api.submit({ username, email, code })
+    if (user) {
+      const { _id } = user
+      this.setState({ created: true, userId: _id })
+    }
+  }
+
+  async handleUpdateInfo (info) {
+    const { canHelp, needHelp, extraInfo } = info
+    const { userId } = this.state
+    const updated = await api.updateInfo({ canHelp, needHelp, extraInfo, userId })
+    if (updated) {
+      this.setState({ updated })
+    }
   }
 
   render () {
@@ -92,14 +106,19 @@ class App extends React.Component {
       email,
       nameVerified,
       verifyNameTip,
-      created
+      created,
+      updated
     } = this.state
 
     const enableSubmit = email.length > 0 && code.length > 0
     if (created) {
       return (
-        <DetailComponent />
+        <DetailComponent handleSubmit={this.handleUpdateInfo} />
       )
+    }
+
+    if (updated) {
+      return (<p> 信息更新成功 </p>)
     }
 
     return (

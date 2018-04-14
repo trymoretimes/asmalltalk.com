@@ -17,7 +17,23 @@ class API {
       body: JSON.stringify(payload)
     }
     const resp = await fetch(url, opt)
-    return resp.status === 201
+    if (resp.status === 201) {
+      return resp.json()
+    }
+  }
+
+  async updateInfo (payload) {
+    const { userId, canHelp, needHelp, extraInfo } = payload
+    const url = `${API_HOST}/users/${userId}`
+    const opt = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ canHelp, needHelp, extraInfo })
+    }
+    const resp = await fetch(url, opt)
+    return resp.status === 204
   }
 
   async isValidUser (payload) {
