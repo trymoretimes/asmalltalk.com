@@ -1,6 +1,11 @@
+body {
+  background: #b8e5f8;
+}
+
 .CenterText {
     text-align: center;
 }
+
 .FormContainer {
     width: 60%;
     margin: 0 auto;
