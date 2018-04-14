@@ -21,6 +21,10 @@ class App extends React.Component {
       loadingCount: 0,
       created: false
     }
+
+    this.onUserNameChange = this.onUserNameChange.bind(this)
+    this.onEmailChange = this.onEmailChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   verifyCodeTip () {
@@ -108,7 +112,7 @@ class App extends React.Component {
             placeholder='用户名'
             type='text'
             className={styles.UserNameInput}
-            onChange={this.onUserNameChange.bind(this)}
+            onChange={this.onUserNameChange}
             />
           <p className={nameVerified ? styles.PassText : styles.ErrorText}>{verifyNameTip}</p>
           <p className={nameVerified ? '' : styles.InactiveText} >
@@ -119,7 +123,7 @@ class App extends React.Component {
             type='email'
             disabled={!nameVerified}
             className={styles.EmailInput}
-            onChange={this.onEmailChange.bind(this)}
+            onChange={this.onEmailChange}
             />
           <p className={nameVerified && !!email ? '' : styles.InactiveText} >
                 3. 把下面的验证码添加到 V2EX 个人简介 (?)
@@ -135,7 +139,7 @@ class App extends React.Component {
           <button
             type='button'
             disabled={!enableSubmit}
-            onClick={this.handleSubmit.bind(this)}
+            onClick={this.handleSubmit}
             className={(!nameVerified || !email) ? styles.SubmitBtn + ' ' + styles.BtnDisable : styles.SubmitBtn}
             > 注册
             </button>
