@@ -161,7 +161,7 @@ class App extends React.Component {
           <div className={styles.introContainer}>
               <p className={styles.CenterText}>· · ·</p>
               <h4 className={styles.CenterText}>How does it work?</h4>
-              <p>本周对话每周为你匹配一位 V2EX 好友，然后发送一封包括他个人介绍的邮件到你的邮箱。</p>
+              <p>小对话每天为你匹配一位 V2EX 好友，然后发送一封包括他个人介绍的邮件到你的邮箱。</p>
               <p className={styles.CenterText}>· · ·</p>
               <img className={styles.Screenshot} src={screenshot} />
           </div>
