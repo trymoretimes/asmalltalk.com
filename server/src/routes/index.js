@@ -1,5 +1,4 @@
 const fetch = require('node-fetch')
-const scrapeIt = require('scrape-it')
 const urls = require('./urls')
 
 async function getUserInfo (username) {
@@ -29,23 +28,7 @@ async function getUserInfo (username) {
   return info
 }
 
-async function spider (username) {
-  const url = `https://www.v2ex.com/member/${username}`
-  const info = { valid: false, bio: '' }
-
-  const { data, response } = await scrapeIt(url, {
-    profile: {
-      listItem: '#Main .box .cell'
-    }
-  })
-  if (response.statusCode === 200) {
-    info.valid = true
-    info.bio = data.profile[1] ? data.profile[1] : ''
-  }
-  return info
-}
-
-const generateCode = () => 'bz' + Math.floor(Math.random() * 10000)
+const generateCode = (email, username) => 'bz' + Buffer.from(`${email}-${username}`).toString('base64').substr(1, 6)
 
 module.exports = [
   {
