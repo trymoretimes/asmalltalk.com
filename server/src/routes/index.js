@@ -2,7 +2,6 @@ const fetch = require('node-fetch')
 const urls = require('./urls')
 
 async function getUserInfo (username) {
-  const info = {}
   for (const url of urls) {
     const opt = {
       method: 'POST',
@@ -16,19 +15,17 @@ async function getUserInfo (username) {
     if (resp.status === 200) {
       const data = await resp.json()
       if (!data.error) {
-        info.valid = data.status === 'found'
-        info.bio = data.bio
-        break
+        return data
       } else {
         console.log(data.error, 'try next service: ', url.split('api')[0])
       }
     }
   }
 
-  return info
+  return {}
 }
 
-const generateCode = (email, username) => 'bz' + Buffer.from(`${email}-${username}`).toString('base64').substr(1, 6)
+const generateCode = (username, email) => 'bz' + Buffer.from(`${username}-${email}`).toString('base64').substr(1, 8)
 
 module.exports = [
   {
@@ -65,15 +62,20 @@ module.exports = [
       const { userId } = ctx.request.query
       if (userId) {
         const info = await getUserInfo(userId)
-        console.log(info)
-        ctx.body = {
-          valid: info.valid,
-          code: info.valid ? generateCode() : ''
-        }
+        ctx.body = info
       } else {
         ctx.status = 400
         ctx.body = { info: 'username missing' }
       }
+    }
+  },
+  {
+    path: '/users/code',
+    method: 'GET',
+    handler: async (ctx, dal) => {
+      const { username, email } = ctx.request.query
+      const code = generateCode(username, email)
+      ctx.body = { code, username, email }
     }
   },
   {
