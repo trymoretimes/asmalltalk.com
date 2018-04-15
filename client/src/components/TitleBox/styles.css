@@ -1,0 +1,11 @@
+.TitleBox {
+  text-align: center;
+  /* width: 60%; */
+  margin-bottom: 50px;
+  color: #616876;
+  margin: 36px;
+}
+
+.TitleBox h3 {
+  text-align: left;
+}

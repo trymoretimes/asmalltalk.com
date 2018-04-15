@@ -1,13 +1,11 @@
 body {
   background: #b8e5f8;
-}
-
-.CenterText {
-    text-align: center;
+  font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
 }
 
 .FormContainer {
-    width: 60%;
+  padding-left: 36px;
+  padding-right: 36px;
     margin: 0 auto;
     margin-bottom: 50px;
     color: #778087;
@@ -21,11 +19,10 @@ body {
 }
 .MainContainer {
     min-width: 300px;
-	max-width: 500px;
+	  max-width: 500px;
     margin: 0 auto;
     padding-top: 30px;
     background-color: white;
-    font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
     border-radius: 2px;
     box-shadow: 0 1px 3px rgba(26,26,26,.1);
     box-sizing: border-box;

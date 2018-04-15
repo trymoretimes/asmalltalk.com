@@ -1,0 +1,32 @@
+.LogoBox {
+  text-align: left;
+  margin-left: 36px;
+  border-bottom: solid 1px lightgray;
+  padding-bottom: 30px;
+}
+
+.LogoBoxTitle {
+  width: 50%;
+  display: inline;
+  font-weight: 800;
+  font-size: 1.8rem;
+}
+
+.LogoBoxTitle a {
+  display: inline;
+  text-decoration: none;
+  color: #616876;
+  transition: color 0.3s;
+}
+
+.LogoBoxSubTitle {
+  width: 50%;
+  display: inline;
+  padding-left: 12px;
+}
+
+.LogoBoxSubTitle p {
+  display: inline;
+  font-size: 12px;
+  color: gray;
+}

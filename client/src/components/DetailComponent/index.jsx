@@ -1,5 +1,8 @@
 import React from 'react'
 
+import styles from '../../styles.css'
+import TitleBox from '../TitleBox'
+
 class DetailComponent extends React.Component {
   constructor (props) {
     super(props)
@@ -39,11 +42,32 @@ class DetailComponent extends React.Component {
 
   render () {
     return (
-      <div>
-        <input placeholder='你可以帮助什么' onChange={this.onCanHelpChange} />
-        <input placeholder='你需要什么帮助' onChange={this.onNeedHelpChange} />
-        <input placeholder='其他' onChange={this.onExtraInfoChange} />
-        <button onClick={this.onSubmit} />
+      <div className={styles.MainContainer}>
+        <TitleBox title='更新信息' />
+        <div className={styles.FormContainer}>
+          <p> 你想从别人获得哪些帮助</p>
+          <input
+            placeholder='你需要什么帮助'
+            className={styles.UserNameInput}
+            onChange={this.onNeedHelpChange}
+          />
+          <p> 你可以帮助别人哪些</p>
+          <input
+            placeholder='你可以帮助什么'
+            onChange={this.onCanHelpChange}
+            className={styles.EmailInput}
+          />
+          <p> 其他</p>
+          <input
+            placeholder='随便说点什么'
+            onChange={this.onExtraInfoChange}
+            className={styles.EmailInput}
+          />
+          <button
+            className={styles.SubmitBtn}
+            onClick={this.onSubmit}
+          > 提交 </button>
+        </div>
       </div>
     )
   }
