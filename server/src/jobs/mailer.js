@@ -40,7 +40,7 @@ class Mailer {
       for (const guyId of matchGuys) {
         if (mailed.indexOf(guyId) === -1) {
           const matchee = await this.dal.findOne({ _id: guyId })
-          await this.connect(matchee, matcher)
+          await this.connect(matcher, matchee)
           break
         }
       }
@@ -48,7 +48,6 @@ class Mailer {
   }
 
   async connect (matcher, matchee) {
-    console.log(`Send email ${matcher.email} ${matchee.email}`)
     try {
       await this.mail(matcher, matchee)
       await this.updateMailed(matcher, matchee)
