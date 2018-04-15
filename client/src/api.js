@@ -2,9 +2,19 @@ import fetch from 'isomorphic-fetch'
 import { API_HOST } from '../config'
 
 class API {
-  async query (uri) {
-    const url = `${API_HOST}/comments?uri=${encodeURIComponent(uri)}`
-    return fetch(url)
+  async query (qs = {}) {
+    const { username, email } = qs
+    let qsString = '?'
+    if (username) {
+      qsString += `username=${username}&`
+    }
+    if (email) {
+      qsString += `email=${email}&`
+    }
+
+    const url = `${API_HOST}/users${qsString}`
+    const resp = await fetch(url)
+    return resp.json()
   }
 
   async submit (payload) {
