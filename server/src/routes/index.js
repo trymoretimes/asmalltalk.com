@@ -42,7 +42,8 @@ module.exports = [
       const { userId, code } = ctx.request.query
       if (userId && code) {
         const info = await getUserInfo(userId)
-        if (info.valid) {
+        console.log(info)
+        if (info.status === 'found') {
           ctx.status = 200
           ctx.body = { verified: info.bio.includes(code) }
         } else {
