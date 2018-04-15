@@ -1,6 +1,6 @@
 const sgMail = require('@sendgrid/mail')
 
-const SENDGRID_API_KEY = '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'
+const SENDGRID_API_KEY = '***REMOVED***'
 sgMail.setApiKey(SENDGRID_API_KEY)
 
 // https://github.com/sendgrid/sendgrid-nodejs/blob/master/test/typescript/mail.ts
