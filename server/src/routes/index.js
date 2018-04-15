@@ -90,7 +90,7 @@ module.exports = [
     method: 'POST',
     handler: async (ctx, dal) => {
       const {
-        userId,
+        username,
         email,
         needHelp,
         canHelp,
@@ -103,7 +103,7 @@ module.exports = [
       let user = null
       try {
         user = await dal.create({
-          userId,
+          username,
           email,
           needHelp,
           canHelp,
@@ -165,6 +165,27 @@ module.exports = [
       } else {
         ctx.status = 500
         ctx.message = `user update met some errors: ${error}`
+      }
+    }
+  },
+  {
+    path: '/users/:id',
+    method: 'DELETE',
+    handler: async (ctx, dal) => {
+      const { id } = ctx.params
+      let error = null
+      try {
+        await dal.delete(id)
+      } catch (e) {
+        error = e
+      }
+
+      if (error === null) {
+        ctx.status = 200
+        ctx.body = { status: `${id} deleted` }
+      } else {
+        ctx.status = 500
+        ctx.message = `errors: ${error}`
       }
     }
   }

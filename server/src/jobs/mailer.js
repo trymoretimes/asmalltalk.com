@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
 
-const CHECK_INTERVAL = 100000
+const CHECK_INTERVAL = 24 * 3600 * 1000
 
 const MAIL_SERVICE_API = 'https://wfyx3piug2.execute-api.us-east-1.amazonaws.com/prod'
 
@@ -48,6 +48,7 @@ class Mailer {
   }
 
   async connect (matcher, matchee) {
+    console.log(`Send email ${matcher.email} ${matchee.email}`)
     try {
       await this.mail(matcher, matchee)
       await this.updateMailed(matcher, matchee)
@@ -65,47 +66,47 @@ class Mailer {
       replyTo: matchee.email,
       subject: `小对话：今天为你推荐 V2EX 用户 ${matchee.name}`,
       text: `
-          Hi ${matcher.name}，
-          今天为你推荐的 V2EX 用户是 ${matchee.name}，以下是 Linus 的个人简介：
+          Hi ${matcher.username}，\n
+          今天为你推荐的 V2EX 用户是 ${matchee.username}，以下是 Linus 的个人简介：\n\n
 
-          Email: ${matchee.email}
-          个人网站：
-          Twitter: 
-          知乎账号：
-          微信账号：
-          V2EX 个人档案：https://www.v2ex.com/member/${matchee.name}
+          Email: ${matchee.email} \n
+          个人网站：\n
+          Twitter:\n
+          知乎账号：\n
+          微信账号：\n
+          V2EX 个人档案：https://www.v2ex.com/member/${matchee.username}\n\n
 
-          Linus 擅长的事物：iOS 开发，深圳房产投资
-          Linus 希望得到帮助的事物：产品推广海外工作、留学咨询
+          Linus 擅长的事物：${matchee.canHelp}\n
+          Linus 希望得到帮助的事物：${matchee.needHelp}\n
 
-          想认识他？直接回复这封邮件跟他 say hi 吧。
+          想认识他？直接回复这封邮件跟他 say hi 吧。 \n
 
-          小对话
+          小对话 \n
 
-          更新你的档案：https://www.asmalltalk.com
-          退订：https://www.asmalltalk.com
+          更新你的档案：https://www.asmalltalk.com \n
+          退订：https://www.asmalltalk.com \n
       `,
       html: `
           <p>
-          Hi ${matcher.name}，
-          今天为你推荐的 V2EX 用户是 ${matchee.name}，以下是 Linus 的个人简介：
+          Hi ${matcher.username}， \n
+          今天为你推荐的 V2EX 用户是 ${matchee.username}，以下是 Linus 的个人简介： \n\n
 
-          Email: ${matchee.email}
-          个人网站：
-          Twitter: 
-          知乎账号：
-          微信账号：
-          V2EX 个人档案：https://www.v2ex.com/member/${matchee.name}
+          Email: ${matchee.email} \n
+          个人网站： \n
+          Twitter:\n
+          知乎账号：\n
+          微信账号：\n
+          V2EX 个人档案：https://www.v2ex.com/member/${matchee.username}\n\n
 
-          Linus 擅长的事物：iOS 开发，深圳房产投资
-          Linus 希望得到帮助的事物：产品推广海外工作、留学咨询
+          Linus 擅长的事物：${matchee.canHelp}\n
+          Linus 希望得到帮助的事物：${matchee.needHelp}\n
 
-          想认识他？直接回复这封邮件跟他 say hi 吧。
+          想认识他？直接回复这封邮件跟他 say hi 吧。\n\n
 
-          小对话
+          小对话\n\n
 
-          更新你的档案：https://www.asmalltalk.com
-          退订：https://www.asmalltalk.com
+          更新你的档案：https://www.asmalltalk.com\n\n
+          退订：https://www.asmalltalk.com\n
           </p>
           `
     }

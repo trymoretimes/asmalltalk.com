@@ -19,6 +19,11 @@ class Comments extends BaseDal {
     return col.findOne({ _id: ObjectID(id) })
   }
 
+  async delete (id) {
+    const col = await this.collection()
+    return col.deleteOne({ _id: ObjectID(id) })
+  }
+
   async queryWithUri (q = {}) {
     const page = parseInt(q.page, 10) || 0
     const limit = parseInt(q.limit, 10) || 100
