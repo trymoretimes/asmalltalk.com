@@ -81,6 +81,9 @@ class Mailer {
           想认识他？直接回复这封邮件跟他 say hi 吧。
 
           小对话
+
+          更新你的档案：https://www.asmalltalk.com
+          退订：https://www.asmalltalk.com
       `,
       html: `
           <p>
@@ -100,6 +103,9 @@ class Mailer {
           想认识他？直接回复这封邮件跟他 say hi 吧。
 
           小对话
+
+          更新你的档案：https://www.asmalltalk.com
+          退订：https://www.asmalltalk.com
           </p>
           `
     }
