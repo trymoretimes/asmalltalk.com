@@ -1,8 +1,8 @@
-const fetch = require('node-fetch')
+const sgMail = require('@sendgrid/mail')
+const SENDGRID_API_KEY = '***REMOVED***'
+sgMail.setApiKey(SENDGRID_API_KEY)
 
-const CHECK_INTERVAL = 24 * 3600 * 1000
-
-const MAIL_SERVICE_API = 'https://wfyx3piug2.execute-api.us-east-1.amazonaws.com/prod'
+const CHECK_INTERVAL = 1 * 3600 * 1000
 
 class Mailer {
   constructor (dal) {
@@ -38,7 +38,8 @@ class Mailer {
       const matchGuys = matcher.matchGuys || []
       const mailed = matcher.emailed || []
       for (const guyId of matchGuys) {
-        if (mailed.indexOf(guyId) === -1) {
+        // TODO since objectID is object, should convert to string to do compare
+        if (mailed.map(c => c.toString()).indexOf(guyId.toString()) === -1) {
           const matchee = await this.dal.findOne({ _id: guyId })
           await this.connect(matcher, matchee)
           break
@@ -63,7 +64,7 @@ class Mailer {
       to: matcher.email,
       from: 'hello@asmalltalk.com', // TODO our platform email here
       replyTo: matchee.email,
-      subject: `小对话：今天为你推荐 V2EX 用户 ${matchee.name}`,
+      subject: `小对话：为你推荐 V2EX 用户 ${matchee.name}`,
       text: `
           Hi ${matcher.username}，\n
           今天为你推荐的 V2EX 用户是 ${matchee.username}，以下是 Linus 的个人简介：\n\n
@@ -110,14 +111,8 @@ class Mailer {
           `
     }
 
-    const opt = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    }
-    return fetch(MAIL_SERVICE_API, opt)
+    await sgMail.send(payload)
+    console.log(`mail send`)
   }
 
   updateMailed (matcher, matchee) {

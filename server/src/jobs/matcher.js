@@ -1,6 +1,6 @@
 const { lcsSubStr } = require('../utils')
 
-const CHECK_INTERVAL = 24 * 3600 * 1000
+const CHECK_INTERVAL = 1 * 3600 * 1000
 
 class Matcher {
   constructor (dal) {

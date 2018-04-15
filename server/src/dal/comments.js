@@ -46,18 +46,6 @@ class Comments extends BaseDal {
               .toArray()
   }
 
-  async queryWithUri (q = {}) {
-    const page = parseInt(q.page, 10) || 0
-    const limit = parseInt(q.limit, 10) || 100
-    const skip = page * limit
-
-    const col = await this.collection()
-    return col.find({ uri: { $regex: `${q.uri}` } })
-              .skip(skip)
-              .limit(limit)
-              .toArray()
-  }
-
   async updateMatchGuys (id, matchId) {
     const col = await this.collection()
 

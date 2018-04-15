@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^6.2.1",
     "codecov": "^2.2.0",
     "es6-promise": "^4.0.5",
     "fetch": "^1.1.0",
