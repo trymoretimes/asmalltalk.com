@@ -45,7 +45,7 @@ class Comments extends BaseDal {
   async updateMailed (id, mailedId) {
     const col = await this.collection()
 
-    const emailed = await this.fetchMailedGuys(id)
+    const emailed = await this.fetchMailedGuys(id) || []
     if (emailed.indexOf(mailedId) === -1) {
       emailed.push(mailedId)
     }
@@ -64,11 +64,7 @@ class Comments extends BaseDal {
 
   async fetchMatchGuys (id) {
     const user = await this.findOne({ _id: id })
-    if (user) {
-      return user.matchGuys
-    }
-
-    throw new Error('no such user')
+    return user.matchGuys || []
   }
 }
 

@@ -91,7 +91,7 @@ class Server {
       this.matcher.start()
       this.mailer.start()
     } catch (e) {
-      console.warn(e.stack)
+      console.warn(e)
     }
   }
 
