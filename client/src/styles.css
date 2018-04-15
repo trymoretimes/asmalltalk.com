@@ -1,35 +1,42 @@
 body {
   background: #b8e5f8;
+  font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
 }
 
-.CenterText {
-    text-align: center;
+.RegistrationContainer {
+  color: #778087;
 }
 
 .FormContainer {
-    width: 60%;
-    margin: 0 auto;
-    margin-bottom: 50px;
-    color: #778087;
-    font-size: 14px;
+  padding-left: 36px;
+  padding-right: 36px;
+  margin: 0 auto;
+  /* margin-bottom: 50px; */
+  font-size: 14px;
 }
-.introContainer {
-    width: 100%;
-    background-color: #f6f6f6;
-    box-sizing: border-box;
-    padding: 5px 30px 50px 30px;
+
+.IntroContainer {
+  background-color: #f6f6f6;
+  color: #778087;
+  padding-top: 1px;
 }
+
+.IntroText {
+  padding-left: 36px;
+  padding-right: 36px;
+}
+
 .MainContainer {
-    min-width: 300px;
-	max-width: 500px;
-    margin: 0 auto;
-    padding-top: 30px;
-    background-color: white;
-    font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
-    border-radius: 2px;
-    box-shadow: 0 1px 3px rgba(26,26,26,.1);
-    box-sizing: border-box;
+  min-width: 300px;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-top: 30px;
+  background-color: white;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(26,26,26,.1);
+  box-sizing: border-box;
 }
+
 .BasicInput {
   display: block;
   font-size: 14px;
@@ -41,11 +48,17 @@ body {
   border-radius: 4px;
   padding: 6px 12px;
 }
+
 .Screenshot {
-    width: 90%;
-    display: block;
-    margin: 0 auto;
+  margin-top: 30px;
 }
+
+.Screenshot img {
+  width: 90%;
+  display: block;
+  margin: 0 auto;
+}
+
 .UserNameInput {
   composes: BasicInput;
 }

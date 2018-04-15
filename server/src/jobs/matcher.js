@@ -1,6 +1,6 @@
 const { lcsSubStr } = require('../utils')
 
-const CHECK_INTERVAL = 5 * 60 * 1000
+const CHECK_INTERVAL = 100000
 
 class Matcher {
   constructor (dal) {
@@ -34,7 +34,7 @@ class Matcher {
     for (let i = 0; i < users.length; i++) {
       const source = users[i]
       let matchGuy = null
-      let maxScore = 0
+      let maxScore = -1
       for (let j = i + 1; j < users.length; j++) {
         const target = users[j]
         const matchGuys = await this.dal.fetchMatchGuys(source._id)
@@ -46,7 +46,6 @@ class Matcher {
           }
         }
       }
-
       if (matchGuy) {
         this.update(source, matchGuy)
       }
