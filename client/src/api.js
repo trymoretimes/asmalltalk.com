@@ -51,8 +51,21 @@ class API {
     const url = `${API_HOST}/users/valid?userId=${username}`
     const resp = await fetch(url)
     const data = await resp.json()
-    const { valid, code } = data
-    return { valid, code }
+    return data.status === 'found'
+  }
+
+  async getUserProfile (payload) {
+    const { username } = payload
+    const url = `${API_HOST}/users/valid?userId=${username}`
+    const resp = await fetch(url)
+    return resp.json()
+  }
+
+  async getCode (payload) {
+    const { username, email } = payload
+    const url = `${API_HOST}/users/code?username=${username}&email=${email}`
+    const resp = await fetch(url)
+    return resp.json()
   }
 
   async verify (payload) {

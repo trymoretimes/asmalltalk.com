@@ -17,8 +17,11 @@ class App extends React.Component {
       email: '',
       username: '',
       code: '',
+
+      usernameVerifying: false,
+      usernameVerified: false,
+
       verified: false,
-      nameVerified: false,
       verifyNameTip: '',
       loadingCount: 0,
       created: false,
@@ -48,17 +51,28 @@ class App extends React.Component {
   async onUserNameChange (evt) {
     const username = evt.target.value
 
-    this.setState({ verifyNameTip: '正在验证用户名', username })
-    const { valid, code } = await api.isValidUser({ username })
-    if (valid) {
+    this.setState({ username })
+    setTimeout(async () => {
+      const { username } = this.state
       this.setState({
-        nameVerified: true,
-        verifyNameTip: '✓ 账号有效',
-        code
+        verifyNameTip: '正在验证用户名',
+        usernameVerifying: true,
+        username
       })
-    } else {
-      this.setState({ verifyNameTip: '无效的用户名' })
-    }
+      const info = await api.getUserProfile({ username })
+      if (info.status === 'found') {
+        this.setState({
+          usernameVerified: true,
+          verifyNameTip: '✓ 账号有效',
+          usernameVerifying: false
+        })
+      } else {
+        this.setState({
+          verifyNameTip: '无效的用户名',
+          usernameVerifying: false
+        })
+      }
+    }, 1000)
   }
 
   async verifyCode () {
@@ -80,6 +94,11 @@ class App extends React.Component {
     const email = evt.target.value
     if (maybeEmailAddress(email)) {
       this.setState({ email })
+      setTimeout(async () => {
+        const { username, email } = this.state
+        const { code } = await api.getCode(username, email)
+        this.setState({ code })
+      }, 500)
     }
   }
 
@@ -111,7 +130,7 @@ class App extends React.Component {
     const {
       code,
       email,
-      nameVerified,
+      usernameVerified,
       verifyNameTip,
       created,
       updated
@@ -141,24 +160,24 @@ class App extends React.Component {
               className={styles.UserNameInput}
               onChange={this.onUserNameChange}
               />
-            <p className={nameVerified ? styles.PassText : styles.ErrorText}>{verifyNameTip}</p>
-            <p className={nameVerified ? '' : styles.InactiveText} >
+            <p className={usernameVerified ? styles.PassText : styles.ErrorText}>{verifyNameTip}</p>
+            <p className={usernameVerified ? '' : styles.InactiveText} >
                   2. 输入你的邮箱
               </p>
             <input
               placeholder='email'
               type='email'
-              disabled={!nameVerified}
+              disabled={!usernameVerified}
               className={styles.EmailInput}
               onChange={this.onEmailChange}
               />
-            <p className={nameVerified && !!email ? '' : styles.InactiveText} >
+            <p className={usernameVerified && !!email ? '' : styles.InactiveText} >
                   3. 把下面的验证码添加到 V2EX 个人简介 (?)
               </p>
             <input
               placeholder='自动生成验证码'
               type='text'
-              disabled={!nameVerified || !email}
+              disabled={!usernameVerified || !email}
               className={styles.CodeInput}
               value={code}
               />
@@ -167,7 +186,7 @@ class App extends React.Component {
               type='button'
               disabled={!enableSubmit}
               onClick={this.handleSubmit}
-              className={(!nameVerified || !email) ? styles.SubmitBtn + ' ' + styles.BtnDisable : styles.SubmitBtn}
+              className={(!usernameVerified || !email) ? styles.SubmitBtn + ' ' + styles.BtnDisable : styles.SubmitBtn}
               > 注册
               </button>
           </div>
