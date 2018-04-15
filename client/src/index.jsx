@@ -85,11 +85,16 @@ class App extends React.Component {
 
   async handleSubmit () {
     const { username, email, code } = this.state
-    await this.verifyCode()
-    const user = await api.submit({ username, email, code })
-    if (user) {
-      const { _id } = user
-      this.setState({ created: true, userId: _id })
+    const users = await api.query({ email, username })
+    if (users.length > 0) {
+      this.setState({ created: true, userId: users[0]._id })
+    } else {
+      await this.verifyCode()
+      const user = await api.submit({ username, email, code })
+      if (user) {
+        const { _id } = user
+        this.setState({ created: true, userId: _id })
+      }
     }
   }
 
