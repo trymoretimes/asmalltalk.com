@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
 
-const CHECK_INTERVAL = 1000
+const CHECK_INTERVAL = 100000
 
 const MAIL_SERVICE_API = 'https://wfyx3piug2.execute-api.us-east-1.amazonaws.com/prod'
 
