@@ -2,7 +2,7 @@ const mongo = require('./db')
 const { ObjectID } = require('mongodb')
 
 function buidQuery(query = {}) {
-  const allowedFields = ['_id', 'user', 'uri', 'text', 'date', 'parent']
+  const allowedFields = ['_id', 'username']
   const newQuery = {}
   for (const f of allowedFields) {
     if (allowedFields.indexOf(f) !== -1 && query[f] !== undefined) {

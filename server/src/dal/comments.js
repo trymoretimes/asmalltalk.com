@@ -1,6 +1,17 @@
 const BaseDal = require('./base_dal')
 const { ObjectID } = require('mongodb')
 
+function buidQuery (query = {}) {
+  const allowedFields = ['_id', 'username', 'email']
+  const newQuery = {}
+  for (const f of allowedFields) {
+    if (allowedFields.indexOf(f) !== -1 && query[f] !== undefined) {
+      newQuery[f] = query[f]
+    }
+  }
+  return newQuery
+}
+
 class Comments extends BaseDal {
   async create (obj) {
     const col = await this.collection()
@@ -22,6 +33,17 @@ class Comments extends BaseDal {
   async delete (id) {
     const col = await this.collection()
     return col.deleteOne({ _id: ObjectID(id) })
+  }
+
+  async find (query = {}) {
+    const page = parseInt(query.page, 10) || 0
+    const limit = parseInt(query.limit, 10) || 100
+    const skip = page * limit
+    const col = await this.collection()
+    return col.find(buidQuery(query))
+              .skip(skip)
+              .limit(limit)
+              .toArray()
   }
 
   async queryWithUri (q = {}) {
