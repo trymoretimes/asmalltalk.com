@@ -4,18 +4,5 @@
   "mongo": {
     "uri": "mongodb+srv://iiiiili_tokyo:***REMOVED***@cluster0-iteff.mongodb.net",
     "db": "users"
-  },
-  "mail": {
-    "service": "163",
-    "user": "hitminghe@163.com",
-    "pass": "19881114"
-  },
-  "env": {
-    "YOYO_JWT_SECRET": "YOYO_JWT_SECRET",
-    "YOYO_JWT_EXPIRES_IN": "1d",
-    "YOYO_ADMIN_USERNAME": "admin",
-    "YOYO_ADMIN_PASSWORD": "admin"
-  },
-  "origins": ["http://localhost:8080"],
-  "adminEmail": ""
+  }
 }

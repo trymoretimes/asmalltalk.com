@@ -1,5 +1,3 @@
-// TODO
-// this is a serious issue between /lib and /src (need to figrure out)
 const Dal = require('../../src/dal')
 const { mockUser } = require('../helpers/mock')
 const Database = require('../helpers/db')
@@ -10,8 +8,8 @@ describe('Dal', () => {
     let database = null
 
     const config = {
-      uri: 'mongodb+srv://iiiiili_tokyo:***REMOVED***@cluster0-iteff.mongodb.net',
-      db: 'YoYo-test'
+      uri: 'mongodb://localhost:27017',
+      db: 'users-test'
     }
 
     beforeAll(async () => {
