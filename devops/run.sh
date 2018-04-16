@@ -1,4 +1,4 @@
 #!/bin/sh
 
 set -e
-npm run build && nginx -g 'daemon off;'
+NODE_ENV=production npm run build && nginx -g 'daemon off;'
