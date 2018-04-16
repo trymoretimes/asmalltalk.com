@@ -70,11 +70,7 @@ class Comments extends BaseDal {
 
   async fetchMailedGuys (id) {
     const user = await this.findOne({ _id: ObjectID(id) })
-    if (user) {
-      return user.emailed
-    }
-
-    throw new Error('no such user')
+    return user.emailed
   }
 
   async fetchMatchGuys (id) {

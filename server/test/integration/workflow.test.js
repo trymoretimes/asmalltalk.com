@@ -2,16 +2,9 @@ const CONFIG = require('../config')
 const fetch = require('isomorphic-fetch')
 const Server = require('../../src')
 const Database = require('../helpers/db')
+const { delay } = require('../../src/utils')
 
 const API_URL = `http://${CONFIG.host}:${CONFIG.port}/v1/api`
-
-const delay = (ms) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true)
-    }, ms)
-  })
-}
 
 const buildBody = (method = 'GET', obj) => (
   {

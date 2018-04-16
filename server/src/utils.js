@@ -62,8 +62,18 @@ const lcsSubStr = (s1, s2) => {
   return ret
 }
 
+const delay = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true)
+    }, ms)
+  })
+}
+
+
 module.exports = {
   uniqueNames,
   appendUniqueName,
-  lcsSubStr
+  lcsSubStr,
+  delay
 }

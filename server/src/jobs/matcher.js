@@ -1,4 +1,4 @@
-const { lcsSubStr } = require('../utils')
+const { delay, lcsSubStr } = require('../utils')
 
 const CHECK_INTERVAL = 1 * 3600 * 1000
 
@@ -8,29 +8,19 @@ class Matcher {
     this.config = config
 
     this.checkInterval = null
-    this.stopped = true
+    this.stopped = false
   }
 
   async start () {
     this.stopped = false
 
-    if (this.checkInterval === null) {
-      this.checkInterval = setInterval(async () => {
-        await this.run()
-      }, this.config.CHECK_INTERVAL || CHECK_INTERVAL)
+    while (!this.stopped) {
+      await this.run()
+      await delay(this.config.CHECK_INTERVAL || CHECK_INTERVAL)
     }
   }
 
   stop () {
-    if (this.checkInterval !== null) {
-      try {
-        clearInterval(this.checkInterval)
-      } catch (e) {
-        console.warn('err stop timeout checker', e)
-      }
-    }
-    this.checkInterval = null
-
     this.stopped = true
   }
 
