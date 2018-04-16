@@ -1,16 +1,21 @@
 import React from 'react'
 
 import styles from '../../styles.css'
+import api from '../../api'
 import TitleBox from '../TitleBox'
+import NotificationBar from '../NotificationBar'
 
 class DetailComponent extends React.Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      canHelp: '',
-      needHelp: '',
-      extraInfo: ''
+      canHelp: props.canHelp,
+      needHelp: props.needHelp,
+      extraInfo: props.extraInfo,
+
+      updating: false,
+      updated: null
     }
 
     this.onCanHelpChange = this.onCanHelpChange.bind(this)
@@ -34,39 +39,61 @@ class DetailComponent extends React.Component {
     this.setState({ extraInfo: val })
   }
 
-  onSubmit () {
-    const { handleSubmit } = this.props
+  async onSubmit () {
+    const { userId } = this.props
     const { canHelp, needHelp, extraInfo } = this.state
-    handleSubmit({ canHelp, needHelp, extraInfo })
+    this.setState({ updating: true })
+    const updated = await api.updateInfo({ canHelp, needHelp, extraInfo, userId })
+    this.setState({ updating: false, updated })
   }
 
   render () {
+    const {
+      canHelp,
+      needHelp,
+      extraInfo,
+      updating,
+      updated
+    } = this.state
+    let message = ''
+    let shouldDisableSubmit = false
+    if (updated !== null) {
+      message = updated ? '更新成功' : '更新失败'
+    } else if (updating) {
+      message = '正在更新'
+      shouldDisableSubmit = true
+    }
     return (
       <div className={styles.MainContainer}>
         <TitleBox title='更新信息' />
         <div className={styles.FormContainer}>
           <p> 你想从别人获得哪些帮助</p>
           <input
+            value={needHelp}
             placeholder='你需要什么帮助'
             className={styles.UserNameInput}
             onChange={this.onNeedHelpChange}
           />
           <p> 你可以帮助别人哪些</p>
           <input
+            value={canHelp}
             placeholder='你可以帮助什么'
             onChange={this.onCanHelpChange}
             className={styles.EmailInput}
           />
           <p> 其他</p>
           <input
+            value={extraInfo}
             placeholder='随便说点什么'
             onChange={this.onExtraInfoChange}
             className={styles.EmailInput}
           />
           <button
+            disabled={shouldDisableSubmit}
             className={styles.SubmitBtn}
             onClick={this.onSubmit}
-          > { this.state.isSubmitting ? '正在更新' : '提交' } </button>
+          > { '提交' } </button>
+          <NotificationBar message={message} />
         </div>
       </div>
     )

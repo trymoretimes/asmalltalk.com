@@ -13,22 +13,16 @@ class App extends React.Component {
     super()
 
     this.state = {
-      email: '',
-      username: '',
-      code: '',
-
-      usernameVerifying: false,
-      usernameVerified: false,
-
-      verified: false,
-      verifyNameTip: '',
+      toUpdate: false,
       loadingCount: 0,
       created: false,
-      updated: false
+      updated: false,
+      canHelp: '',
+      needHelp: '',
+      extraInfo: ''
     }
 
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleUpdateInfo = this.handleUpdateInfo.bind(this)
   }
 
   async verifyCode () {
@@ -50,37 +44,49 @@ class App extends React.Component {
     const { username, email, code } = payload
     const users = await api.query({ email, username })
     if (users.length > 0) {
-      this.setState({ created: true, userId: users[0]._id })
+      this.setState({
+        toUpdate: true,
+        created: true,
+        userId: users[0]._id,
+        canHelp: users[0].canHelp,
+        needHelp: users[0].needHelp,
+        extraInfo: users[0].extraInfo
+      })
     } else {
       await this.verifyCode()
       const user = await api.submit({ username, email, code })
       if (user) {
         const { _id } = user
-        this.setState({ created: true, userId: _id })
+        this.setState({
+          toUpdate: true,
+          created: true,
+          userId: _id
+        })
       }
     }
   }
 
-  async handleUpdateInfo (info) {
-    const { canHelp, needHelp, extraInfo } = info
-    const { userId } = this.state
-    const updated = await api.updateInfo({ canHelp, needHelp, extraInfo, userId })
-    if (updated) {
-      this.setState({ updated })
-    }
-  }
-
   render () {
-    const { created, updated } = this.state
+    const {
+      canHelp,
+      needHelp,
+      extraInfo,
+      userId,
+      toUpdate
+    } = this.state
 
-    if (created) {
+    if (toUpdate) {
       return (
-        <DetailComponent handleSubmit={this.handleUpdateInfo} />
+        <div className={styles.MainContainer}>
+          <LogoBox />
+          <DetailComponent
+            userId={userId}
+            canHelp={canHelp}
+            needHelp={needHelp}
+            extraInfo={extraInfo}
+          />
+        </div>
       )
-    }
-
-    if (updated) {
-      return (<p> 信息更新成功 </p>)
     }
 
     return (
