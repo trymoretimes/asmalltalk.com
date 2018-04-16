@@ -66,7 +66,7 @@ class DetailComponent extends React.Component {
           <button
             className={styles.SubmitBtn}
             onClick={this.onSubmit}
-          > 提交 </button>
+          > { this.state.isSubmitting ? '正在更新' : '提交' } </button>
         </div>
       </div>
     )
