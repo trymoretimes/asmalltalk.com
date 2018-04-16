@@ -32,8 +32,8 @@ class Server {
     const staticRoot = `${__dirname}/../public`
     this.app.use(serve(staticRoot))
 
-    this.matcher = setupMatcher(this.dals.comments)
-    this.mailer = setupMailer(this.dals.comments)
+    this.matcher = setupMatcher(this.dals.comments, this.config.matcher)
+    this.mailer = setupMailer(this.dals.comments, this.config.mailer)
   }
 
   setupHandlers () {
@@ -75,7 +75,7 @@ class Server {
         // if request with credentials, origin cannot be '*',
         // origin should be exactly the request origin
         //
-        if (this.config.origins.indexOf(origin) > -1) {
+        if (this.config.origins && this.config.origins.indexOf(origin) > -1) {
           return origin
         }
         return '*'

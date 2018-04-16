@@ -3,17 +3,21 @@ const { lcsSubStr } = require('../utils')
 const CHECK_INTERVAL = 1 * 3600 * 1000
 
 class Matcher {
-  constructor (dal) {
+  constructor (dal, config = {}) {
     this.dal = dal
+    this.config = config
 
     this.checkInterval = null
+    this.stopped = true
   }
 
   async start () {
+    this.stopped = false
+
     if (this.checkInterval === null) {
       this.checkInterval = setInterval(async () => {
         await this.run()
-      }, CHECK_INTERVAL)
+      }, this.config.CHECK_INTERVAL || CHECK_INTERVAL)
     }
   }
 
@@ -26,6 +30,8 @@ class Matcher {
       }
     }
     this.checkInterval = null
+
+    this.stopped = true
   }
 
   async run () {
@@ -35,19 +41,22 @@ class Matcher {
       const source = users[i]
       let matchGuy = null
       let maxScore = -1
-      for (let j = i + 1; j < users.length; j++) {
+      for (let j = 0; j < users.length; j++) {
         const target = users[j]
-        const matchGuys = await this.dal.fetchMatchGuys(source._id)
-        if (matchGuys.indexOf(target._id) === -1) {
-          const score = this.calculate(source, target)
-          if (score > maxScore) {
-            maxScore = score
-            matchGuy = target
+
+        if (target._id.toString() !== source._id.toString()) {
+          const matchGuys = await this.dal.fetchMatchGuys(source._id)
+          if (matchGuys.indexOf(target._id) === -1) {
+            const score = this.calculate(source, target)
+            if (score > maxScore) {
+              maxScore = score
+              matchGuy = target
+            }
           }
         }
-      }
-      if (matchGuy) {
-        this.update(source, matchGuy)
+        if (matchGuy) {
+          await this.update(source, matchGuy)
+        }
       }
     }
   }
@@ -58,11 +67,11 @@ class Matcher {
     return score1 + score2
   }
 
-  update (host, matcher) {
-    this.dal.updateMatchGuys(host._id, matcher._id)
+  async update (host, matcher) {
+    await this.dal.updateMatchGuys(host._id.toString(), matcher._id.toString())
   }
 }
 
-module.exports = (dal) => {
-  return new Matcher(dal)
+module.exports = (dal, config) => {
+  return new Matcher(dal, config)
 }

@@ -54,22 +54,22 @@ class Comments extends BaseDal {
       matchGuys.push(matchId)
     }
 
-    return col.updateOne({ _id: id }, { $set: { matchGuys } })
+    return col.updateOne({ _id: ObjectID(id) }, { $set: { matchGuys } })
   }
 
   async updateMailed (id, mailedId) {
     const col = await this.collection()
 
-    const emailed = await this.fetchMailedGuys(id) || []
+    const emailed = await this.fetchMailedGuys(id)
     if (emailed.indexOf(mailedId) === -1) {
       emailed.push(mailedId)
     }
 
-    return col.updateOne({ _id: id }, { $set: { emailed } })
+    return col.updateOne({ _id: ObjectID(id) }, { $set: { emailed } })
   }
 
   async fetchMailedGuys (id) {
-    const user = await this.findOne({ _id: id })
+    const user = await this.findOne({ _id: ObjectID(id) })
     if (user) {
       return user.emailed
     }
@@ -78,7 +78,7 @@ class Comments extends BaseDal {
   }
 
   async fetchMatchGuys (id) {
-    const user = await this.findOne({ _id: id })
+    const user = await this.findOne({ _id: ObjectID(id) })
     return user.matchGuys || []
   }
 }

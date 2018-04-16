@@ -5,17 +5,21 @@ sgMail.setApiKey(SENDGRID_API_KEY)
 const CHECK_INTERVAL = 1 * 3600 * 1000
 
 class Mailer {
-  constructor (dal) {
+  constructor (dal, config = {}) {
     this.dal = dal
+    this.config = config
 
     this.checkInterval = null
+    this.stopped = true
   }
 
   async start () {
+    this.stopped = false
+
     if (this.checkInterval === null) {
       this.checkInterval = setInterval(async () => {
         await this.run()
-      }, CHECK_INTERVAL)
+      }, this.config.CHECK_INTERVAL || CHECK_INTERVAL)
     }
   }
 
@@ -28,6 +32,8 @@ class Mailer {
       }
     }
     this.checkInterval = null
+
+    this.stopped = true
   }
 
   async run () {
@@ -38,9 +44,8 @@ class Mailer {
       const matchGuys = matcher.matchGuys || []
       const mailed = matcher.emailed || []
       for (const guyId of matchGuys) {
-        // TODO since objectID is object, should convert to string to do compare
-        if (mailed.map(c => c.toString()).indexOf(guyId.toString()) === -1) {
-          const matchee = await this.dal.findOne({ _id: guyId })
+        if (mailed.indexOf(guyId) === -1) {
+          const matchee = await this.dal.fetch(guyId)
           await this.connect(matcher, matchee)
           break
         }
@@ -51,12 +56,16 @@ class Mailer {
   async connect (matcher, matchee) {
     try {
       await this.mail(matcher, matchee)
-      await this.updateMailed(matcher, matchee)
+      await this.dal.updateMailed(matcher._id.toString(), matchee._id.toString())
     } catch (e) {
       console.error('Send email failed =====')
       console.error(e)
       console.error('=======================')
     }
+  }
+
+  updateMailed (matcher, matchee) {
+    this.dal.updateMailed(matcher._id, matchee._id)
   }
 
   async mail (matcher, matchee) {
@@ -114,12 +123,8 @@ class Mailer {
     await sgMail.send(payload)
     console.log(`mail send`)
   }
-
-  updateMailed (matcher, matchee) {
-    this.dal.updateMailed(matcher._id, matchee._id)
-  }
 }
 
-module.exports = (dal) => {
-  return new Mailer(dal)
+module.exports = (dal, config) => {
+  return new Mailer(dal, config)
 }

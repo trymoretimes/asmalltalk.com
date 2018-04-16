@@ -97,8 +97,7 @@ module.exports = [
         needHelp,
         canHelp,
         keywords,
-        matchGuys,
-        emailed
+        matchGuys
       } = ctx.request.body
 
       let error = null
@@ -110,8 +109,8 @@ module.exports = [
           needHelp,
           canHelp,
           keywords,
-          matchGuys,
-          emailed,
+          matchGuys: matchGuys || [],
+          emailed: [],
           date: (new Date()).toISOString()
         })
       } catch (e) {
