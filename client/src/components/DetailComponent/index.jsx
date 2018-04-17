@@ -44,7 +44,11 @@ class DetailComponent extends React.Component {
     const { canHelp, needHelp, extraInfo } = this.state
     this.setState({ updating: true }, async () => {
       const updated = await api.updateInfo({ canHelp, needHelp, extraInfo, userId })
-      this.setState({ updating: false, updated })
+      this.setState({ updating: false, updated }, () => {
+        setTimeout(() => {
+          this.setState({ updating: false, updated: null })
+        }, 2000)
+      })
     })
   }
 
@@ -56,7 +60,7 @@ class DetailComponent extends React.Component {
       updating,
       updated
     } = this.state
-    let message = ''
+    let message = '提交'
     let shouldDisableSubmit = false
     if (updating) {
       message = '正在更新'
@@ -93,8 +97,7 @@ class DetailComponent extends React.Component {
             disabled={shouldDisableSubmit}
             className={styles.SubmitBtn}
             onClick={this.onSubmit}
-          > { '提交' } </button>
-          <NotificationBar message={message} />
+          > {message} </button>
         </div>
       </div>
     )
