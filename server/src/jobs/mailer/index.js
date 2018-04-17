@@ -1,6 +1,7 @@
 const sgMail = require('@sendgrid/mail')
 
-const { delay } = require('../utils')
+const { delay } = require('../../utils')
+const buildBody = require('./builder')
 
 const SENDGRID_API_KEY = '***REMOVED***'
 sgMail.setApiKey(SENDGRID_API_KEY)
@@ -60,54 +61,15 @@ class Mailer {
     this.dal.updateMailed(matcher._id, matchee._id)
   }
 
-  async mail (matcher, matchee) {
+  async mail (reciver, matcher) {
+    const { text, html } = buildBody(reciver, matcher)
     const payload = {
-      to: matcher.email,
+      to: reciver.email,
       from: 'hello@asmalltalk.com', // TODO our platform email here
-      replyTo: matchee.email,
-      subject: `小对话：为你推荐 V2EX 用户 ${matchee.name}`,
-      text: `
-Hi ${matcher.username}，<br>
-今天为你推荐的 V2EX 用户是 ${matchee.username}，以下是 Linus 的个人简介：<br><br>
-
-Email: ${matchee.email} \r\n
-个人网站：\r\n
-Twitter:\r\n
-知乎账号：\r\n
-微信账号：\r\n
-V2EX 个人档案：https://www.v2ex.com/member/${matchee.username}\r\n\r\n
-
-Linus 擅长的事物：${matchee.canHelp}\r\n
-Linus 希望得到帮助的事物：${matchee.needHelp}\r\n
-
-想认识他？直接回复这封邮件跟他 say hi 吧。 \r\n
-
-小对话 \r\n
-
-更新你的档案：https://www.asmalltalk.com \r\n
-退订：https://www.asmalltalk.com \r\n
-      `,
-      html: `
-Hi ${matcher.username}， <br>
-今天为你推荐的 V2EX 用户是 ${matchee.username}，以下是 Linus 的个人简介： <br><br>
-
-Email: ${matchee.email} <br>
-个人网站： <br>
-Twitter:<br>
-知乎账号：<br>
-微信账号：<br>
-V2EX 个人档案：https://www.v2ex.com/member/${matchee.username}<br><br>
-
-Linus 擅长的事物：${matchee.canHelp}<br>
-Linus 希望得到帮助的事物：${matchee.needHelp}<br>
-
-想认识他？直接回复这封邮件跟他 say hi 吧。<br><br>
-
-小对话<br><br>
-
-更新你的档案：https://www.asmalltalk.com<br><br>
-退订：https://www.asmalltalk.com<br>
-          `
+      replyTo: matcher.email,
+      subject: `小对话：今天为你推荐 V2EX 用户 ${matcher.name}`,
+      text,
+      html
     }
 
     await sgMail.send(payload)
