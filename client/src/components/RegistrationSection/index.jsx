@@ -55,6 +55,7 @@ class InputRow extends React.Component {
             <button
               className='btn btn-outline-secondary'
               type='button'
+              disabled={disabled}
               onClick={this.onSubmit}
             >
               &darr;
