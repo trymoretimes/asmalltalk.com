@@ -10,6 +10,7 @@ const routes = require('./routes')
 const Dal = require('./dal')
 const setupMatcher = require('./jobs/matcher')
 const setupMailer = require('./jobs/mailer')
+const Driver = require('./drivers/v2ex')
 
 class Server {
   constructor (config) {
@@ -32,6 +33,7 @@ class Server {
     const staticRoot = `${__dirname}/../public`
     this.app.use(serve(staticRoot))
 
+    this.driver = new Driver()
     this.matcher = setupMatcher(this.dals.comments, this.config.matcher)
     this.mailer = setupMailer(this.dals.comments, this.config.mailer)
   }
@@ -42,7 +44,7 @@ class Server {
     routes.forEach((route) => {
       const handler = async (ctx) => {
         if (route.path && route.path.startsWith('/users')) {
-          await route.handler(ctx, this.dals.comments)
+          await route.handler(ctx, this.dals.comments, this.driver)
         }
       }
 

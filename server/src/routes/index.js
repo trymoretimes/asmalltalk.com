@@ -90,27 +90,29 @@ module.exports = [
   {
     path: '/users',
     method: 'POST',
-    handler: async (ctx, dal) => {
+    handler: async (ctx, dal, driver) => {
       const {
         username,
         email,
         needHelp,
         canHelp,
-        keywords,
+        extraInfo,
         matchGuys
       } = ctx.request.body
 
       let error = null
       let user = null
       try {
+        const profile = await driver.getUserProfile(username)
         user = await dal.create({
           username,
           email,
           needHelp,
           canHelp,
-          keywords,
+          extraInfo,
           matchGuys: matchGuys || [],
           emailed: [],
+          profile,
           date: (new Date()).toISOString()
         })
       } catch (e) {

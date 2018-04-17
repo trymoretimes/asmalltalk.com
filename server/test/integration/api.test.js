@@ -1,8 +1,8 @@
-const CONFIG = require('../config')
 const fetch = require('isomorphic-fetch')
 const Server = require('../../src')
-const { mockComment } = require('../helpers/mock')
 const Database = require('../helpers/db')
+const { buildBody } = require('./utils')
+const CONFIG = require('../config')
 
 const API_URL = `http://${CONFIG.host}:${CONFIG.port}/v1/api`
 
@@ -17,102 +17,44 @@ describe('API - Comments', async () => {
     database = new Database()
     await database.init({
       ...CONFIG.mongo,
-      collection: 'Comments',
+      collection: 'Comments'
     })
 
     await database.collection.remove()
   })
 
   afterAll(async () => {
+    await server.stop()
     await database.collection.remove()
     await database.db.close()
-
-    server.stop()
   })
 
-  it('create a normal comment', async () => {
-    const comment = mockComment()
-    const url = `${API_URL}/comments`
-    const opts = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(comment),
+  it('create users', async () => {
+    const user1 = {
+      username: 'metrue',
+      email: 'john@john.me',
+      needHelp: 'JavaScript',
+      canHelp: 'iOS'
     }
-    let error = null
-    let resp = null
-    try {
-      resp = await fetch(url, opts)
-    } catch (e) {
-      error = e
-    }
-    expect(error).toBe(null)
-    expect(resp.status).toBe(201)
-
-    const ret = await database.collection.find(comment).toArray()
-    expect(ret.length).toBe(1)
-    // eslint-disable-next-line
-    const { _id, date, ...createdComment } = ret[0]
-    expect(createdComment).toEqual({ ...comment, mod: false })
-  })
-
-  it('create a mod comment', async () => {
-    const comment = mockComment()
-    const modComment = { ...comment, user: CONFIG.adminEmail }
-    const url = `${API_URL}/comments`
-    const opts = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        // Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(modComment),
-    }
-    let error = null
-    let resp = null
-    try {
-      resp = await fetch(url, opts)
-    } catch (e) {
-      error = e
-    }
-    expect(error).toBe(null)
-    expect(resp.status).toBe(201)
-
-    const ret = await database.collection.find(modComment).toArray()
-    expect(ret.length).toBe(1)
-    // eslint-disable-next-line
-    const { _id, date, ...createdComment } = ret[0]
-    expect(createdComment).toEqual({ ...modComment, mod: true })
-  })
-
-  it('list all comments', async () => {
-    const url = `${API_URL}/comments`
-    let error = null
-    let data = null
-    try {
-      const resp = await fetch(url)
-      data = await resp.json()
-    } catch (e) {
-      error = e
-    }
-    expect(error).toBe(null)
-    expect(data).toBeInstanceOf(Array)
-    expect(data.length > 0).toBe(true)
-  })
-
-  it('list by page', async () => {
-    const url = `${API_URL}/comments?page=0&limit=2`
-    let error = null
-    let data = null
-    try {
-      const resp = await fetch(url)
-      data = await resp.json()
-    } catch (e) {
-      error = e
-    }
-    expect(error).toBe(null)
-    expect(data).toBeInstanceOf(Array)
-    expect(data.length).toBe(2)
+    const url = `${API_URL}/users`
+    let payload = buildBody('POST', user1)
+    let resp = await fetch(url, payload)
+    const createdUser1 = await resp.json()
+    expect(createdUser1.username).toBe(user1.username)
+    expect(createdUser1.email).toBe(user1.email)
+    expect(createdUser1.canHelp).toBe(user1.canHelp)
+    expect(createdUser1.needHelp).toBe(user1.needHelp)
+    expect(createdUser1.matchGuys).toEqual([])
+    expect(createdUser1.emailed).toEqual([])
+    expect(createdUser1.profile).toEqual({
+      username: 'metrue',
+      website: 'http://minghe.me',
+      twitter: '_metrue',
+      bio: 'bzW5kZWZpb',
+      psn: '',
+      github: 'metrue',
+      btc: '',
+      avatar: 'https://cdn.v2ex.com/avatar/043a/5783/84957_normal.png?m=1458204503'
+    })
   })
 })
