@@ -106,7 +106,7 @@ module.exports = {
         },
       },
       {
-        test: /\.woff|\.woff2|\.svg|.eot|\.ttf/,
+        test: /\.woff|\.woff2|.eot|\.ttf/,
         loader: 'url-loader?prefix=font/&limit=10000',
       },
     ],

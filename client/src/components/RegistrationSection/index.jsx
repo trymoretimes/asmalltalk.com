@@ -4,6 +4,7 @@ import styles from '../../styles.css'
 import TitleBox from '../TitleBox'
 import api from '../../api'
 import { maybeEmailAddress } from '../../utils'
+import screenshot from './clip.svg'
 
 const FlagText = ({ type, text }) => {
   const classNames = {
@@ -16,19 +17,53 @@ const FlagText = ({ type, text }) => {
   )
 }
 
-const InputRow = ({ label, disabled, placeholder, onChangeHandler }) => {
-  return (
-    <div>
-      <FlagText type={disabled ? 'inactive' : null} text={label} />
-      <input
-        placeholder={placeholder}
-        type='text'
-        className={styles.UserNameInput}
-        disabled={disabled}
-        onChange={onChangeHandler}
-        />
-    </div>
-  )
+class InputRow extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = { value: '' }
+    this.onSubmit = this.onSubmit.bind(this)
+    this.onChange = this.onChange.bind(this)
+  }
+
+  onSubmit () {
+    const { onSubmit } = this.props
+    const { value } = this.state
+    onSubmit(value)
+  }
+
+  onChange (evt) {
+    const value = evt.target.value
+    this.setState({ value })
+  }
+
+  render () {
+    const { disabled, placeholder, type } = this.props
+    return (
+      <div>
+        <div className='input-group mb-3'>
+          <input
+            disabled={disabled}
+            type={type}
+            className='form-control'
+            placeholder={placeholder}
+            aria-label={placeholder}
+            aria-describedby={placeholder}
+            onChange={this.onChange}
+          />
+          <div className='input-group-append'>
+            <button
+              className='btn btn-outline-secondary'
+              type='button'
+              onClick={this.onSubmit}
+            >
+              &darr;
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 }
 
 class RegistrationSection extends React.Component {
@@ -40,42 +75,49 @@ class RegistrationSection extends React.Component {
       email: '',
       code: '',
 
+      copied: false,
       usernameIsVerifying: false,
       usernameIsValid: null // TODO no verified yet
     }
 
-    this.onUserNameChange = this.onUserNameChange.bind(this)
-    this.onEmailChange = this.onEmailChange.bind(this)
+    this.onUserNameSubmit = this.onUserNameSubmit.bind(this)
+    this.onEmailSubmit = this.onEmailSubmit.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  onUserNameChange (evt) {
-    const username = evt.target.value
+  componentDidMount () {
+    const clipboard = new ClipboardJS('.clipboard');
+    clipboard.on('success', () => {
+      this.setState({ copied: true })
+    })
 
+    clipboard.on('error', (e) => {
+      this.setState({ copied: false })
+    })
+  }
+
+  async onUserNameSubmit (username) {
     this.setState({ username })
-    setTimeout(async () => {
-      const { username } = this.state
+    this.setState({
+      usernameIsVerifying: true,
+      username
+    })
+    const info = await api.getUserProfile({ username })
+    if (info.status === 'found') {
       this.setState({
-        usernameIsVerifying: true,
-        username
+        user: true,
+        usernameIsVerifying: false,
+        usernameIsValid: true
+      }, async () => {
+        await this.getCode()
       })
-      const info = await api.getUserProfile({ username })
-      if (info.status === 'found') {
-        this.setState({
-          user: true,
-          usernameIsVerifying: false,
-          usernameIsValid: true
-        }, async () => {
-          await this.getCode()
-        })
-      } else {
-        this.setState({
-          code: '',
-          usernameIsVerifying: false,
-          usernameIsValid: false
-        })
-      }
-    }, 2000)
+    } else {
+      this.setState({
+        code: '',
+        usernameIsVerifying: false,
+        usernameIsValid: false
+      })
+    }
   }
 
   async getCode () {
@@ -86,13 +128,11 @@ class RegistrationSection extends React.Component {
     }
   }
 
-  onEmailChange (evt) {
-    const email = evt.target.value
+  async onEmailSubmit (email) {
     if (maybeEmailAddress(email)) {
-      this.setState({ email })
-      setTimeout(async () => {
+      this.setState({ email }, async () => {
         await this.getCode()
-      }, 2000)
+      })
     }
   }
 
@@ -139,33 +179,54 @@ class RegistrationSection extends React.Component {
         <TitleBox title='开始你的小对话' />
         <div className={styles.FormContainer}>
           <InputRow
-            label='1. 输入你的 V2EX 用户名'
-            placeholder='V2EX 用户名'
-            onChangeHandler={this.onUserNameChange}
+            type='text'
+            placeholder='输入你的 v2ex 用户名'
+            onSubmit={this.onUserNameSubmit}
           />
           <FlagText text={verifyTipText} type={verifyTipType} />
           <InputRow
-            label='2. 输入你的邮箱'
-            placeholder='email'
+            type='email'
+            placeholder='输入你的 email'
             disabled={!usernameIsValid}
-            onChangeHandler={this.onEmailChange}
+            onSubmit={this.onEmailSubmit}
           />
-          <FlagText type={!isReady ? 'inactive' : null} text='3. 把下面的验证码添加到 V2EX 个人简介 (?)' />
-          <input
-            placeholder='自动生成验证码'
-            type='text'
-            disabled={!usernameIsValid || !email}
-            className={styles.CodeInput}
-            value={code}
-            />
-          <p> {this.verifyCodeTip()}</p>
-          <button
-            type='button'
-            disabled={!isReady}
-            onClick={this.handleSubmit}
-            className={isReady ? styles.SubmitBtn : styles.SubmitBtn + ' ' + styles.BtnDisable}
-            > 注册
-          </button>
+          <div>
+            <div className='input-group mb-3'>
+              <input
+                className='form-control'
+                placeholder='自动生成验证码'
+                aria-label='自动生成验证码'
+                type='text'
+                id='MigicCode'
+                value={code}
+                disabled={!usernameIsValid || !email}
+              />
+              <div className='input-group-append'>
+                <button
+                  className='btn btn-outline-secondary clipboard'
+                  type='button'
+                  data-clipboard-target='#MigicCode'
+                  data-clipboard-action='copy'
+                >
+                  <img src={screenshot} width='16' alt='复制' />
+                </button>
+              </div>
+            </div>
+            <div>
+              把上面 &uarr; 的验证码保存到 <a target='_blank' href='https://www.v2ex.com/settings'>V2EX 个人简介 </a> 然后点击注册
+            </div>
+            <p> {this.verifyCodeTip()}</p>
+          </div>
+          <div className={styles.SubmitContainer}>
+            <button
+              type='button'
+              className={isReady ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
+              disabled={!isReady}
+              onClick={this.handleSubmit}
+            >
+              注册
+            </button>
+          </div>
         </div>
       </div>
     )
