@@ -57,7 +57,7 @@ class InputRow extends React.Component {
               type='button'
               onClick={this.onSubmit}
             >
-              ->
+              &rarr;
             </button>
           </div>
         </div>
@@ -118,8 +118,9 @@ class RegistrationSection extends React.Component {
 
   async onEmailSubmit (email) {
     if (maybeEmailAddress(email)) {
-      this.setState({ email })
-      await this.getCode()
+      this.setState({ email }, async () => {
+        await this.getCode()
+      })
     }
   }
 
@@ -178,21 +179,27 @@ class RegistrationSection extends React.Component {
             onSubmit={this.onEmailSubmit}
           />
           <FlagText type={!isReady ? 'inactive' : null} text='3. 把下面的验证码添加到 V2EX 个人简介 (?)' />
-          <input
-            placeholder='自动生成验证码'
-            type='text'
-            disabled={!usernameIsValid || !email}
-            className={styles.CodeInput}
-            value={code}
+          <div className='input-group mb-3'>
+            <input
+              placeholder='自动生成验证码'
+              aria-label='自动生成验证码'
+              type='text'
+              className='form-control'
+              disabled={!usernameIsValid || !email}
+              value={code}
             />
-          <p> {this.verifyCodeTip()}</p>
-          <button
-            type='button'
-            disabled={!isReady}
-            onClick={this.handleSubmit}
-            className={isReady ? styles.SubmitBtn : styles.SubmitBtn + ' ' + styles.BtnDisable}
-            > 注册
-          </button>
+            <div className='input-group-append'>
+              <button
+                className='btn btn-outline-secondary'
+                type='button'
+                disabled={!isReady}
+                onClick={this.handleSubmit}
+              >
+                注册
+              </button>
+            </div>
+            <p> {this.verifyCodeTip()}</p>
+          </div>
         </div>
       </div>
     )
