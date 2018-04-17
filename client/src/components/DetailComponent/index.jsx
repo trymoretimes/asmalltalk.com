@@ -4,6 +4,19 @@ import styles from '../../styles.css'
 import api from '../../api'
 import TitleBox from '../TitleBox'
 
+const InputBox = ({label, value, onChange}) => (
+  <div className='form-group'>
+    <label for='exampleFormControlTextarea1'>{label}</label>
+    <textarea
+      className='form-control'
+      id='exampleFormControlTextarea1'
+      rows='3'
+      value={value}
+      onChange={onChange}
+     />
+  </div>
+)
+
 class DetailComponent extends React.Component {
   constructor (props) {
     super(props)
@@ -71,27 +84,9 @@ class DetailComponent extends React.Component {
       <div className={styles.MainContainer}>
         <TitleBox title='更新信息' />
         <div className={styles.FormContainer}>
-          <p> 你想从别人获得哪些帮助</p>
-          <input
-            value={needHelp}
-            placeholder='你需要什么帮助'
-            className={styles.UserNameInput}
-            onChange={this.onNeedHelpChange}
-          />
-          <p> 你可以帮助别人哪些</p>
-          <input
-            value={canHelp}
-            placeholder='你可以帮助什么'
-            onChange={this.onCanHelpChange}
-            className={styles.EmailInput}
-          />
-          <p> 其他</p>
-          <input
-            value={extraInfo}
-            placeholder='随便说点什么'
-            onChange={this.onExtraInfoChange}
-            className={styles.EmailInput}
-          />
+          <InputBox value={needHelp} label='我想获取这些帮助' onChange={this.onNeedHelpChange} />
+          <InputBox value={canHelp} label='我可以提供这些帮助' onChange={this.onCanHelpChange} />
+          <InputBox value={extraInfo} label='其他' onChange={this.onExtraInfoChange} />
           <button
             disabled={shouldDisableSubmit}
             className={styles.SubmitBtn}
