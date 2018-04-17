@@ -32,7 +32,7 @@ const build = (reciver, matcher) => {
   return {
     text: `
 Hi ${reciver.username}，<br>
-今天为你推荐的 V2EX 用户是 ${matcher.username}，以下是 Linus 的个人简介：<br><br>
+今天为你推荐的 V2EX 用户是 ${matcher.username}，以下是 ${matcher.username} 的个人简介：<br><br>
 
 ${textBody}
 
@@ -45,7 +45,7 @@ ${textBody}
 `,
     html: `
 Hi ${reciver.username}， <br>
-今天为你推荐的 V2EX 用户是 ${matcher.username}，以下是 Linus 的个人简介： <br><br>
+今天为你推荐的 V2EX 用户是 ${matcher.username}，以下是 ${matcher.username} 的个人简介： <br><br>
 
 ${htmlBody}
 
