@@ -87,7 +87,7 @@ class RegistrationSection extends React.Component {
   }
 
   componentDidMount () {
-    const clipboard = new ClipboardJS('.clipboard');
+    const clipboard = new ClipboardJS('.clipboard')
     clipboard.on('success', () => {
       this.setState({ copied: true })
     })
@@ -206,10 +206,11 @@ class RegistrationSection extends React.Component {
                 <button
                   className='btn btn-outline-secondary clipboard'
                   type='button'
+                  disabled={!usernameIsValid || !email}
                   data-clipboard-target='#MigicCode'
                   data-clipboard-action='copy'
                 >
-                  <img src={screenshot} width='16' alt='复制' />
+                  <img src={screenshot} reandonly width='16' alt='复制' />
                 </button>
               </div>
             </div>

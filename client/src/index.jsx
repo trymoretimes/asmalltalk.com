@@ -85,6 +85,7 @@ class App extends React.Component {
             needHelp={needHelp}
             extraInfo={extraInfo}
           />
+          <AboutSection />
         </div>
       )
     }

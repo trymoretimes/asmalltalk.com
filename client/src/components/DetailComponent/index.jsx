@@ -87,11 +87,13 @@ class DetailComponent extends React.Component {
           <InputBox value={needHelp} label='我想获取这些帮助' onChange={this.onNeedHelpChange} />
           <InputBox value={canHelp} label='我可以提供这些帮助' onChange={this.onCanHelpChange} />
           <InputBox value={extraInfo} label='其他' onChange={this.onExtraInfoChange} />
-          <button
-            disabled={shouldDisableSubmit}
-            className={styles.SubmitBtn}
-            onClick={this.onSubmit}
-          > {message} </button>
+          <div className={styles.SubmitContainer}>
+            <button
+              disabled={shouldDisableSubmit}
+              className='btn btn-primary btn-sm'
+              onClick={this.onSubmit}
+            > {message} </button>
+          </div>
         </div>
       </div>
     )

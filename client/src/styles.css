@@ -100,7 +100,6 @@ body {
 }
 .SubmitBtn {
   composes: BasicBtn;
-  margin: 20px auto;
 }
 .BtnDisable {
     background-color: #f6f6f6;
