@@ -25,13 +25,13 @@ class App extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  async verifyCode () {
-    const { username, code } = this.state
+  async verifyCode (payload) {
+    const { username, code } = payload
     this.setState({ loadingCount: this.state.loadingCount + 1 })
     const verified = await api.verify({ username, code })
     this.setState({ verified })
     if (!verified) {
-      await this.verifyCode()
+      await this.verifyCode(payload)
     } else {
       this.setState({
         loadingTip: '账号验证成功',
@@ -53,7 +53,7 @@ class App extends React.Component {
         extraInfo: users[0].extraInfo
       })
     } else {
-      await this.verifyCode()
+      await this.verifyCode(payload)
       const user = await api.submit({ username, email, code })
       if (user) {
         const { _id } = user

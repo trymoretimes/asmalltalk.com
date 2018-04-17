@@ -42,9 +42,10 @@ class DetailComponent extends React.Component {
   async onSubmit () {
     const { userId } = this.props
     const { canHelp, needHelp, extraInfo } = this.state
-    this.setState({ updating: true })
-    const updated = await api.updateInfo({ canHelp, needHelp, extraInfo, userId })
-    this.setState({ updating: false, updated })
+    this.setState({ updating: true }, async () => {
+      const updated = await api.updateInfo({ canHelp, needHelp, extraInfo, userId })
+      this.setState({ updating: false, updated })
+    })
   }
 
   render () {
@@ -57,11 +58,11 @@ class DetailComponent extends React.Component {
     } = this.state
     let message = ''
     let shouldDisableSubmit = false
-    if (updated !== null) {
-      message = updated ? '更新成功' : '更新失败'
-    } else if (updating) {
+    if (updating) {
       message = '正在更新'
       shouldDisableSubmit = true
+    } else if (updated !== null) {
+      message = updated ? '更新成功' : '更新失败'
     }
     return (
       <div className={styles.MainContainer}>
