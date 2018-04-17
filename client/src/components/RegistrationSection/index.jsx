@@ -16,19 +16,54 @@ const FlagText = ({ type, text }) => {
   )
 }
 
-const InputRow = ({ label, disabled, placeholder, onChangeHandler }) => {
-  return (
-    <div>
-      <FlagText type={disabled ? 'inactive' : null} text={label} />
-      <input
-        placeholder={placeholder}
-        type='text'
-        className={styles.UserNameInput}
-        disabled={disabled}
-        onChange={onChangeHandler}
-        />
-    </div>
-  )
+class InputRow extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = { value: '' }
+    this.onSubmit = this.onSubmit.bind(this)
+    this.onChange = this.onChange.bind(this)
+  }
+
+  onSubmit () {
+    const { onSubmit } = this.props
+    const { value } = this.state
+    onSubmit(value)
+  }
+
+  onChange (evt) {
+    const value = evt.target.value
+    this.setState({ value })
+  }
+
+  render () {
+    const { label, disabled, placeholder } = this.props
+    return (
+      <div>
+        <FlagText type={disabled ? 'inactive' : null} text={label} />
+        <div className='input-group mb-3'>
+          <input
+            disabled={disabled}
+            type='text'
+            className='form-control'
+            placeholder={placeholder}
+            aria-label={placeholder}
+            aria-describedby={placeholder}
+            onChange={this.onChange}
+          />
+          <div className='input-group-append'>
+            <button
+              className='btn btn-outline-secondary'
+              type='button'
+              onClick={this.onSubmit}
+            >
+              ->
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 }
 
 class RegistrationSection extends React.Component {
@@ -44,38 +79,33 @@ class RegistrationSection extends React.Component {
       usernameIsValid: null // TODO no verified yet
     }
 
-    this.onUserNameChange = this.onUserNameChange.bind(this)
-    this.onEmailChange = this.onEmailChange.bind(this)
+    this.onUserNameSubmit = this.onUserNameSubmit.bind(this)
+    this.onEmailSubmit = this.onEmailSubmit.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  onUserNameChange (evt) {
-    const username = evt.target.value
-
+  async onUserNameSubmit (username) {
     this.setState({ username })
-    setTimeout(async () => {
-      const { username } = this.state
+    this.setState({
+      usernameIsVerifying: true,
+      username
+    })
+    const info = await api.getUserProfile({ username })
+    if (info.status === 'found') {
       this.setState({
-        usernameIsVerifying: true,
-        username
+        user: true,
+        usernameIsVerifying: false,
+        usernameIsValid: true
+      }, async () => {
+        await this.getCode()
       })
-      const info = await api.getUserProfile({ username })
-      if (info.status === 'found') {
-        this.setState({
-          user: true,
-          usernameIsVerifying: false,
-          usernameIsValid: true
-        }, async () => {
-          await this.getCode()
-        })
-      } else {
-        this.setState({
-          code: '',
-          usernameIsVerifying: false,
-          usernameIsValid: false
-        })
-      }
-    }, 2000)
+    } else {
+      this.setState({
+        code: '',
+        usernameIsVerifying: false,
+        usernameIsValid: false
+      })
+    }
   }
 
   async getCode () {
@@ -86,13 +116,10 @@ class RegistrationSection extends React.Component {
     }
   }
 
-  onEmailChange (evt) {
-    const email = evt.target.value
+  async onEmailSubmit (email) {
     if (maybeEmailAddress(email)) {
       this.setState({ email })
-      setTimeout(async () => {
-        await this.getCode()
-      }, 2000)
+      await this.getCode()
     }
   }
 
@@ -141,14 +168,14 @@ class RegistrationSection extends React.Component {
           <InputRow
             label='1. 输入你的 V2EX 用户名'
             placeholder='V2EX 用户名'
-            onChangeHandler={this.onUserNameChange}
+            onSubmit={this.onUserNameSubmit}
           />
           <FlagText text={verifyTipText} type={verifyTipType} />
           <InputRow
             label='2. 输入你的邮箱'
             placeholder='email'
             disabled={!usernameIsValid}
-            onChangeHandler={this.onEmailChange}
+            onSubmit={this.onEmailSubmit}
           />
           <FlagText type={!isReady ? 'inactive' : null} text='3. 把下面的验证码添加到 V2EX 个人简介 (?)' />
           <input
