@@ -3,18 +3,9 @@ const fetch = require('isomorphic-fetch')
 const Server = require('../../src')
 const Database = require('../helpers/db')
 const { delay } = require('../../src/utils')
+const { buildBody } = require('./utils')
 
 const API_URL = `http://${CONFIG.host}:${CONFIG.port}/v1/api`
-
-const buildBody = (method = 'GET', obj) => (
-  {
-    method,
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(obj)
-  }
-)
 
 describe('Workflow', async () => {
   let database = null
