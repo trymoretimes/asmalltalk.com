@@ -78,7 +78,7 @@ class App extends React.Component {
     if (toUpdate) {
       return (
         <div className={styles.MainContainer}>
-          <LogoBox />
+          <LogoBox  subTitle='注册完成！更新下列信息将帮助你更精确匹配好友' />
           <DetailComponent
             userId={userId}
             canHelp={canHelp}
@@ -92,7 +92,7 @@ class App extends React.Component {
 
     return (
       <div className={styles.MainContainer}>
-        <LogoBox />
+        <LogoBox subTitle='很高兴认识你'/>
         <RegistrationSection onSubmit={this.handleSubmit} />
         <AboutSection />
       </div>

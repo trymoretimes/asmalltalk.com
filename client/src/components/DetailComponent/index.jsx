@@ -4,11 +4,12 @@ import styles from '../../styles.css'
 import api from '../../api'
 import TitleBox from '../TitleBox'
 
-const InputBox = ({label, value, onChange}) => (
+const InputBox = ({label, value, placeholder, onChange}) => (
   <div className='form-group'>
     <label for='exampleFormControlTextarea1'>{label}</label>
     <textarea
       className='form-control'
+      placeholder={placeholder}
       id='exampleFormControlTextarea1'
       rows='3'
       value={value}
@@ -24,7 +25,6 @@ class DetailComponent extends React.Component {
     this.state = {
       canHelp: props.canHelp,
       needHelp: props.needHelp,
-      extraInfo: props.extraInfo,
 
       updating: false,
       updated: null
@@ -32,7 +32,6 @@ class DetailComponent extends React.Component {
 
     this.onCanHelpChange = this.onCanHelpChange.bind(this)
     this.onNeedHelpChange = this.onNeedHelpChange.bind(this)
-    this.onExtraInfoChange = this.onExtraInfoChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
   }
 
@@ -46,16 +45,11 @@ class DetailComponent extends React.Component {
     this.setState({ needHelp: val })
   }
 
-  onExtraInfoChange (evt) {
-    const val = evt.target.value
-    this.setState({ extraInfo: val })
-  }
-
   async onSubmit () {
     const { userId } = this.props
-    const { canHelp, needHelp, extraInfo } = this.state
+    const { canHelp, needHelp } = this.state
     this.setState({ updating: true }, async () => {
-      const updated = await api.updateInfo({ canHelp, needHelp, extraInfo, userId })
+      const updated = await api.updateInfo({ canHelp, needHelp, userId })
       this.setState({ updating: false, updated }, () => {
         setTimeout(() => {
           this.setState({ updating: false, updated: null })
@@ -68,7 +62,6 @@ class DetailComponent extends React.Component {
     const {
       canHelp,
       needHelp,
-      extraInfo,
       updating,
       updated
     } = this.state
@@ -84,9 +77,8 @@ class DetailComponent extends React.Component {
       <div className={styles.MainContainer}>
         <TitleBox title='更新信息' />
         <div className={styles.FormContainer}>
-          <InputBox value={needHelp} label='我想获取这些帮助' onChange={this.onNeedHelpChange} />
-          <InputBox value={canHelp} label='我可以提供这些帮助' onChange={this.onCanHelpChange} />
-          <InputBox value={extraInfo} label='其他' onChange={this.onExtraInfoChange} />
+          <InputBox placeholder='最近想开始入门区块链, 不知道如何开始呢' value={needHelp} label='我想获取这些帮助' onChange={this.onNeedHelpChange} />
+          <InputBox placeholder='我精通Go语言编程,偶尔写写 Vue' value={canHelp} label='我可以提供这些帮助' onChange={this.onCanHelpChange} />
           <div className={styles.SubmitContainer}>
             <button
               disabled={shouldDisableSubmit}
