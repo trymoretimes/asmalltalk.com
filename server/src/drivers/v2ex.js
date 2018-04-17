@@ -18,11 +18,9 @@ class V2EX {
   }
 
   _buildUserInfo (profile) {
-    const info = {}
     const { username, website, twitter, facebook, bio, psn, github, btc, avatar_normal } = profile
     const avatar = avatar_normal.replace(/^\/\//, 'https://')
     return {
-      ...info,
       username,
       website,
       twitter,

@@ -15,7 +15,6 @@ function buidQuery(query = {}) {
 class BaseDal {
   constructor (config) {
     const { uri, db, collectionName } = config
-    console.log(uri, db, collectionName)
     const goodToGo = uri && db && collectionName
     if (!goodToGo) {
       throw new Error('host, port, db, and collection name are required')
