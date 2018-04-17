@@ -81,7 +81,7 @@ class RegistrationSection extends React.Component {
   async getCode () {
     const { username, email } = this.state
     if (maybeEmailAddress(email)) {
-      const { code } = await api.getCode(username, email)
+      const { code } = await api.getCode({ username, email })
       this.setState({ code })
     }
   }
