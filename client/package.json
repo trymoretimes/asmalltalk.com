@@ -71,6 +71,7 @@
   },
   "dependencies": {
     "chai": "^3.5.0",
+    "clipboard": "^2.0.0",
     "draft-js": "^0.10.5",
     "draft-js-mention-plugin": "^2.0.1",
     "draft-js-plugins-editor": "^2.0.4",

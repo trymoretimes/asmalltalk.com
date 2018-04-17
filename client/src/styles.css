@@ -3,6 +3,12 @@ body {
   font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
 }
 
+.SubmitContainer {
+  text-align: center;
+  padding-bottom: 36px;
+  padding-top: 16px;
+}
+
 .RegistrationContainer {
   color: #778087;
 }
