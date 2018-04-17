@@ -30,6 +30,7 @@ class Mailer {
   }
 
   async run () {
+    console.log('run mailer at', (new Date()))
     // matchee ---> matcher
     // we send matchee info to matcher
     const users = await this.dal.find()

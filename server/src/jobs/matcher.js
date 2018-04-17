@@ -27,6 +27,7 @@ class Matcher {
   async run () {
     const users = await this.dal.find()
 
+    console.log('run matcher at', (new Date()))
     for (let i = 0; i < users.length; i++) {
       const source = users[i]
       let matchGuy = null
