@@ -8,4 +8,6 @@
 
 .TitleBox h3 {
   text-align: left;
+  font-weight: bold;
+  font-size: 1.4rem;
 }
