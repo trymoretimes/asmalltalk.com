@@ -22,7 +22,7 @@ docker build -f devops/dockerfile.client -t ff-client .
 docker build -f devops/dockerfile.server -t ff-server .
 
 # build matcher service
-cd services/matcher && docker build -f devops/dockerfile -t ff-matcher
+cd services/matcher && docker build -f devops/dockerfile -t ff-matcher .
 
 docker stop $(docker ps -a -q)
 
