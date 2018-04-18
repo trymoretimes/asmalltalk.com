@@ -27,5 +27,7 @@ cd services/matcher && docker build -f devops/dockerfile -t ff-matcher .
 docker stop $(docker ps -a -q)
 
 docker run -p 5002:5002 -d ff-server
+# wait for server start
+sleep 10
 docker run -d ff-matcher
 docker run -p 80:80 -p 443:443 -v /etc/letsencrypt:/etc/letsencrypt -d ff-client

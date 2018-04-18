@@ -87,8 +87,7 @@ class Matcher {
         const target = users[j]
 
         if (target._id.toString() !== source._id.toString()) {
-          const matchGuys = await this.getUserMatcher(source._id.toString())
-          console.log(matchGuys)
+          const matchGuys = await this.getUserMatcher(source._id.toString()) || []
           if (matchGuys.indexOf(target._id) === -1) {
             const score = this.calculate(source, target)
             if (score > maxScore) {
