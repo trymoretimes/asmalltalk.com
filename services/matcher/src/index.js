@@ -68,7 +68,7 @@ class Matcher {
 
   async updateUserMatchGuys (hostId, matchGuyId) {
     const user = await this.fetchUser(hostId)
-    const { matchGuys } = user
+    const matchGuys = user.matchGuys || []
     if (matchGuys.indexOf(matchGuyId) === -1) {
       matchGuys.push(matchGuyId)
     }
