@@ -8,7 +8,6 @@ const serve = require('koa-static')
 
 const routes = require('./routes')
 const Dal = require('./dal')
-const setupMatcher = require('./jobs/matcher')
 const setupMailer = require('./jobs/mailer')
 const Driver = require('./drivers/v2ex')
 
@@ -34,7 +33,6 @@ class Server {
     this.app.use(serve(staticRoot))
 
     this.driver = new Driver()
-    this.matcher = setupMatcher(this.dals.comments, this.config.matcher)
     this.mailer = setupMailer(this.dals.comments, this.config.mailer)
   }
 
@@ -90,7 +88,6 @@ class Server {
   async start () {
     try {
       this._server = await this.app.listen(this.port)
-      this.matcher.start()
       this.mailer.start()
     } catch (e) {
       console.warn(e)

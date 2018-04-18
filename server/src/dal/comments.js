@@ -20,9 +20,9 @@ class Comments extends BaseDal {
   }
 
   async update (obj) {
-    const { id, canHelp, needHelp, extraInfo } = obj
+    const { id, canHelp, needHelp, matchGuys } = obj
     const col = await this.collection()
-    return col.updateOne({ _id: ObjectID(id) }, { $set: { canHelp, needHelp, extraInfo } })
+    return col.updateOne({ _id: ObjectID(id) }, { $set: { canHelp, needHelp, matchGuys } })
   }
 
   async fetch (id) {
