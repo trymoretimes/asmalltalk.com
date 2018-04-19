@@ -4,23 +4,21 @@ const { delay } = require('../src/utils')
 
 describe('matcher', () => {
   it('should run on interval set', async () => {
-    console.log('a')
     const matcher = new Matcher({ ...config, CHECK_INTERVAL: 500 })
-    console.log('a')
 
     // Mock interface
     const users = [{
-      _id: 1,
+      _id: 0,
       matchGuys: [],
       canHelp: 'abc',
       needHelp: 'def'
     }, {
-      _id: 2,
+      _id: 1,
       matchGuys: [],
       canHelp: 'def',
       needHelp: 'ghi'
     }, {
-      _id: 3,
+      _id: 2,
       matchGuys: [],
       canHelp: 'ghi',
       needHelp: 'abc'
@@ -42,11 +40,11 @@ describe('matcher', () => {
     }
 
     matcher.updateUserMatchGuys = (hostId, matchGuyId) => {
-      const matchGuys = this.getUserMatcher(hostId)
+      const matchGuys = matcher.getUserMatcher(hostId)
       if (matchGuys.indexOf(matchGuyId) === -1) {
         matchGuys.push(matchGuyId)
       }
-      this.updateUser(hostId, { matchGuys })
+      matcher.updateUser(hostId, { matchGuys })
     }
 
     expect(matcher.stopped).toBeFalsy()
@@ -59,12 +57,12 @@ describe('matcher', () => {
     await delay(500)
 
     expect(users[0].matchGuys).toEqual([1])
-    expect(users[1].matchguys).toequal([2])
+    expect(users[1].matchGuys).toEqual([2])
     expect(users[2].matchGuys).toEqual([0])
 
     await delay(500)
     expect(users[0].matchGuys).toEqual([1, 2])
-    expect(users[1].matchguys).toequal([2, 0])
+    expect(users[1].matchGuys).toEqual([2, 0])
     expect(users[2].matchGuys).toEqual([0, 1])
 
     matcher.stop()
