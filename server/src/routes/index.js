@@ -100,32 +100,40 @@ module.exports = [
         matchGuys
       } = ctx.request.body
 
-      let error = null
-      let user = null
-      try {
-        const profile = await driver.getUserProfile(username)
-        user = await dal.create({
-          username,
-          email,
-          needHelp,
-          canHelp,
-          extraInfo,
-          matchGuys: matchGuys || [],
-          emailed: [],
-          profile,
-          date: (new Date()).toISOString()
-        })
-      } catch (e) {
-        error = e
+      if (!username || !email) {
+        ctx.status = 400
+        ctx.body = { message: 'both username and email needed'}
+
+        return
       }
 
-      if (error === null) {
-        ctx.status = 201
-        ctx.body = user
-      } else {
-        ctx.status = 500
-        ctx.message = `comment created met some errors: ${error}`
+      const users = await dal.find({ username, email })
+      if (users.length > 0) {
+        ctx.status = 409
+        return
       }
+
+      const isValid = await driver.isValidUser(username)
+      if (!isValid) {
+        ctx.status = 400
+        ctx.body = { message: `${username} is not a valid v2ex user`}
+
+        return
+      }
+
+      const profile = await driver.getUserProfile(username)
+      const user = await dal.create({
+        username,
+        email,
+        needHelp,
+        canHelp,
+        matchGuys: matchGuys || [],
+        emailed: [],
+        profile,
+        date: (new Date()).toISOString()
+      })
+      ctx.status = 201
+      ctx.body = user
     }
   },
   {
@@ -133,21 +141,9 @@ module.exports = [
     method: 'GET',
     handler: async (ctx, dal) => {
       const { id } = ctx.params
-      let error = null
-      let user = null
-      try {
-        user = await dal.fetch(id)
-      } catch (e) {
-        error = e
-      }
-
-      if (error === null) {
-        ctx.status = 200
-        ctx.body = user
-      } else {
-        ctx.status = 500
-        ctx.message = `errors: ${error}`
-      }
+      console.log(typeof id, id)
+      const user = await dal.fetch(id)
+      ctx.body = user
     }
   },
   {

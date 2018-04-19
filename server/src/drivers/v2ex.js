@@ -5,6 +5,11 @@ class V2EX {
     this.baseUrl = 'https://www.v2ex.com/api/members/show.json'
   }
 
+  async isValidUser (username) {
+    const profile = await this._fetchProfile(username)
+    return profile.status === 'found'
+  }
+
   async getUserProfile (username) {
     const info = await this._fetchProfile(username)
     const profile = this._buildUserInfo(info)

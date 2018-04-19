@@ -23,28 +23,31 @@ describe('matcher', () => {
       canHelp: 'ghi',
       needHelp: 'abc'
     }]
-    matcher.fetchUsers = () => {
-      return users
-    }
 
-    matcher.updateUser = (id, obj) => {
-      const user = users.find((u) => u._id === id)
-      Object.keys(obj).forEach((k) => {
-        user[k] = obj[k]
-      })
-    }
+    matcher.api = {
+      fetchUsers: () => {
+        return users
+      },
 
-    matcher.getUserMatcher = (id) => {
-      const user = users.find((u) => u._id === id)
-      return user.matchGuys
-    }
+      updateUser: (id, obj) => {
+        const user = users.find((u) => u._id === id)
+        Object.keys(obj).forEach((k) => {
+          user[k] = obj[k]
+        })
+      },
 
-    matcher.updateUserMatchGuys = (hostId, matchGuyId) => {
-      const matchGuys = matcher.getUserMatcher(hostId)
-      if (matchGuys.indexOf(matchGuyId) === -1) {
-        matchGuys.push(matchGuyId)
+      getUserMatcher: (id) => {
+        const user = users.find((u) => u._id === id)
+        return user.matchGuys
+      },
+
+      updateUserMatchGuys: (hostId, matchGuyId) => {
+        const matchGuys = matcher.api.getUserMatcher(hostId)
+        if (matchGuys.indexOf(matchGuyId) === -1) {
+          matchGuys.push(matchGuyId)
+        }
+        matcher.api.updateUser(hostId, { matchGuys })
       }
-      matcher.updateUser(hostId, { matchGuys })
     }
 
     expect(matcher.stopped).toBeFalsy()
@@ -52,9 +55,16 @@ describe('matcher', () => {
       expect(u.matchGuys).toEqual([])
     })
 
-    // run once
-    matcher.start()
-    await delay(500)
+    let error = null
+    try {
+      // run once
+      matcher.start()
+      await delay(500)
+    } catch (e) {
+      error = e
+    }
+
+    expect(error).toEqual(null)
 
     expect(users[0].matchGuys).toEqual([1])
     expect(users[1].matchGuys).toEqual([2])
