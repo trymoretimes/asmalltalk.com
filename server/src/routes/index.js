@@ -95,14 +95,12 @@ module.exports = [
         username,
         email,
         needHelp,
-        canHelp,
-        extraInfo,
-        matchGuys
+        canHelp
       } = ctx.request.body
 
       if (!username || !email) {
         ctx.status = 400
-        ctx.body = { message: 'both username and email needed'}
+        ctx.body = { message: 'both username and email needed' }
 
         return
       }
@@ -116,7 +114,7 @@ module.exports = [
       const isValid = await driver.isValidUser(username)
       if (!isValid) {
         ctx.status = 400
-        ctx.body = { message: `${username} is not a valid v2ex user`}
+        ctx.body = { message: `${username} is not a valid v2ex user` }
 
         return
       }
@@ -127,7 +125,7 @@ module.exports = [
         email,
         needHelp,
         canHelp,
-        matchGuys: matchGuys || [],
+        matchGuys: [],
         emailed: [],
         profile,
         date: (new Date()).toISOString()
