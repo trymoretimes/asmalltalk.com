@@ -66,9 +66,9 @@ class Mailer {
     const { text, html } = buildBody(reciver, matcher)
     const payload = {
       to: reciver.email,
-      from: 'hello@asmalltalk.com', // TODO our platform email here
+      from: 'h.minghe@gmail.com', // TODO our platform email here
       replyTo: matcher.email,
-      subject: `小对话：今天为你推荐 V2EX 用户 ${matcher.name}`,
+      subject: `小对话：今天为你推荐 V2EX 用户 ${matcher.username}`,
       text,
       html
     }
