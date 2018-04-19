@@ -5,9 +5,24 @@ class API {
     this.base = config.API_URL || 'https://asmalltalk.com/v1/api'
   }
 
+  async createUser (obj) {
+    const url = `${this.base}/users`
+    const opt = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(obj)
+    }
+    const resp = await fetch(url, opt)
+    if (resp.status !== 201) {
+        throw new Error(`create user exception: ${resp.status}`)
+    }
+    return resp.json()
+  }
+
   async fetchUsers () {
     const url = `${this.base}/users`
-    console.log(url)
     const resp = await fetch(url)
     if (resp.status !== 200) {
       throw new Error(`fetch users failure: ${resp}`)
@@ -17,6 +32,7 @@ class API {
 
   async fetchUser (id) {
     const url = `${this.base}/users/${id}`
+    console.log(url)
     const resp = await fetch(url)
     if (resp.status !== 200) {
       throw new Error(`fetch match guys failed: ${resp.statusText}`)
@@ -33,7 +49,9 @@ class API {
     const url = `${this.base}/users/${id}`
     const opt = {
       method: 'PUT',
-      contentType: 'application/json',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(obj)
     }
     const resp = await fetch(url, opt)
