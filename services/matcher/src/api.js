@@ -42,7 +42,8 @@ class API {
 
   async getUserMatcher (id) {
     const user = await this.fetchUser(id)
-    return user.matchGuys
+    // TODO hot fix --- to clean soon
+    return user.matchGuys || []
   }
 
   async updateUser (id, obj) {
