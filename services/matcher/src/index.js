@@ -1,4 +1,4 @@
-const fetch = require('node-fetch')
+const API = require('./api')
 
 const { lcsSubStr, delay } = require('./utils')
 
@@ -11,6 +11,7 @@ class Matcher {
 
     this.checkInterval = null
     this.stopped = false
+    this.api = new API(config)
   }
 
   async start () {
@@ -30,76 +31,34 @@ class Matcher {
     this.stopped = true
   }
 
-  async fetchUsers () {
-    const url = `${this.API_URL}/users`
-    const resp = await fetch(url)
-    if (resp.status !== 200) {
-      throw new Error(`fetch users failure: ${resp}`)
-    }
-    return resp.json()
-  }
-
-  async fetchUser (id) {
-    const url = `${this.API_URL}/users/${id}`
-    const resp = await fetch(url)
-    if (resp.status !== 200) {
-      throw new Error(`fetch match guys failed: ${resp.statusText}`)
-    }
-    return resp.json()
-  }
-
-  async getUserMatcher (id) {
-    const user = await this.fetchUser(id)
-    return user.matchGuys
-  }
-
-  async updateUser (id, obj) {
-    const url = `${this.API_URL}/users/${id}`
-    const opt = {
-      method: 'PUT',
-      contentType: 'application/json',
-      body: JSON.stringify(obj)
-    }
-    const resp = await fetch(url, opt)
-    if (resp.status !== 204) {
-      throw new Error(`update user failed: ${resp.statusText}`)
-    }
-  }
-
-  async updateUserMatchGuys (hostId, matchGuyId) {
-    const user = await this.fetchUser(hostId)
-    const matchGuys = user.matchGuys || []
-    if (matchGuys.indexOf(matchGuyId) === -1) {
-      matchGuys.push(matchGuyId)
-    }
-
-    await this.updateUser(hostId, { matchGuys })
-  }
-
   async run () {
-    const users = await this.fetchUsers()
+    try {
+      const users = await this.api.fetchUsers()
 
-    for (let i = 0; i < users.length; i++) {
-      const source = users[i]
-      let matchGuy = null
-      let maxScore = -1
-      for (let j = 0; j < users.length; j++) {
-        const target = users[j]
+      for (let i = 0; i < users.length; i++) {
+        const source = users[i]
+        let matchGuy = null
+        let maxScore = -1
+        for (let j = 0; j < users.length; j++) {
+          const target = users[j]
 
-        if (target._id !== source._id) {
-          const matchGuys = await this.getUserMatcher(source._id) || []
-          if (matchGuys.indexOf(target._id) === -1) {
-            const score = this.calculate(source, target)
-            if (score > maxScore) {
-              maxScore = score
-              matchGuy = target
+          if (target._id !== source._id) {
+            const matchGuys = await this.api.getUserMatcher(source._id) || []
+            if (matchGuys.indexOf(target._id) === -1) {
+              const score = this.calculate(source, target)
+              if (score > maxScore) {
+                maxScore = score
+                matchGuy = target
+              }
             }
           }
         }
+        if (matchGuy) {
+          await this.api.updateUserMatchGuys(source._id, matchGuy._id)
+        }
       }
-      if (matchGuy) {
-        await this.updateUserMatchGuys(source._id, matchGuy._id)
-      }
+    } catch (e) {
+      console.error(e)
     }
   }
 
