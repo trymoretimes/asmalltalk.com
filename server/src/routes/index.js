@@ -132,6 +132,7 @@ module.exports = [
         profile,
         date: (new Date()).toISOString()
       })
+      ctx.cookies.set('asmalltalk-email', email, { httpOnly: false, maxAge: 10 * 24 * 3600 * 1000 })
       ctx.status = 201
       ctx.body = user
     }
