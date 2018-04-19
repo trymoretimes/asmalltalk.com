@@ -14,10 +14,12 @@ class Matcher {
   }
 
   async start () {
+        console.log('run')
     this.stopped = false
 
     while (!this.stopped) {
       try {
+        console.log('run')
         await this.run()
         await delay(this.CHECK_INTERVAL)
       } catch (e) {
@@ -78,6 +80,7 @@ class Matcher {
 
   async run () {
     const users = await this.fetchUsers()
+    console.log(users)
 
     for (let i = 0; i < users.length; i++) {
       const source = users[i]
