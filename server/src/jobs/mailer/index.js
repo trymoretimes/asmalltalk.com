@@ -68,7 +68,7 @@ class Mailer {
       to: reciver.email,
       from: 'h.minghe@gmail.com', // TODO our platform email here
       replyTo: matcher.email,
-      subject: `小对话：今天为你推荐 V2EX 用户 ${matcher.username}`,
+      subject: `小对话：今天为你推荐 ${matcher.username}`,
       text,
       html
     }
