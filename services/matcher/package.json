@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "./bin/matcher",
-    "test": "jest"
+    "test": "jest test/matcher.test.js"
   },
   "keywords": [],
   "author": "",
