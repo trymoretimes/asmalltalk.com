@@ -86,8 +86,8 @@ class Matcher {
       for (let j = 0; j < users.length; j++) {
         const target = users[j]
 
-        if (target._id.toString() !== source._id.toString()) {
-          const matchGuys = await this.getUserMatcher(source._id.toString()) || []
+        if (target._id !== source._id) {
+          const matchGuys = await this.getUserMatcher(source._id) || []
           if (matchGuys.indexOf(target._id) === -1) {
             const score = this.calculate(source, target)
             if (score > maxScore) {
@@ -96,17 +96,15 @@ class Matcher {
             }
           }
         }
-        if (matchGuy) {
-          await this.updateUserMatchGuys(source._id.toString(), matchGuy._id.toString())
-        }
+      }
+      if (matchGuy) {
+        await this.updateUserMatchGuys(source._id, matchGuy._id)
       }
     }
   }
 
-  calculate (a, b) {
-    const score1 = lcsSubStr(a.canHelp || '', b.needHelp || '')
-    const score2 = lcsSubStr(a.needHelp || '', b.canHelp || '')
-    return score1 + score2
+  calculate (source, target) {
+    return lcsSubStr(source.needHelp || '', target.canHelp || '')
   }
 }
 
