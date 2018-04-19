@@ -13,11 +13,11 @@ jobs:
           name: build server
           command: cd server && npm install  # setup database
       - run:
+          name: test server
+          command: cd server && npm test
+      - run:
           name: test matcher
           command: cd services/matcher && npm install && npm test
-      - run:
-          name: Test SSH
-          command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "echo hello_linode"
       - run:
           name: Deploy
           command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "cd ff && git pull && ./devops/deploy.sh"

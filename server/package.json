@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "./bin/server",
-    "test": "NODE_ENV=test node --harmony ./node_modules/.bin/jest --forceExit",
+    "test": "jest test/unit/utils.test.js test/unit/mailer.test.js test/unit/utils.test.js",
     "coverage": "NODE_ENV=test  node --harmony ./node_modules/.bin/jest --forceExit --coverage | codecov -t d46b64da-89d9-43ed-8ea7-54f98b1b9586",
     "coverage:local": "NODE_ENV=test node --harmony ./node_modules/.bin/jest --forceExit --coverage",
     "lint": "standard src || exit 0"

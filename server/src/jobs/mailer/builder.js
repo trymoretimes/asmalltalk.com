@@ -38,7 +38,7 @@ ${textBody}
 
 想认识他？直接回复这封邮件跟他 say hi 吧。 \r\n
 
-小对话 - ${(new Date).toISOString().substring(0, 10);}\r\n
+小对话 - ${(new Date()).toISOString().substring(0, 10)}\r\n
 
 更新你的档案：https://www.asmalltalk.com \r\n
  \r\n
