@@ -28,9 +28,7 @@ class DetailComponent extends React.Component {
       canHelp: props.canHelp,
       needHelp: props.needHelp,
 
-      submitStatus: SubmitStatus.Default,
-      updating: false,
-      updated: null
+      submitStatus: SubmitStatus.Default
     }
 
     this.onCanHelpChange = this.onCanHelpChange.bind(this)
@@ -40,12 +38,18 @@ class DetailComponent extends React.Component {
 
   onCanHelpChange (evt) {
     const val = evt.target.value
-    this.setState({ canHelp: val })
+    this.setState({
+      canHelp: val,
+      submitStatus: SubmitStatus.Default
+    })
   }
 
   onNeedHelpChange (evt) {
     const val = evt.target.value
-    this.setState({ needHelp: val })
+    this.setState({
+      needHelp: val,
+      submitStatus: SubmitStatus.Default
+    })
   }
 
   async onSubmit () {
