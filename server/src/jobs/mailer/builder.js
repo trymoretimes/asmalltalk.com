@@ -31,7 +31,7 @@ const build = (reciver, matcher) => {
   const htmlBody = buildSocialAccounts(matcher, MailTypes.Html)
   return {
     text: `
-Hi ${reciver.username}，<br>
+Hi ${reciver.username}，\r\n
 今天为你推荐的 V2EX 用户是 ${matcher.username}，以下是 ${matcher.username} 的个人简介：<br><br>
 
 ${textBody}

@@ -1,10 +1,6 @@
-const sgMail = require('@sendgrid/mail')
-
-const { delay } = require('../../utils')
+const mailer = require('../../sendgrid')
 const buildBody = require('./builder')
-
-const SENDGRID_API_KEY = '***REMOVED***'
-sgMail.setApiKey(SENDGRID_API_KEY)
+const { delay } = require('../../utils')
 
 const CHECK_INTERVAL = 1 * 3600 * 1000
 
@@ -73,7 +69,7 @@ class Mailer {
       html
     }
 
-    await sgMail.send(payload)
+    await mailer.send(payload)
     console.log(`mail send`)
   }
 }

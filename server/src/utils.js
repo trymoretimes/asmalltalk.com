@@ -70,7 +70,6 @@ const delay = (ms) => {
   })
 }
 
-
 module.exports = {
   uniqueNames,
   appendUniqueName,
