@@ -3,6 +3,8 @@ import React from 'react'
 import styles from '../../styles.css'
 import api from '../../api'
 import TitleBox from '../TitleBox'
+import SubmitButton from '../SubmitButton'
+import { SubmitStatus } from '../../constants'
 
 const InputBox = ({label, value, placeholder, onChange}) => (
   <div className='form-group'>
@@ -26,6 +28,7 @@ class DetailComponent extends React.Component {
       canHelp: props.canHelp,
       needHelp: props.needHelp,
 
+      submitStatus: SubmitStatus.Default,
       updating: false,
       updated: null
     }
@@ -48,30 +51,28 @@ class DetailComponent extends React.Component {
   async onSubmit () {
     const { userId } = this.props
     const { canHelp, needHelp } = this.state
-    this.setState({ updating: true }, async () => {
-      const updated = await api.updateInfo({ canHelp, needHelp, userId })
-      this.setState({ updating: false, updated }, () => {
-        setTimeout(() => {
-          this.setState({ updating: false, updated: null })
-        }, 2000)
-      })
-    })
+    this.setState({ submitStatus: SubmitStatus.Submitting })
+    try {
+      await api.updateInfo({ canHelp, needHelp, userId })
+      this.setState({ submitStatus: SubmitStatus.Succeed })
+    } catch (e) {
+      this.setState({ submitStatus: SubmitStatus.Failed })
+    }
   }
 
   render () {
     const {
       canHelp,
       needHelp,
-      updating,
-      updated
+      submitStatus
     } = this.state
     let message = '提交'
-    let shouldDisableSubmit = false
-    if (updating) {
+    if (submitStatus === SubmitStatus.Submitting) {
       message = '正在更新'
-      shouldDisableSubmit = true
-    } else if (updated !== null) {
-      message = updated ? '更新成功' : '更新失败'
+    } else if (submitStatus === SubmitStatus.Succeed) {
+      message = '更新成功'
+    } else if (submitStatus === SubmitStatus.Failed) {
+      message = '更新失败'
     }
     return (
       <div className={styles.MainContainer}>
@@ -79,13 +80,11 @@ class DetailComponent extends React.Component {
         <div className={styles.FormContainer}>
           <InputBox placeholder='最近想开始入门区块链, 不知道如何开始呢' value={needHelp} label='我想获取这些帮助' onChange={this.onNeedHelpChange} />
           <InputBox placeholder='我精通Go语言编程,偶尔写写 Vue' value={canHelp} label='我可以提供这些帮助' onChange={this.onCanHelpChange} />
-          <div className={styles.SubmitContainer}>
-            <button
-              disabled={shouldDisableSubmit}
-              className='btn btn-primary btn-sm'
-              onClick={this.onSubmit}
-            > {message} </button>
-          </div>
+          <SubmitButton
+            status={submitStatus}
+            message={message}
+            handleSubmit={this.onSubmit}
+          />
         </div>
       </div>
     )

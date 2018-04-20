@@ -1,10 +1,14 @@
 import React from 'react'
 
 import styles from '../../styles.css'
-import TitleBox from '../TitleBox'
 import api from '../../api'
 import { maybeEmailAddress } from '../../utils'
 import screenshot from './clip.svg'
+
+import { SubmitStatus } from '../../constants'
+import SubmitButton from '../SubmitButton'
+
+import TitleBox from '../TitleBox'
 
 const FlagText = ({ type, text }) => {
   const classNames = {
@@ -78,7 +82,8 @@ class RegistrationSection extends React.Component {
 
       copied: false,
       usernameIsVerifying: false,
-      usernameIsValid: null // TODO no verified yet
+      usernameIsValid: null, // TODO no verified yet
+      submitStatus: SubmitStatus.Default,
     }
 
     this.onUserNameSubmit = this.onUserNameSubmit.bind(this)
@@ -151,7 +156,14 @@ class RegistrationSection extends React.Component {
   handleSubmit () {
     const { code, username, email } = this.state
     const { onSubmit } = this.props
-    onSubmit({ code, username, email })
+    this.setState({ submitStatus: SubmitStatus.Submitting })
+    onSubmit({ code, username, email }, (err, data) => {
+      if (err) {
+        this.setState({ submitStatus: SubmitStatus.Failed })
+      } else {
+        this.setState({ submitStatus: SubmitButton.Succeed })
+      }
+    })
   }
 
   render () {
@@ -159,8 +171,17 @@ class RegistrationSection extends React.Component {
       email,
       usernameIsVerifying,
       usernameIsValid,
-      code
+      code,
+      submitStatus
     } = this.state
+    let message = '注册'
+    if (submitStatus === SubmitStatus.Submitting) {
+      message = '正在提交'
+    } else if (submitStatus === SubmitStatus.Succeed) {
+      message = '注册成功'
+    } else if (submitStatus === SubmitStatus.Failed) {
+      message = '注册失败'
+    }
 
     let verifyTipText = ''
     let verifyTipType = 'default'
@@ -198,7 +219,7 @@ class RegistrationSection extends React.Component {
                 placeholder='自动生成验证码'
                 aria-label='自动生成验证码'
                 type='text'
-                id='MigicCode'
+                id='MagicCode'
                 value={code}
                 disabled={!usernameIsValid || !email}
               />
@@ -207,7 +228,7 @@ class RegistrationSection extends React.Component {
                   className='btn btn-outline-secondary clipboard'
                   type='button'
                   disabled={!usernameIsValid || !email}
-                  data-clipboard-target='#MigicCode'
+                  data-clipboard-target='#MagicCode'
                   data-clipboard-action='copy'
                 >
                   <img src={screenshot} reandonly width='16' alt='复制' />
@@ -219,16 +240,12 @@ class RegistrationSection extends React.Component {
             </div>
             <p> {this.verifyCodeTip()}</p>
           </div>
-          <div className={styles.SubmitContainer}>
-            <button
-              type='button'
-              className={isReady ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
-              disabled={!isReady}
-              onClick={this.handleSubmit}
-            >
-              注册
-            </button>
-          </div>
+          <SubmitButton
+            status={submitStatus}
+            message={message}
+            handleSubmit={this.handleSubmit}
+            disabled={!isReady}
+          />
         </div>
       </div>
     )

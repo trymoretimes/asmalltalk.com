@@ -132,7 +132,15 @@ module.exports = [
 
       if (!username || !email) {
         ctx.status = 400
-        ctx.body = { message: 'both username and email needed' }
+        ctx.body = { error: 'both username and email needed' }
+
+        return
+      }
+
+      const isValid = await driver.isValidUser(username)
+      if (!isValid) {
+        ctx.status = 400
+        ctx.body = { error: `${username} is not a valid v2ex user` }
 
         return
       }
@@ -140,13 +148,8 @@ module.exports = [
       const users = await dal.find({ username, email })
       if (users.length > 0) {
         ctx.status = 409
-        return
-      }
-
-      const isValid = await driver.isValidUser(username)
-      if (!isValid) {
-        ctx.status = 400
-        ctx.body = { message: `${username} is not a valid v2ex user` }
+        const user = users[0]
+        ctx.body = { ...user, message: 'user already existed' }
 
         return
       }
@@ -165,7 +168,7 @@ module.exports = [
       await welcomeEmail({ username, email })
       ctx.cookies.set('asmalltalk-email', email, { httpOnly: false, maxAge: 10 * 24 * 3600 * 1000 })
       ctx.status = 201
-      ctx.body = user
+      ctx.body = { ...user, message: 'registration successfully' }
     }
   },
   {
@@ -173,7 +176,6 @@ module.exports = [
     method: 'GET',
     handler: async (ctx, dal) => {
       const { id } = ctx.params
-      console.log(typeof id, id)
       const user = await dal.fetch(id)
       ctx.body = user
     }
