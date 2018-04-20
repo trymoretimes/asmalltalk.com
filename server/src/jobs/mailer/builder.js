@@ -54,7 +54,7 @@ ${htmlBody}
 小对话<br><br>
 
 更新你的档案：https://www.asmalltalk.com<br><br>
-<a href="mailto:h.minghe@gmail.com?subject=退订?body=对 小对话 有什么建议吗">退订</a>
+<a href="mailto:h.minghe@gmail.com?subject=退订&body=对 小对话 有什么建议吗">退订</a>
           `
   }
 }
