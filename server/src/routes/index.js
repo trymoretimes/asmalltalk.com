@@ -1,5 +1,39 @@
 const fetch = require('node-fetch')
 const urls = require('./urls')
+const { ourEmail, SENDGRID_API_KEY } = require('../../config.json')
+const { setupSendGrid } = require('../utils')
+
+async function welcomeEmail (to) {
+  const mailClient = setupSendGrid(SENDGRID_API_KEY)
+
+  const text = `
+Hi, ${to.username} \r\n\r\n
+
+感谢你使用 小对话, 你很快就会收到你的第一个推荐好友喽，当时你及时的更新的个人信息，让 小对话 可以帮你更精确的找到好友。\r\n\r\n
+
+如果你对 小对话 有任何的意见和建议，欢迎你随时回复这封邮件. \r\n\r\n
+
+小对话团队
+`
+  const html = `
+Hi, ${to.username} <br><br>
+
+感谢你使用 小对话, 你很快就会收到你的第一个推荐好友喽，当时你及时的更新的个人信息，让 小对话 可以帮你更精确的找到好友。<br><br>
+
+如果你对 小对话 有任何的意见和建议，欢迎你随时回复这封邮件. <br><br>
+
+小对话团队 <br>
+`
+  const payload = {
+    to: to.email,
+    from: ourEmail, // TODO our platform email here
+    replyTo: ourEmail,
+    subject: `欢迎来到小对话`,
+    text,
+    html
+  }
+  await mailClient.send(payload)
+}
 
 async function getUserInfo (username) {
   for (const url of urls) {
@@ -130,6 +164,7 @@ module.exports = [
         profile,
         date: (new Date()).toISOString()
       })
+      await welcomeEmail({ username, email })
       ctx.cookies.set('asmalltalk-email', email, { httpOnly: false, maxAge: 10 * 24 * 3600 * 1000 })
       ctx.status = 201
       ctx.body = user

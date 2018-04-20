@@ -1,3 +1,5 @@
+const sgMail = require('@sendgrid/mail')
+
 const uniqueNames = (emails) => {
   const names = []
   emails.forEach((email) => {
@@ -70,10 +72,15 @@ const delay = (ms) => {
   })
 }
 
+const setupSendGrid = (key) => {
+  sgMail.setApiKey(key)
+  return sgMail
+}
 
 module.exports = {
   uniqueNames,
   appendUniqueName,
   lcsSubStr,
-  delay
+  delay,
+  setupSendGrid
 }
