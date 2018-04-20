@@ -1,11 +1,9 @@
 const fetch = require('node-fetch')
 const urls = require('./urls')
-const { ourEmail, SENDGRID_API_KEY } = require('../../config.json')
-const { setupSendGrid } = require('../utils')
+const { ourEmail } = require('../../config.json')
+const mailer = require('../sendgrid')
 
 async function welcomeEmail (to) {
-  const mailClient = setupSendGrid(SENDGRID_API_KEY)
-
   const text = `
 Hi, ${to.username} \r\n\r\n
 
@@ -32,7 +30,7 @@ Hi, ${to.username} <br><br>
     text,
     html
   }
-  await mailClient.send(payload)
+  await mailer.send(payload)
 }
 
 async function getUserInfo (username) {

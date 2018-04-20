@@ -1,6 +1,6 @@
-const { SENDGRID_API_KEY } = require('../../../config.json')
-const { delay, setupSendGrid } = require('../../utils')
+const mailer = require('../../sendgrid')
 const buildBody = require('./builder')
+const { delay } = require('../../utils')
 
 const CHECK_INTERVAL = 1 * 3600 * 1000
 
@@ -9,7 +9,6 @@ class Mailer {
     this.dal = dal
     this.config = config
 
-    this.mailClient = setupSendGrid(SENDGRID_API_KEY)
     this.stopped = false
   }
 
@@ -70,7 +69,7 @@ class Mailer {
       html
     }
 
-    await this.mailClient.send(payload)
+    await mailer.send(payload)
     console.log(`mail send`)
   }
 }

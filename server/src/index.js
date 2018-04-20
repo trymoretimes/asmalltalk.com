@@ -8,7 +8,7 @@ const serve = require('koa-static')
 
 const routes = require('./routes')
 const Dal = require('./dal')
-const setupMailer = require('./jobs/mailer')
+const setupMailer = require('../sendgrid')
 const Driver = require('./drivers/v2ex')
 
 class Server {
