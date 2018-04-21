@@ -1,7 +1,7 @@
 {
   "host": "127.0.0.1",
   "port": 5002,
-  "ourEmail": "h.minghe@gmail.com",
+  "ourEmail": "asmalltalk@iiiii.li",
   "SENDGRID_API_KEY": "***REMOVED***",
   "mongo": {
     "uri": "mongodb://localhost:27017",

@@ -1,6 +1,7 @@
 const mailer = require('../../sendgrid')
 const buildBody = require('./builder')
 const { delay } = require('../../utils')
+const { ourEmail } = require('../../../config.json')
 
 const CHECK_INTERVAL = 1 * 3600 * 1000
 
@@ -62,7 +63,7 @@ class Mailer {
     const { text, html } = buildBody(reciver, matcher)
     const payload = {
       to: reciver.email,
-      from: 'h.minghe@gmail.com', // TODO our platform email here
+      from: ourEmail, // TODO our platform email here
       replyTo: matcher.email,
       subject: `小对话：今天为你推荐 ${matcher.username}`,
       text,
