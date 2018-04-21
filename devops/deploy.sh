@@ -24,13 +24,13 @@ docker build -f devops/dockerfile.server -t ff-server .
 # build matcher service
 cd ~/ff/services/matcher && docker build -f devops/dockerfile -t ff-matcher .
 cd ~/ff/services/mailer && docker build -f devops/dockerfile -t ff-mailer .
-cd ~/ff/services/jobs && docker build -f devops/dockerfile -t ff-jobs
+cd ~/ff/services/jobs && docker build -f devops/dockerfile -t ff-jobs .
 
 docker stop $(docker ps -a -q)
 
 docker run -p 5002:5002 -d ff-server
 # wait for server start
-sleep 10
+sleep 20
 docker run -d ff-matcher
 docker run -d ff-mailer
 docker run -d ff-jobs
