@@ -9,5 +9,8 @@
   },
   "origins": [
     "https://asmalltalk.com"
-  ]
+  ],
+  "mailer": {
+    "CHECK_INTERVAL": 86400000
+  }
 }

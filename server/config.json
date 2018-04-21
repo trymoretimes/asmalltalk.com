@@ -9,5 +9,8 @@
   },
   "origins": [
     "http://localhost:8080"
-  ]
+  ],
+  "mailer": {
+    "CHECK_INTERVAL": 3600000
+  }
 }
