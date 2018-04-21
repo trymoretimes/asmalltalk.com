@@ -1,4 +1,5 @@
 import React from 'react'
+import ClipboardJS from 'clipboard'
 
 import styles from '../../styles.css'
 import api from '../../api'
