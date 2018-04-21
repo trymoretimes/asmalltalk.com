@@ -14,6 +14,7 @@ const AboutSection = () => (
       <img src={screenshot} />
     </div>
     <div className={styles.FooterContainer}>
+      <img src='/favicon.ico'/>
       小对话 built by <a href='https://github.com/metrue'> metrue </a> and <a href='https://github.com/haojianzong'> jakehao </a>
     </div>
   </div>

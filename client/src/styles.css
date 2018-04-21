@@ -117,3 +117,9 @@ opacity: 1; /* Firefox */
   padding-top: 26px;
   text-align: center;
 }
+
+.FooterContainer img {
+  width: 1rem;
+  margin: 0 auto;
+  display: block;
+}
