@@ -1,4 +1,4 @@
 {
-  "CHECK_INTERVAL": 3600000,
+  "CHECK_INTERVAL": 86400000,
   "API_URL": "https://asmalltalk.com/v1/api"
 }
