@@ -1,14 +1,15 @@
-const mailer = require('../../sendgrid')
+const mailer = require('./sendgrid')
 const buildBody = require('./builder')
-const { delay } = require('../../utils')
-const { ourEmail } = require('../../../config.json')
+const { ourEmail } = require('../config.json')
+const { delay } = require('./utils')
+const API = require('./api')
 
 const CHECK_INTERVAL = 1 * 3600 * 1000
 
 class Mailer {
-  constructor (dal, config = {}) {
-    this.dal = dal
-    this.config = config
+  constructor (config = {}) {
+    this.api = new API(config)
+    this.CHECK_INTERVAL = config.CHECK_INTERVAL || CHECK_INTERVAL
 
     this.stopped = false
   }
@@ -18,7 +19,7 @@ class Mailer {
 
     while (!this.stopped) {
       await this.run()
-      await delay(this.config.CHECK_INTERVAL || CHECK_INTERVAL)
+      await delay(this.CHECK_INTERVAL || CHECK_INTERVAL)
     }
   }
 
@@ -27,18 +28,21 @@ class Mailer {
   }
 
   async run () {
-    console.log('run mailer at', (new Date()))
+    const now = (new Date()).getTime()
     // matchee ---> matcher
     // we send matchee info to matcher
-    const users = await this.dal.find()
+    const users = await this.api.fetchUsers()
     for (const matcher of users) {
-      const matchGuys = matcher.matchGuys || []
-      const mailed = matcher.emailed || []
-      for (const guyId of matchGuys) {
-        if (mailed.indexOf(guyId) === -1) {
-          const matchee = await this.dal.fetch(guyId)
-          await this.connect(matcher, matchee)
-          break
+      const { lastEmailAt } = matcher
+      if (!lastEmailAt || (now - lastEmailAt >= 24 * 3600 * 1000)) {
+        const matchGuys = matcher.matchGuys || []
+        const mailed = matcher.emailed || []
+        for (const guyId of matchGuys) {
+          if (mailed.indexOf(guyId) === -1) {
+            const matchee = await this.api.fetchUser(guyId)
+            await this.connect(matcher, matchee)
+            break
+          }
         }
       }
     }
@@ -47,7 +51,7 @@ class Mailer {
   async connect (matcher, matchee) {
     try {
       await this.mail(matcher, matchee)
-      await this.dal.updateMailed(matcher._id.toString(), matchee._id.toString())
+      await this.api.updateMailed(matcher._id, matchee._id)
     } catch (e) {
       console.error('Send email failed =====')
       console.error(e)
@@ -56,7 +60,7 @@ class Mailer {
   }
 
   updateMailed (matcher, matchee) {
-    this.dal.updateMailed(matcher._id, matchee._id)
+    this.api.updateMailed(matcher._id, matchee._id)
   }
 
   async mail (reciver, matcher) {
@@ -75,6 +79,4 @@ class Mailer {
   }
 }
 
-module.exports = (dal, config) => {
-  return new Mailer(dal, config)
-}
+module.exports = Mailer
