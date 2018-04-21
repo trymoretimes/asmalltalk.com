@@ -4,7 +4,7 @@ const { ObjectID } = require('mongodb')
 const buildObj = (srcObj, allowedFields = []) => {
   const obj = {}
   for (const f of allowedFields) {
-    if (allowedFields.indexOf(f) !== -1 && srcObj[f] !== undefined) {
+    if (allowedFields.indexOf(f) !== -1 && srcObj[f] !== undefined && srcObj[f] !== null) {
       obj[f] = srcObj[f]
     }
   }
