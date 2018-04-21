@@ -6,5 +6,8 @@
   "mongo": {
     "uri": "mongodb+srv://iiiiili_tokyo:***REMOVED***@cluster0-iteff.mongodb.net",
     "db": "users"
-  }
+  },
+  "origin": [
+    "https://asmalltalk.com"
+  ]
 }
