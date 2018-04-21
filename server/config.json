@@ -6,5 +6,8 @@
   "mongo": {
     "uri": "mongodb://localhost:27017",
     "db": "users"
-  }
+  },
+  "origins": [
+    "http://localhost:8080"
+  ]
 }

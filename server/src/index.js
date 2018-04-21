@@ -78,7 +78,7 @@ class Server {
         if (this.config.origins && this.config.origins.indexOf(origin) > -1) {
           return origin
         }
-        return '*'
+        return this.config.origins[0]
       },
       credentials: true
     }
