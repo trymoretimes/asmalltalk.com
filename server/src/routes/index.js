@@ -206,6 +206,16 @@ module.exports = [
     method: 'DELETE',
     handler: async (ctx, dal) => {
       const { id } = ctx.params
+      // TODO just make it work
+      const { code } = ctx.request.body
+      if (code !== 'iamtheking') {
+        ctx.status = 403
+        ctx.body = 'fuck away please'
+
+        return
+      }
+
+
       let error = null
       try {
         await dal.delete(id)
