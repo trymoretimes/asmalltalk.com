@@ -17,7 +17,7 @@ const buidQuery = (query = {}) => {
 }
 
 const buildUpdateObj = (obj = {}) => {
-  const allowedFields = ['matchGuys', 'emailed', 'canHelp', 'needHelp', 'lastEmailAt']
+  const allowedFields = ['matchGuys', 'emailed', 'canHelp', 'needHelp', 'lastEmailAt', 'company']
   return buildObj(obj, allowedFields)
 }
 
