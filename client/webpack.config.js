@@ -48,7 +48,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        exclude: /site\.css$|react-select\.css|bootstrap\.css$|fixed-data-table\.min\.css$|rodal\.css$|plugin\.css$/,
+        exclude: /site\.css$|bootstrap\.css$/,
         use: [
           'style-loader',
           'css-loader?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
