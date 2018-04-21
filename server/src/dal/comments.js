@@ -1,15 +1,24 @@
 const BaseDal = require('./base_dal')
 const { ObjectID } = require('mongodb')
 
-function buidQuery (query = {}) {
-  const allowedFields = ['_id', 'username', 'email']
-  const newQuery = {}
+const buildObj = (srcObj, allowedFields = []) => {
+  const obj = {}
   for (const f of allowedFields) {
-    if (allowedFields.indexOf(f) !== -1 && query[f] !== undefined) {
-      newQuery[f] = query[f]
+    if (allowedFields.indexOf(f) !== -1 && srcObj[f] !== undefined) {
+      obj[f] = srcObj[f]
     }
   }
-  return newQuery
+  return obj
+}
+
+const buidQuery = (query = {}) => {
+  const allowedFields = ['_id', 'username', 'email']
+  return buildObj(query, allowedFields)
+}
+
+const buildUpdateObj = (obj = {}) => {
+  const allowedFields = ['matchGuys', 'emailed', 'canHelp', 'needHelp']
+  return buildObj(obj, allowedFields)
 }
 
 class Comments extends BaseDal {
@@ -22,7 +31,7 @@ class Comments extends BaseDal {
   async update (obj) {
     const { id, canHelp, needHelp, matchGuys } = obj
     const col = await this.collection()
-    return col.updateOne({ _id: ObjectID(id) }, { $set: { canHelp, needHelp, matchGuys } })
+    return col.updateOne({ _id: ObjectID(id) }, { $set: buildUpdateObj(obj) })
   }
 
   async fetch (id) {

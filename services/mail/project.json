@@ -1,8 +1,0 @@
-{
-  "name": "ff-sendgrid-mail",
-  "description": "mail send service",
-  "role": "arn:aws:iam::735685238621:role/fff",
-  "environment": {
-    "LOGGLY_TOKEN": "some token defined in project.json"
-  }
-}

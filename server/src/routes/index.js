@@ -185,10 +185,10 @@ module.exports = [
     method: 'PUT',
     handler: async (ctx, dal) => {
       const { id } = ctx.params
-      const { canHelp, needHelp, matchGuys } = ctx.request.body
+      const obj = ctx.request.body
       let error = null
       try {
-        await dal.update({ id, canHelp, needHelp, matchGuys })
+        await dal.update({ ...obj, id })
       } catch (e) {
         error = e
       }
