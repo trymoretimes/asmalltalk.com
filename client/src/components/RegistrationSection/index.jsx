@@ -237,7 +237,7 @@ class RegistrationSection extends React.Component {
               </div>
             </div>
             <div>
-              把上面 &uarr; 的验证码保存到 <a target='_blank' href='https://www.v2ex.com/settings'>V2EX 个人简介 </a> 然后点击注册
+              复制上面 &uarr; 的验证码, 保存到 <a target='_blank' href='https://www.v2ex.com/settings'>V2EX 个人简介 </a> 然后点击注册
             </div>
             <p> {this.verifyCodeTip()}</p>
           </div>
