@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 
 import api from './api'
 import styles from './styles.css'
+import 'bootstrap/dist/css/bootstrap.css'
 
 import { SubmitStatus } from './constants'
 
