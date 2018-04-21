@@ -17,7 +17,7 @@ const buidQuery = (query = {}) => {
 }
 
 const buildUpdateObj = (obj = {}) => {
-  const allowedFields = ['matchGuys', 'emailed', 'canHelp', 'needHelp']
+  const allowedFields = ['matchGuys', 'emailed', 'canHelp', 'needHelp', 'lastEmailAt']
   return buildObj(obj, allowedFields)
 }
 
@@ -29,9 +29,8 @@ class Comments extends BaseDal {
   }
 
   async update (obj) {
-    const { id, canHelp, needHelp, matchGuys } = obj
     const col = await this.collection()
-    return col.updateOne({ _id: ObjectID(id) }, { $set: buildUpdateObj(obj) })
+    return col.updateOne({ _id: ObjectID(obj.id) }, { $set: buildUpdateObj(obj) })
   }
 
   async fetch (id) {
