@@ -27,9 +27,7 @@ class API {
       body: JSON.stringify(payload)
     }
     const resp = await fetch(url, opt)
-    if (resp.status === 201) {
-      return resp.json()
-    }
+    return resp.json()
   }
 
   async updateInfo (payload) {

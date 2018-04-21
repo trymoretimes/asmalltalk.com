@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom'
 
 import api from './api'
 import styles from './styles.css'
+
+import { SubmitStatus } from './constants'
+
 import DetailComponent from './components/DetailComponent'
 import LogoBox from './components/LogoBox'
 import AboutSection from './components/AboutSection'
@@ -18,8 +21,7 @@ class App extends React.Component {
       created: false,
       updated: false,
       canHelp: '',
-      needHelp: '',
-      extraInfo: ''
+      needHelp: ''
     }
 
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -40,29 +42,28 @@ class App extends React.Component {
     }
   }
 
-  async handleSubmit (payload) {
-    const { username, email, code } = payload
-    const users = await api.query({ email, username })
-    if (users.length > 0) {
-      this.setState({
-        toUpdate: true,
-        created: true,
-        userId: users[0]._id,
-        canHelp: users[0].canHelp,
-        needHelp: users[0].needHelp,
-        extraInfo: users[0].extraInfo
-      })
-    } else {
+  async handleSubmit (payload, callback) {
+    this.setState({ registrating: SubmitStatus.Submitting })
+
+    try {
       await this.verifyCode(payload)
-      const user = await api.submit({ username, email, code })
-      if (user) {
-        const { _id } = user
+      const data = await api.submit(payload)
+      if (data.error) {
         this.setState({
-          toUpdate: true,
-          created: true,
-          userId: _id
+          created: false,
+          toUpdate: false
         })
+        callback(data.error, data)
+      } else {
+        this.setState({
+          created: true,
+          userId: data._id,
+          toUpdate: true
+        })
+        callback(null, data)
       }
+    } catch (e) {
+      callback(e, null)
     }
   }
 
@@ -70,7 +71,6 @@ class App extends React.Component {
     const {
       canHelp,
       needHelp,
-      extraInfo,
       userId,
       toUpdate
     } = this.state
@@ -78,12 +78,11 @@ class App extends React.Component {
     if (toUpdate) {
       return (
         <div className={styles.MainContainer}>
-          <LogoBox  subTitle='注册完成！更新下列信息将帮助你更精确匹配好友' />
+          <LogoBox subTitle='注册完成！更新下列信息将帮助你更精确匹配好友' />
           <DetailComponent
             userId={userId}
             canHelp={canHelp}
             needHelp={needHelp}
-            extraInfo={extraInfo}
           />
           <AboutSection />
         </div>
@@ -92,7 +91,7 @@ class App extends React.Component {
 
     return (
       <div className={styles.MainContainer}>
-        <LogoBox subTitle='很高兴认识你'/>
+        <LogoBox subTitle='很高兴认识你' />
         <RegistrationSection onSubmit={this.handleSubmit} />
         <AboutSection />
       </div>
