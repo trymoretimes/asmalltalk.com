@@ -4,7 +4,7 @@ const MailTypes = {
 }
 
 const buildSocialAccounts = (user, type = MailTypes.Plain) => {
-  const { email, canHelp, needHelp } = user
+  const { email, company, canHelp, needHelp } = user
   const { profile } = user
   const newLine = type === MailTypes.Plain ? '\r\n' : '<br>'
 
@@ -20,6 +20,10 @@ const buildSocialAccounts = (user, type = MailTypes.Plain) => {
   }
   if (needHelp && needHelp.length > 0) {
     body += `${profile.username} 希望: ${user.needHelp}${newLine}`
+  }
+
+  if (company) {
+    body += `公司及职位：${company}`
   }
 
   body += `V2EX 个人档案：https://www.v2ex.com/member/${profile.username}${newLine}${newLine}`
