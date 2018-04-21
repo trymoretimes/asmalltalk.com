@@ -8,7 +8,6 @@ const serve = require('koa-static')
 
 const routes = require('./routes')
 const Dal = require('./dal')
-const setupMailer = require('./jobs/mailer')
 const Driver = require('./drivers/v2ex')
 
 class Server {
@@ -33,7 +32,6 @@ class Server {
     this.app.use(serve(staticRoot))
 
     this.driver = new Driver()
-    this.mailer = setupMailer(this.dals.comments, this.config.mailer)
   }
 
   setupHandlers () {
@@ -88,7 +86,6 @@ class Server {
   async start () {
     try {
       this._server = await this.app.listen(this.port)
-      this.mailer.start()
     } catch (e) {
       console.warn(e)
     }
