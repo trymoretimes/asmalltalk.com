@@ -112,3 +112,8 @@ body {
 color: #ccc;
 opacity: 1; /* Firefox */
 }
+
+.FooterContainer {
+  padding-top: 26px;
+  text-align: center;
+}
