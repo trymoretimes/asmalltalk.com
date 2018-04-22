@@ -109,14 +109,11 @@ class RegistrationSection extends React.Component {
       usernameIsVerifying: true,
       username
     })
-    const info = await api.getUserProfile({ username })
-    if (info.status === 'found') {
+    const valid = await api.isValidUser({ username })
+    if (valid) {
       this.setState({
-        user: true,
         usernameIsVerifying: false,
         usernameIsValid: true
-      }, async () => {
-        await this.getCode()
       })
     } else {
       this.setState({
