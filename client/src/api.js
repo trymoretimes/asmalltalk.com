@@ -49,7 +49,7 @@ class API {
     const url = `${API_HOST}/users/valid?userId=${username}`
     const resp = await fetch(url)
     const data = await resp.json()
-    return data.status === 'found'
+    return data.valid
   }
 
   async getUserProfile (payload) {

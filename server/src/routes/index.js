@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
-const urls = require('./urls')
 const { ourEmail } = require('../../config.json')
+const driver = require('../drivers')
 const mailer = require('../sendgrid')
 
 async function welcomeEmail (to) {
@@ -33,31 +33,14 @@ Hi, ${to.username} <br><br>
   await mailer.send(payload)
 }
 
-async function getUserInfo (username) {
-  for (const url of urls) {
-    const opt = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username: username })
-    }
-    const resp = await fetch(url, opt)
-    // TODO refactor needed
-    if (resp.status === 200) {
-      const data = await resp.json()
-      if (!data.error) {
-        return data
-      } else {
-        console.log(data.error, 'try next service: ', url.split('api')[0])
-      }
-    }
-  }
-
-  return {}
-}
-
 const generateCode = (username, email) => 'bz' + Buffer.from(`${username}-${email}`).toString('base64').substr(1, 8)
+
+const getSiteAndUserId = (str) => {
+  if (str.includes('/')) {
+     return str.split('/')
+  }
+  return ['v2ex', str]
+}
 
 module.exports = [
   {
@@ -72,15 +55,11 @@ module.exports = [
     method: 'GET',
     handler: async (ctx, dal) => {
       const { userId, code } = ctx.request.query
-      if (userId && code) {
-        const info = await getUserInfo(userId)
-        if (info.status === 'found') {
-          ctx.status = 200
-          ctx.body = { verified: info.bio.includes(code) }
-        } else {
-          ctx.status = 200
-          ctx.body = { verified: false, info: 'username is not valid' }
-        }
+      const [site, username] = getSiteAndUserId(userId)
+      if (site && username && code) {
+        const info = await driver.getUserProfile(site, username)
+        ctx.status = 200
+        ctx.body = { verified: info.bio.includes(code) }
       } else {
         ctx.status = 400
         ctx.body = { info: 'username missing' }
@@ -92,9 +71,10 @@ module.exports = [
     method: 'GET',
     handler: async (ctx, dal) => {
       const { userId } = ctx.request.query
+      const [site, username] = getSiteAndUserId(userId)
       if (userId) {
-        const info = await getUserInfo(userId)
-        ctx.body = info
+        const valid = await driver.isValidUser(site, username)
+        ctx.body = { valid }
       } else {
         ctx.status = 400
         ctx.body = { info: 'username missing' }
@@ -122,13 +102,13 @@ module.exports = [
   {
     path: '/users',
     method: 'POST',
-    handler: async (ctx, dal, driver) => {
+    handler: async (ctx, dal) => {
       const {
-        username,
         email,
         needHelp,
         canHelp
       } = ctx.request.body
+      let { username } = ctx.request.body
 
       if (!username || !email) {
         ctx.status = 400
@@ -137,7 +117,8 @@ module.exports = [
         return
       }
 
-      const isValid = await driver.isValidUser(username)
+      const [site, userId] = getSiteAndUserId(username)
+      const isValid = await driver.isValidUser(site, userId)
       if (!isValid) {
         ctx.status = 400
         ctx.body = { error: `${username} is not a valid v2ex user` }
@@ -145,7 +126,7 @@ module.exports = [
         return
       }
 
-      const users = await dal.find({ username, email })
+      const users = await dal.find({ userId, email })
       if (users.length > 0) {
         ctx.status = 409
         const user = users[0]
@@ -154,9 +135,10 @@ module.exports = [
         return
       }
 
-      const profile = await driver.getUserProfile(username)
+      const profile = await driver.getUserProfile(site, userId)
       const user = await dal.create({
-        username,
+        username: userId,
+        site,
         email,
         needHelp,
         canHelp,
@@ -165,7 +147,7 @@ module.exports = [
         profile,
         date: (new Date()).toISOString()
       })
-      await welcomeEmail({ username, email })
+      await welcomeEmail({ username: userId, email })
       ctx.cookies.set('asmalltalk-email', email, { httpOnly: false, maxAge: 10 * 24 * 3600 * 1000 })
       ctx.status = 201
       ctx.body = { ...user, message: 'registration successfully' }

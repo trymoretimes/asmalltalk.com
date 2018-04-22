@@ -3,7 +3,7 @@ import ClipboardJS from 'clipboard'
 
 import styles from '../../styles.css'
 import api from '../../api'
-import { maybeEmailAddress } from '../../utils'
+import { maybeEmailAddress, getSiteAndUserId } from '../../utils'
 import screenshot from './clip.svg'
 
 import { SubmitStatus } from '../../constants'
@@ -19,6 +19,23 @@ const FlagText = ({ type, text }) => {
   }
   return (
     <p className={classNames[type] || ''}> {text} </p>
+  )
+}
+
+const Indicator = ({ username }) => {
+  const [site, _] = getSiteAndUserId(username)
+  const urls = {
+    'v2ex': 'https://www.v2ex.com/settings',
+    'github': 'https://github.com/settings/profile'
+  }
+  const messages = {
+    'v2ex': 'V2EX 个人简介',
+    'github': 'GitHub 个人 Profile 的 Bio 字段'
+  }
+  return (
+    <div>
+      复制上面 &uarr; 的验证码, 保存到 <a target='_blank' href={urls[site]}>{ messages[site] } </a> 然后点击注册
+    </div>
   )
 }
 
@@ -109,14 +126,11 @@ class RegistrationSection extends React.Component {
       usernameIsVerifying: true,
       username
     })
-    const info = await api.getUserProfile({ username })
-    if (info.status === 'found') {
+    const valid = await api.isValidUser({ username })
+    if (valid) {
       this.setState({
-        user: true,
         usernameIsVerifying: false,
         usernameIsValid: true
-      }, async () => {
-        await this.getCode()
       })
     } else {
       this.setState({
@@ -129,10 +143,8 @@ class RegistrationSection extends React.Component {
 
   async getCode () {
     const { username, email } = this.state
-    if (maybeEmailAddress(email)) {
-      const { code } = await api.getCode({ username, email })
-      this.setState({ code })
-    }
+    const { code } = await api.getCode({ username, email })
+    this.setState({ code })
   }
 
   async onEmailSubmit (email) {
@@ -170,6 +182,7 @@ class RegistrationSection extends React.Component {
   render () {
     const {
       email,
+      username,
       usernameIsVerifying,
       usernameIsValid,
       code,
@@ -236,9 +249,7 @@ class RegistrationSection extends React.Component {
                 </button>
               </div>
             </div>
-            <div>
-              复制上面 &uarr; 的验证码, 保存到 <a target='_blank' href='https://www.v2ex.com/settings'>V2EX 个人简介 </a> 然后点击注册
-            </div>
+            <Indicator username={username} />
             <p> {this.verifyCodeTip()}</p>
           </div>
           <SubmitButton
