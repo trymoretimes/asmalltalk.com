@@ -58,13 +58,8 @@ module.exports = [
       const [site, username] = getSiteAndUserId(userId)
       if (site && username && code) {
         const info = await driver.getUserProfile(site, username)
-        if (info.status === 'found') {
-          ctx.status = 200
-          ctx.body = { verified: info.bio.includes(code) }
-        } else {
-          ctx.status = 200
-          ctx.body = { verified: false, info: 'username is not valid' }
-        }
+        ctx.status = 200
+        ctx.body = { verified: info.bio.includes(code) }
       } else {
         ctx.status = 400
         ctx.body = { info: 'username missing' }

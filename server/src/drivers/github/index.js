@@ -1,13 +1,13 @@
 const fetch = require('node-fetch')
 
-class V2EX {
+class Github {
   constructor () {
-    this.baseUrl = 'https://www.v2ex.com/api/members/show.json'
+    this.baseUrl = 'https://api.github.com/users'
   }
 
   async isValidUser (username) {
     const profile = await this._fetchProfile(username)
-    return profile.status === 'found'
+    return profile.login === username
   }
 
   async getUserProfile (username) {
@@ -17,26 +17,21 @@ class V2EX {
   }
 
   async _fetchProfile (username) {
-    const url = `${this.baseUrl}?username=${username}`
+    const url = `${this.baseUrl}/${username}`
     const resp = await fetch(url)
     return resp.json()
   }
 
   _buildUserInfo (profile) {
-    const { username, website, twitter, facebook, bio, psn, github, btc, avatar_normal } = profile
-    const avatar = avatar_normal.replace(/^\/\//, 'https://')
     return {
-      username,
-      website,
-      twitter,
-      facebook,
-      bio,
-      psn,
-      github,
-      btc,
-      avatar
+      username: profile.login,
+      website: profile.blog,
+      bio: profile.bio,
+      github: profile.html_url,
+      avatar: profile.avatar_url,
+      company: profile.company
     }
   }
 }
 
-module.exports = V2EX
+module.exports = Github
