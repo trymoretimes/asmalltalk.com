@@ -47,24 +47,40 @@ class InputRow extends React.Component {
   constructor (props) {
     super(props)
 
-    this.state = { value: '' }
+    this.state = { value: '', submitStatus: SubmitStatus.Default }
     this.onSubmit = this.onSubmit.bind(this)
     this.onChange = this.onChange.bind(this)
   }
 
-  onSubmit () {
+  async onSubmit () {
     const { onSubmit } = this.props
     const { value } = this.state
-    onSubmit(value)
+    this.setState({ submitStatus: SubmitStatus.Submitting })
+    const ok = await onSubmit(value)
+    if (ok) {
+      this.setState({ submitStatus: SubmitStatus.Succeed })
+    } else {
+      this.setState({ submitStatus: SubmitStatus.Failed })
+    }
   }
 
   onChange (evt) {
     const value = evt.target.value
-    this.setState({ value })
+    this.setState({ value, submitStatus: SubmitStatus.Default })
   }
 
   render () {
     const { disabled, placeholder, type, label } = this.props
+    const { submitStatus } = this.state
+    let message = '↓'
+    if (submitStatus === SubmitStatus.Submitting) {
+      message = '...'
+    } else if (submitStatus === SubmitStatus.Succeed) {
+      message = '√'
+    } else if (submitStatus === SubmitStatus.Failed) {
+      message = 'X'
+    }
+
     return (
       <div>
         <p>{ label }</p>
@@ -80,12 +96,12 @@ class InputRow extends React.Component {
           />
           <div className='input-group-append'>
             <button
-              className='btn btn-outline-secondary'
+              className='btn btn-secondary'
               type='button'
               disabled={disabled}
               onClick={this.onSubmit}
             >
-              &darr;
+              { message }
             </button>
           </div>
         </div>
@@ -100,13 +116,12 @@ class RegistrationSection extends React.Component {
 
     this.state = {
       username: '',
+      usernameIsValid: false,
       email: '',
       site: '',
       code: '',
 
       copied: false,
-      usernameIsVerifying: false,
-      usernameIsValid: null, // TODO no verified yet
       submitStatus: SubmitStatus.Default,
     }
 
@@ -128,24 +143,10 @@ class RegistrationSection extends React.Component {
 
   async onUserNameSubmit (val) {
     const [site, username] = getSiteAndUserId(val)
-    this.setState({
-      usernameIsVerifying: true,
-      username,
-      site,
-    })
+    this.setState({ username, site })
     const valid = await api.isValidUser({ username, site })
-    if (valid) {
-      this.setState({
-        usernameIsVerifying: false,
-        usernameIsValid: true
-      })
-    } else {
-      this.setState({
-        code: '',
-        usernameIsVerifying: false,
-        usernameIsValid: false
-      })
-    }
+    this.setState({ usernameIsValid: valid })
+    return valid
   }
 
   async getCode () {
@@ -155,11 +156,13 @@ class RegistrationSection extends React.Component {
   }
 
   async onEmailSubmit (email) {
-    if (maybeEmailAddress(email)) {
+    const ok = maybeEmailAddress(email)
+    if (ok) {
       this.setState({ email }, async () => {
         await this.getCode()
       })
     }
+    return ok
   }
 
   verifyCodeTip () {
@@ -190,7 +193,6 @@ class RegistrationSection extends React.Component {
     const {
       email,
       username,
-      usernameIsVerifying,
       usernameIsValid,
       site,
       code,
@@ -205,18 +207,6 @@ class RegistrationSection extends React.Component {
       message = '注册失败'
     }
 
-    let verifyTipText = ''
-    let verifyTipType = 'default'
-    if (usernameIsVerifying) {
-      verifyTipText = '正在验证用户名'
-    } else if (usernameIsValid) {
-      verifyTipText = '用户名验证成功'
-      verifyTipType = 'success'
-    } else if (usernameIsValid === false) {
-      verifyTipText = '用户名验证失败'
-      verifyTipType = 'error'
-    }
-
     const isReady = email.length > 0 && code.length > 0 && usernameIsValid
     return (
       <div className={styles.RegistrationContainer}>
@@ -228,7 +218,6 @@ class RegistrationSection extends React.Component {
             placeholder='v2ex/your-id or github/your-id'
             onSubmit={this.onUserNameSubmit}
           />
-          <FlagText text={verifyTipText} type={verifyTipType} />
           <InputRow
             type='email'
             label='输入你的 email'
