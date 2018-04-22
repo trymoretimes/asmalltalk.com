@@ -1,9 +1,10 @@
 const fetch = require('node-fetch')
-const urls = require('./urls')
+const urls = require('../urls')
 
 class V2EX {
   constructor () {
     this.baseUrl = 'https://www.v2ex.com/api/members/show.json'
+    this.site = 'v2ex'
   }
 
   async isValidUser (username) {
@@ -18,7 +19,10 @@ class V2EX {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ username: username })
+        body: JSON.stringify({
+          username: username,
+          site: this.site
+        })
       }
       const resp = await fetch(url, opt)
       // TODO refactor needed
