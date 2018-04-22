@@ -45,8 +45,8 @@ class API {
   }
 
   async isValidUser (payload) {
-    const { username } = payload
-    const url = `${API_HOST}/users/valid?userId=${username}`
+    const { username, site } = payload
+    const url = `${API_HOST}/users/valid?username=${username}&site=${site}`
     const resp = await fetch(url)
     const data = await resp.json()
     return data.valid
@@ -54,21 +54,21 @@ class API {
 
   async getUserProfile (payload) {
     const { username } = payload
-    const url = `${API_HOST}/users/valid?userId=${username}`
+    const url = `${API_HOST}/users/valid?username=${username}`
     const resp = await fetch(url)
     return resp.json()
   }
 
   async getCode (payload) {
-    const { username, email } = payload
-    const url = `${API_HOST}/users/code?username=${username}&email=${email}`
+    const { username, email, site } = payload
+    const url = `${API_HOST}/users/code?username=${username}&email=${email}&site=${site}`
     const resp = await fetch(url)
     return resp.json()
   }
 
   async verify (payload) {
-    const { username, code } = payload
-    const url = `${API_HOST}/users/verifycode?userId=${username}&code=${code}`
+    const { username, code, site } = payload
+    const url = `${API_HOST}/users/verifycode?username=${username}&code=${code}&site=${site}`
     const resp = await fetch(url)
     const data = await resp.json()
     return data.verified
