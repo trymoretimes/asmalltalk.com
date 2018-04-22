@@ -8,7 +8,6 @@ const serve = require('koa-static')
 
 const routes = require('./routes')
 const Dal = require('./dal')
-const Driver = require('./drivers/v2ex')
 
 class Server {
   constructor (config) {
@@ -30,8 +29,6 @@ class Server {
     // TODO testing on this
     const staticRoot = `${__dirname}/../public`
     this.app.use(serve(staticRoot))
-
-    this.driver = new Driver()
   }
 
   setupHandlers () {
@@ -40,7 +37,7 @@ class Server {
     routes.forEach((route) => {
       const handler = async (ctx) => {
         if (route.path && route.path.startsWith('/users')) {
-          await route.handler(ctx, this.dals.comments, this.driver)
+          await route.handler(ctx, this.dals.comments)
         }
       }
 
