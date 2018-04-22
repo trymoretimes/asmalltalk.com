@@ -8,6 +8,7 @@ import screenshot from './clip.svg'
 
 import { SubmitStatus } from '../../constants'
 import SubmitButton from '../SubmitButton'
+import InputRow from '../InputRow'
 
 import TitleBox from '../TitleBox'
 
@@ -41,73 +42,6 @@ const Indicator = ({ username, site }) => {
       复制下面 &darr; 的验证码, 保存到 <a target='_blank' href={urls[site]}>{ messages[site] } </a> 然后点击注册
     </p>
   )
-}
-
-class InputRow extends React.Component {
-  constructor (props) {
-    super(props)
-
-    this.state = { value: '', submitStatus: SubmitStatus.Default }
-    this.onSubmit = this.onSubmit.bind(this)
-    this.onChange = this.onChange.bind(this)
-  }
-
-  async onSubmit () {
-    const { onSubmit } = this.props
-    const { value } = this.state
-    this.setState({ submitStatus: SubmitStatus.Submitting })
-    const ok = await onSubmit(value)
-    if (ok) {
-      this.setState({ submitStatus: SubmitStatus.Succeed })
-    } else {
-      this.setState({ submitStatus: SubmitStatus.Failed })
-    }
-  }
-
-  onChange (evt) {
-    const value = evt.target.value
-    this.setState({ value, submitStatus: SubmitStatus.Default })
-  }
-
-  render () {
-    const { disabled, placeholder, type, label } = this.props
-    const { submitStatus } = this.state
-    let message = '↓'
-    if (submitStatus === SubmitStatus.Submitting) {
-      message = '...'
-    } else if (submitStatus === SubmitStatus.Succeed) {
-      message = '√'
-    } else if (submitStatus === SubmitStatus.Failed) {
-      message = 'X'
-    }
-
-    return (
-      <div>
-        <p>{ label }</p>
-        <div className='input-group mb-3'>
-          <input
-            disabled={disabled}
-            type={type}
-            className='form-control'
-            placeholder={placeholder}
-            aria-label={placeholder}
-            aria-describedby={placeholder}
-            onChange={this.onChange}
-          />
-          <div className='input-group-append'>
-            <button
-              className='btn btn-secondary'
-              type='button'
-              disabled={disabled}
-              onClick={this.onSubmit}
-            >
-              { message }
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
 }
 
 class RegistrationSection extends React.Component {
