@@ -29,9 +29,8 @@ class App extends React.Component {
   }
 
   async verifyCode (payload) {
-    const { username, code } = payload
     this.setState({ loadingCount: this.state.loadingCount + 1 })
-    const verified = await api.verify({ username, code })
+    const verified = await api.verify(payload)
     this.setState({ verified })
     if (!verified) {
       await this.verifyCode(payload)

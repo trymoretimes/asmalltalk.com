@@ -35,13 +35,6 @@ Hi, ${to.username} <br><br>
 
 const generateCode = (username, email) => 'bz' + Buffer.from(`${username}-${email}`).toString('base64').substr(1, 8)
 
-const getSiteAndUserId = (str) => {
-  if (str.includes('/')) {
-     return str.split('/')
-  }
-  return ['v2ex', str]
-}
-
 module.exports = [
   {
     path: '/health',
@@ -54,8 +47,7 @@ module.exports = [
     path: '/users/verifycode',
     method: 'GET',
     handler: async (ctx, dal) => {
-      const { userId, code } = ctx.request.query
-      const [site, username] = getSiteAndUserId(userId)
+      const { username, site, code } = ctx.request.query
       if (site && username && code) {
         const info = await driver.getUserProfile(site, username)
         ctx.status = 200
@@ -70,9 +62,8 @@ module.exports = [
     path: '/users/valid',
     method: 'GET',
     handler: async (ctx, dal) => {
-      const { userId } = ctx.request.query
-      const [site, username] = getSiteAndUserId(userId)
-      if (userId) {
+      const { site, username } = ctx.request.query
+      if (site && username) {
         const valid = await driver.isValidUser(site, username)
         ctx.body = { valid }
       } else {
@@ -105,10 +96,11 @@ module.exports = [
     handler: async (ctx, dal) => {
       const {
         email,
+        username,
+        site,
         needHelp,
         canHelp
       } = ctx.request.body
-      let { username } = ctx.request.body
 
       if (!username || !email) {
         ctx.status = 400
@@ -117,8 +109,7 @@ module.exports = [
         return
       }
 
-      const [site, userId] = getSiteAndUserId(username)
-      const isValid = await driver.isValidUser(site, userId)
+      const isValid = await driver.isValidUser(site, username)
       if (!isValid) {
         ctx.status = 400
         ctx.body = { error: `${username} is not a valid v2ex user` }
@@ -126,7 +117,7 @@ module.exports = [
         return
       }
 
-      const users = await dal.find({ userId, email })
+      const users = await dal.find({ username, email, site })
       if (users.length > 0) {
         ctx.status = 409
         const user = users[0]
@@ -135,9 +126,9 @@ module.exports = [
         return
       }
 
-      const profile = await driver.getUserProfile(site, userId)
+      const profile = await driver.getUserProfile(site, username)
       const user = await dal.create({
-        username: userId,
+        username,
         site,
         email,
         needHelp,
@@ -147,7 +138,7 @@ module.exports = [
         profile,
         date: (new Date()).toISOString()
       })
-      await welcomeEmail({ username: userId, email })
+      await welcomeEmail({ username, email })
       ctx.cookies.set('asmalltalk-email', email, { httpOnly: false, maxAge: 10 * 24 * 3600 * 1000 })
       ctx.status = 201
       ctx.body = { ...user, message: 'registration successfully' }

@@ -96,6 +96,7 @@ class RegistrationSection extends React.Component {
     this.state = {
       username: '',
       email: '',
+      site: '',
       code: '',
 
       copied: false,
@@ -120,13 +121,14 @@ class RegistrationSection extends React.Component {
     })
   }
 
-  async onUserNameSubmit (username) {
-    this.setState({ username })
+  async onUserNameSubmit (val) {
+    const [site, username] = getSiteAndUserId(val)
     this.setState({
       usernameIsVerifying: true,
-      username
+      username,
+      site,
     })
-    const valid = await api.isValidUser({ username })
+    const valid = await api.isValidUser({ username, site })
     if (valid) {
       this.setState({
         usernameIsVerifying: false,
@@ -142,8 +144,8 @@ class RegistrationSection extends React.Component {
   }
 
   async getCode () {
-    const { username, email } = this.state
-    const { code } = await api.getCode({ username, email })
+    const { username, email, site } = this.state
+    const { code } = await api.getCode({ username, email, site })
     this.setState({ code })
   }
 
@@ -167,10 +169,10 @@ class RegistrationSection extends React.Component {
   }
 
   handleSubmit () {
-    const { code, username, email } = this.state
+    const { code, username, email, site } = this.state
     const { onSubmit } = this.props
     this.setState({ submitStatus: SubmitStatus.Submitting })
-    onSubmit({ code, username, email }, (err, data) => {
+    onSubmit({ code, username, email, site }, (err, data) => {
       if (err) {
         this.setState({ submitStatus: SubmitStatus.Failed })
       } else {
