@@ -64,8 +64,12 @@ module.exports = [
     handler: async (ctx, dal) => {
       const { site, username } = ctx.request.query
       if (site && username) {
-        const valid = await driver.isValidUser(site, username)
-        ctx.body = { valid }
+        try {
+          const valid = await driver.isValidUser(site, username)
+          ctx.body = { valid }
+        } catch (e) {
+          ctx.body = { valid: false, message: e.message }
+        }
       } else {
         ctx.status = 400
         ctx.body = { info: 'username missing' }

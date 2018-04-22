@@ -20,7 +20,7 @@ class Driver {
   getUserProfile (site, username) {
     const driver = this.drivers[site]
     if (!driver) {
-      throw new Error(`${site} not supported`)
+      throw new Error(`website ${site} not supported, only github and v2ex supported now`)
     }
     return driver.getUserProfile(username)
   }
