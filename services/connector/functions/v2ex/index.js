@@ -8,7 +8,12 @@ exports.handle = function (e, ctx, cb) {
 
   const url = urls[e.site]
   if (url) {
-    fetch(url).then((res) => {
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Basic ' + Buffer.from('metrue:***REMOVED***').toString('base64')
+      }
+    }).then((res) => {
       if (res.status === 200) {
         return res.json()
       } else {
