@@ -5,7 +5,14 @@ export function maybeEmailAddress (email) {
 
 export function getSiteAndUserId (str) {
   if (str.includes('/')) {
-     return str.split('/')
+    let [site, username] = str.split('/')
+    if (site.includes('github')) {
+      site = 'github'
+    } else if (site.includes('v2ex')) {
+      site = 'v2ex'
+    }
+
+    return [site, username]
   }
   return ['v2ex', str]
 }
