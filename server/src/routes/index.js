@@ -50,11 +50,16 @@ module.exports = [
       const { username, site, code } = ctx.request.query
       if (site && username && code) {
         const info = await driver.getUserProfile(site, username)
-        ctx.status = 200
-        ctx.body = { verified: info.bio.includes(code) }
+        if (info.bio && info.bio.includes(code)) {
+          ctx.status = 200
+          ctx.body = { verified: true }
+        } else {
+          ctx.status = 200
+          ctx.body = { verified: false }
+        }
       } else {
         ctx.status = 400
-        ctx.body = { info: 'username missing' }
+        ctx.body = { info: 'site, username, and code needed' }
       }
     }
   },
