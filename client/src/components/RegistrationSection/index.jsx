@@ -22,8 +22,7 @@ const FlagText = ({ type, text }) => {
   )
 }
 
-const Indicator = ({ username }) => {
-  const [site, _] = getSiteAndUserId(username)
+const Indicator = ({ username, site }) => {
   const urls = {
     'v2ex': 'https://www.v2ex.com/settings',
     'github': 'https://github.com/settings/profile'
@@ -32,10 +31,15 @@ const Indicator = ({ username }) => {
     'v2ex': 'V2EX 个人简介',
     'github': 'GitHub 个人 Profile 的 Bio 字段'
   }
+
+  if (!username || !site) {
+    return <div></div>
+  }
+
   return (
-    <div>
-      复制上面 &uarr; 的验证码, 保存到 <a target='_blank' href={urls[site]}>{ messages[site] } </a> 然后点击注册
-    </div>
+    <p>
+      复制下面 &darr; 的验证码, 保存到 <a target='_blank' href={urls[site]}>{ messages[site] } </a> 然后点击注册
+    </p>
   )
 }
 
@@ -60,9 +64,10 @@ class InputRow extends React.Component {
   }
 
   render () {
-    const { disabled, placeholder, type } = this.props
+    const { disabled, placeholder, type, label } = this.props
     return (
       <div>
+        <p>{ label }</p>
         <div className='input-group mb-3'>
           <input
             disabled={disabled}
@@ -187,6 +192,7 @@ class RegistrationSection extends React.Component {
       username,
       usernameIsVerifying,
       usernameIsValid,
+      site,
       code,
       submitStatus
     } = this.state
@@ -218,22 +224,25 @@ class RegistrationSection extends React.Component {
         <div className={styles.FormContainer}>
           <InputRow
             type='text'
-            placeholder='输入你的 v2ex 用户名'
+            label='输入你的 GitHub 或者 V2EX 用户名'
+            placeholder='v2ex/your-id or github/your-id'
             onSubmit={this.onUserNameSubmit}
           />
           <FlagText text={verifyTipText} type={verifyTipType} />
           <InputRow
             type='email'
-            placeholder='输入你的 email'
+            label='输入你的 email'
+            placeholder='hello@asmalltalk.com'
             disabled={!usernameIsValid}
             onSubmit={this.onEmailSubmit}
           />
           <div>
+            <Indicator username={username} site={site} />
             <div className='input-group mb-3'>
               <input
                 className='form-control'
-                placeholder='自动生成验证码'
-                aria-label='自动生成验证码'
+                placeholder='验证码'
+                aria-label='验证码'
                 type='text'
                 id='MagicCode'
                 value={code}
@@ -251,7 +260,6 @@ class RegistrationSection extends React.Component {
                 </button>
               </div>
             </div>
-            <Indicator username={username} />
             <p> {this.verifyCodeTip()}</p>
           </div>
           <SubmitButton
