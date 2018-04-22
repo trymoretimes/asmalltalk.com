@@ -3,7 +3,9 @@ export function maybeEmailAddress (email) {
   return re.test(email)
 }
 
-export function validateComment (text) {
-  // TODO sanitize check, -- too weak now
-  return text && text.length > 0
+export function getSiteAndUserId (str) {
+  if (str.includes('/')) {
+     return str.split('/')
+  }
+  return ['v2ex', str]
 }
