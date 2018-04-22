@@ -20,4 +20,5 @@ jobs:
           command: cd services/matcher && npm install && npm test
       - run:
           name: Deploy
-          command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "cd ff && git pull && ./devops/deploy.sh"
+          command: echo 'not ready yet'
+          # command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "cd ff && git pull && ./devops/deploy.sh"
