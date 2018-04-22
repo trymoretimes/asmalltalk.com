@@ -58,7 +58,9 @@ class App extends React.Component {
         this.setState({
           created: true,
           userId: data._id,
-          toUpdate: true
+          toUpdate: true,
+          canHelp: data.canHelp,
+          needHelp: data.needHelp
         })
         callback(null, data)
       }
