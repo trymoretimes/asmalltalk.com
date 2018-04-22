@@ -138,6 +138,7 @@ module.exports = [
       const profile = await driver.getUserProfile(site, userId)
       const user = await dal.create({
         username: userId,
+        site,
         email,
         needHelp,
         canHelp,
