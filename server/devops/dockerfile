@@ -1,11 +1,11 @@
 FROM node:alpine
 
 WORKDIR /opt/server
-COPY server/package.json .
+COPY package.json .
 RUN npm install
 
-COPY server/ .
-COPY server/prod.config.json config.json
+COPY . .
+COPY prod.config.json config.json
 
 EXPOSE 5002
 

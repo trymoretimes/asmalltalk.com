@@ -18,10 +18,8 @@ domain=asmalltalk.com
 #   quay.io/letsencrypt/letsencrypt renew \
 #   --standalone
 
-docker build -f devops/dockerfile.client -t ff-client .
-docker build -f devops/dockerfile.server -t ff-server .
-
-# build matcher service
+cd ~/ff/server && docker build -f devops/dockerfile -t ff-server .
+cd ~/ff/client && docker build -f devops/dockerfile -t ff-client .
 cd ~/ff/services/matcher && docker build -f devops/dockerfile -t ff-matcher .
 cd ~/ff/services/mailer && docker build -f devops/dockerfile -t ff-mailer .
 cd ~/ff/services/jobs && docker build -f devops/dockerfile -t ff-jobs .

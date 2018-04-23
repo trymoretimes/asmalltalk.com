@@ -8,7 +8,7 @@ class V2EX {
   }
 
   async isValidUser (username) {
-    const profile = await this._fetchProfile(username)
+    const profile = await this.getUserProfile(username)
     return profile.status === 'found'
   }
 
