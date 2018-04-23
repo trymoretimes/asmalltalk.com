@@ -12,7 +12,7 @@ const buildObj = (srcObj, allowedFields = []) => {
 }
 
 const buidQuery = (query = {}) => {
-  const allowedFields = ['_id', 'username', 'email']
+  const allowedFields = ['_id', 'username', 'email', 'site']
   return buildObj(query, allowedFields)
 }
 
