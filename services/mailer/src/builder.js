@@ -26,7 +26,12 @@ const buildSocialAccounts = (user, type = MailTypes.Plain) => {
     body += `公司及职位：${company}`
   }
 
-  body += `V2EX 个人档案：https://www.v2ex.com/member/${profile.username}${newLine}${newLine}`
+  if (profile.login) {
+    body += `个人档案：https://github.com/metrue/${profile.login}${newLine}${newLine}`
+  } else {
+    body += `个人档案：https://www.v2ex.com/member/${profile.username}${newLine}${newLine}`
+  }
+
   return body
 }
 
@@ -36,7 +41,7 @@ const build = (reciver, matcher) => {
   return {
     text: `
 Hi ${reciver.username}，\r\n
-今天为你推荐的 V2EX 用户是 ${matcher.username}，以下是 ${matcher.username} 的个人简介：<br><br>
+今天为你推荐的是 ${matcher.username}，以下是 ${matcher.username} 的个人简介：<br><br>
 
 ${textBody}
 
@@ -49,7 +54,7 @@ ${textBody}
 `,
     html: `
 Hi ${reciver.username}， <br>
-今天为你推荐的 V2EX 用户是 ${matcher.username}，以下是 ${matcher.username} 的个人简介： <br><br>
+今天为你推荐的是 ${matcher.username}，以下是 ${matcher.username} 的个人简介： <br><br>
 
 ${htmlBody}
 
