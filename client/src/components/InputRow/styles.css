@@ -1,0 +1,9 @@
+.Succeed {
+  color: green;
+  background-color: white;
+}
+
+.Failed {
+  color: red;
+  background-color: white;
+}

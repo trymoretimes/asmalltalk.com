@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { SubmitStatus } from '../../constants'
+import styles from './styles.css'
 
 class InputRow extends React.Component {
   constructor (props) {
@@ -32,12 +33,15 @@ class InputRow extends React.Component {
     const { disabled, placeholder, type, label } = this.props
     const { submitStatus } = this.state
     let message = '↓'
+    let buttonStyle = ''
     if (submitStatus === SubmitStatus.Submitting) {
       message = '...'
     } else if (submitStatus === SubmitStatus.Succeed) {
       message = '√'
+      buttonStyle = styles.Succeed
     } else if (submitStatus === SubmitStatus.Failed) {
       message = 'X'
+      buttonStyle = styles.Failed
     }
 
     return (
@@ -55,7 +59,7 @@ class InputRow extends React.Component {
           />
           <div className='input-group-append'>
             <button
-              className='btn btn-secondary'
+              className={'btn btn-secondary ' + buttonStyle}
               type='button'
               disabled={disabled}
               onClick={this.onSubmit}
