@@ -50,12 +50,13 @@ class Mailer {
 
   async connect (matcher, matchee) {
     try {
-      await this.mail(matcher, matchee)
+      if (matchee) {
+        await this.mail(matcher, matchee)
+        console.log(`mail sended to ${matcher.email} with ${matchee.email}`)
+      }
       await this.api.updateMailed(matcher._id, matchee._id)
     } catch (e) {
-      console.error('Send email failed =====')
-      console.error(e)
-      console.error('=======================')
+      console.log(e)
     }
   }
 
