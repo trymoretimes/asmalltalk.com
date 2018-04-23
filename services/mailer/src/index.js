@@ -37,7 +37,8 @@ class Mailer {
       if (!lastEmailAt || (now - lastEmailAt >= 24 * 3600 * 1000)) {
         const matchGuys = matcher.matchGuys || []
         const mailed = matcher.emailed || []
-        for (const guyId of matchGuys) {
+        for (let i = matchGuys.length - 1; i >= 0; --i) {
+          const guyId = matchGuys[i]
           if (mailed.indexOf(guyId) === -1) {
             const matchee = await this.api.fetchUser(guyId)
             await this.connect(matcher, matchee)
