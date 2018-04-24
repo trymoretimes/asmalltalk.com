@@ -16,10 +16,10 @@ const buildSocialAccounts = (user, type = MailTypes.Plain) => {
     }
   })
   if (canHelp && canHelp.length > 0) {
-    body += `${profile.username} 擅长: ${user.canHelp}${newLine}`
+    body += `${profile.username || profile.login} 擅长: ${user.canHelp}${newLine}`
   }
   if (needHelp && needHelp.length > 0) {
-    body += `${profile.username} 希望: ${user.needHelp}${newLine}`
+    body += `${profile.username || profile.login} 希望: ${user.needHelp}${newLine}`
   }
 
   if (company) {
@@ -27,7 +27,7 @@ const buildSocialAccounts = (user, type = MailTypes.Plain) => {
   }
 
   if (profile.login) {
-    body += `个人档案：https://github.com/metrue/${profile.login}${newLine}${newLine}`
+    body += `个人档案：https://github.com/${profile.login}${newLine}${newLine}`
   } else {
     body += `个人档案：https://www.v2ex.com/member/${profile.username}${newLine}${newLine}`
   }
