@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Home from './components/App'
+import Home from './components/Home'
 import User from './components/User'
 import NotFound from './components/NotFound'
 import { Router, Route, IndexRoute, hashHistory } from 'react-router'
