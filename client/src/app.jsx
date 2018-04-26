@@ -8,7 +8,7 @@ ReactDOM.render((
   <Router history={ hashHistory }>
     <Route path="/" component={ App }>
       <IndexRoute component={ App } />
-      <Route path="users/:id" component={ User } />
     </Route>
+    <Route path="users/:id" component={ User } />
   </Router>
 ), document.body)

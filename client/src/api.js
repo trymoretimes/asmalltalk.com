@@ -2,14 +2,17 @@ import fetch from 'isomorphic-fetch'
 import { API_HOST } from '../config'
 
 class API {
-  async query (qs = {}) {
-    const { username, email } = qs
+  async query(qs = {}) {
+    const { username, email, id } = qs
     let qsString = '?'
     if (username) {
       qsString += `username=${username}&`
     }
     if (email) {
       qsString += `email=${email}&`
+    }
+    if (id) {
+      qsString += `id=${id}&`
     }
 
     const url = `${API_HOST}/users${qsString}`
