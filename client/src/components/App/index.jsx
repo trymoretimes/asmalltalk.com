@@ -11,6 +11,8 @@ import LogoBox from '../../components/LogoBox'
 import AboutSection from '../../components/AboutSection'
 import RegistrationSection from '../../components/RegistrationSection'
 
+import { hashHistory } from 'react-router'
+
 class App extends React.Component {
   constructor () {
     super()
@@ -48,19 +50,12 @@ class App extends React.Component {
       await this.verifyCode(payload)
       const data = await api.submit(payload)
       if (data.error) {
-        this.setState({
-          created: false,
-          toUpdate: false
-        })
+        hashHistory.push('/notfound')
+        this.setState({ created: false })
         callback(data.error, data)
       } else {
-        this.setState({
-          created: true,
-          userId: data._id,
-          toUpdate: true,
-          canHelp: data.canHelp,
-          needHelp: data.needHelp
-        })
+        hashHistory.push(`/users/${data._id}`)
+        this.setState({ created: true })
         callback(null, data)
       }
     } catch (e) {
