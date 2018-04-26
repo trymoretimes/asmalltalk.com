@@ -1,16 +1,15 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 
-import api from './api'
-import styles from './styles.css'
+import api from '../../api'
+import styles from '../../styles.css'
 import 'bootstrap/dist/css/bootstrap.css'
 
-import { SubmitStatus } from './constants'
+import { SubmitStatus } from '../../constants'
 
-import DetailComponent from './components/DetailComponent'
-import LogoBox from './components/LogoBox'
-import AboutSection from './components/AboutSection'
-import RegistrationSection from './components/RegistrationSection'
+import DetailComponent from '../../components/DetailComponent'
+import LogoBox from '../../components/LogoBox'
+import AboutSection from '../../components/AboutSection'
+import RegistrationSection from '../../components/RegistrationSection'
 
 class App extends React.Component {
   constructor () {
@@ -101,6 +100,4 @@ class App extends React.Component {
   }
 }
 
-const COMMENTOR_ID = 'YoYo'
-const node = document.getElementById(COMMENTOR_ID)
-ReactDOM.render(<App />, node)
+export default App
