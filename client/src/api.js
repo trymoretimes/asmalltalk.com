@@ -34,8 +34,8 @@ class API {
   }
 
   async updateInfo (payload) {
-    const { userId, canHelp, needHelp, extraInfo } = payload
-    const url = `${API_HOST}/users/${userId}`
+    const { id, canHelp, needHelp, extraInfo } = payload
+    const url = `${API_HOST}/users/${id}`
     const opt = {
       method: 'PUT',
       headers: {
