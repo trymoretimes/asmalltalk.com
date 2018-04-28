@@ -49,7 +49,7 @@ ${textBody}
 
 小对话 - ${(new Date()).toISOString().substring(0, 10)}\r\n
 
-更新你的档案：https://www.asmalltalk.com \r\n
+更新你的档案：https://asmalltalk.com/#/users/${reciver._id} \r\n
  \r\n
 `,
     html: `
@@ -62,8 +62,8 @@ ${htmlBody}
 
 小对话<br><br>
 
-更新你的档案：https://www.asmalltalk.com<br><br>
-<a href="mailto:h.minghe@gmail.com?subject=退订&body=对 小对话 有什么建议吗">退订</a>
+更新你的档案：https://asmalltalk.com/#/users/${reciver._id} <br><br>
+<a href="mailto:h.minghe@gmail.com?subject=退订&body=对 小对话 有什么建议吗">退订</a><br>
           `
   }
 }
