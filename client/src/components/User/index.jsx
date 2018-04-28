@@ -39,8 +39,10 @@ export default class User extends React.Component {
 
   async componentWillMount() {
     const { id } = this.props.params
-    const user = api.query({ id })
-    this.setState({ user })
+    const users = await api.query({ id })
+    if (users.length > 0) {
+      this.setState({ user: users[0] })
+    }
   }
 
   onCanHelpChange (evt) {
@@ -60,11 +62,11 @@ export default class User extends React.Component {
   }
 
   async onSubmit () {
-    const { userId } = this.props
+    const { id } = this.props.params
     const { canHelp, needHelp } = this.state
     this.setState({ submitStatus: SubmitStatus.Submitting })
     try {
-      await api.updateInfo({ canHelp, needHelp, userId })
+      await api.updateInfo({ canHelp, needHelp, id })
       this.setState({ submitStatus: SubmitStatus.Succeed })
     } catch (e) {
       this.setState({ submitStatus: SubmitStatus.Failed })
@@ -86,11 +88,28 @@ export default class User extends React.Component {
     return (
         <div className={styles.MainContainer}>
           <LogoBox subTitle='注册完成！更新下列信息将帮助你更精确匹配好友' />
-          <DetailComponent
-            userId={_id}
-            canHelp={canHelp}
-            needHelp={needHelp}
-          />
+          <div className={styles.MainContainer}>
+            <TitleBox title='更新信息' />
+            <div className={styles.FormContainer}>
+              <InputBox
+                placeholder='最近想开始入门区块链, 不知道如何开始呢'
+                value={needHelp}
+                label='我想获取这些帮助'
+                onChange={this.onNeedHelpChange}
+              />
+              <InputBox
+                placeholder='我精通Go语言编程,偶尔写写 Vue'
+                value={canHelp}
+                label='我可以提供这些帮助'
+                onChange={this.onCanHelpChange}
+              />
+              <SubmitButton
+                status={submitStatus}
+                message={message}
+                handleSubmit={this.onSubmit}
+              />
+            </div>
+          </div>
           <AboutSection />
         </div>
     )
