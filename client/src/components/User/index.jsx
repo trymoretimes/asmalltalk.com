@@ -6,7 +6,6 @@ import TitleBox from '../TitleBox'
 import SubmitButton from '../SubmitButton'
 import { SubmitStatus } from '../../constants'
 import LogoBox from '../../components/LogoBox'
-import DetailComponent from '../../components/DetailComponent'
 import AboutSection from '../../components/AboutSection'
 
 const InputBox = ({label, value, placeholder, onChange}) => (

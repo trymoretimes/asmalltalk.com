@@ -5,8 +5,6 @@ import styles from '../../styles.css'
 import 'bootstrap/dist/css/bootstrap.css'
 
 import { SubmitStatus } from '../../constants'
-
-import DetailComponent from '../../components/DetailComponent'
 import LogoBox from '../../components/LogoBox'
 import AboutSection from '../../components/AboutSection'
 import RegistrationSection from '../../components/RegistrationSection'
