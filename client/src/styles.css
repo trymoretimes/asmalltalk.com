@@ -16,18 +16,6 @@ body {
   font-size: 0.8rem;
 }
 
-.RegistrationContainer {
-  color: #778087;
-}
-
-.FormContainer {
-  padding-left: 36px;
-  padding-right: 36px;
-  margin: 0 auto;
-  /* margin-bottom: 50px; */
-  font-size: 14px;
-}
-
 .IntroContainer {
   background-color: #f6f6f6;
   color: #778087;

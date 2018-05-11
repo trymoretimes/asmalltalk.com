@@ -1,0 +1,20 @@
+.RegistrationContainer {
+  color: #778087;
+}
+
+.FormContainer {
+  padding-left: 36px;
+  padding-right: 36px;
+  margin: 0 auto;
+  /* margin-bottom: 50px; */
+  font-size: 14px;
+}
+
+.SiteButton {
+  margin: 5px;
+}
+
+.SiteButtonClicked {
+  background-color: #6c757d;
+  color: white;
+}

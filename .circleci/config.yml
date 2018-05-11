@@ -1,24 +1,118 @@
-version: 2
-jobs:
-  build:
+workspace: &workspace
+  ~/circleci-ff-workflows
+
+defaults: &defaults
     docker:
       - image: circleci/node:9.11
-    working_directory: ~/circleci-ff-workflows
-    steps:
-      - checkout
-      - run:
-          name: build client
-          command: cd client && npm install && npm run build  # install dependencies
-      - run:
-          name: build server
-          command: cd server && npm install  # setup database
-      - run:
-          name: test server
-          command: cd server && npm test
-      - run:
-          name: test matcher
-          command: cd services/matcher && npm install && npm test
-      - run:
-          name: Deploy
-          command: echo 'not ready yet'
-          # command: ssh -o "StrictHostKeyChecking no" root@172.104.86.178 "cd ff && git pull && ./devops/deploy.sh"
+    working_directory: *workspace
+
+steps: &setup
+  - checkout
+  - run:
+      name: install client deps
+      command: |
+        cd client
+        npm install
+  - run:
+      name: install server deps
+      command: |
+        cd server
+        npm install
+  - persist_to_workspace:
+      root: .
+      paths:
+        - '*'
+
+steps: &build-client
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: build
+      command: |
+        cd client
+        cp prod.config.js config.js
+        NODE_ENV=production npm run build
+  - persist_to_workspace:
+      root: .
+      paths:
+        - '*'
+
+steps: &build-server
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: build
+      command: |
+        echo 'build done'
+
+steps: &deploy-client
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run: sudo apt-get update && sudo apt-get install -qq -y python-pip libpython-dev
+  - run: curl -O https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py
+  - run: sudo pip install -q awscli --upgrade
+  - run:
+      name: deploy
+      command: |
+        ls -al client/public
+        aws s3 sync client/public s3://asmalltalk.com/ --delete --acl public-read
+
+steps: &deploy-server
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: deploy
+      command: |
+        echo 'deploy server'
+
+version: 2
+jobs:
+  setup:
+    <<: *defaults
+    steps: *setup
+  build-client:
+    <<: *defaults
+    steps: *build-client
+  build-server:
+    <<: *defaults
+    steps: *build-server
+  deploy-client:
+    <<: *defaults
+    steps: *deploy-client
+  deploy-server:
+    <<: *defaults
+    steps: *deploy-server
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - setup
+      - build-client:
+          requires:
+            - setup
+      - build-server:
+          requires:
+            - setup
+      - deploy-client:
+          requires:
+            - build-client
+          filters:
+            branches:
+              only:
+                - master
+                - v1
+      - deploy-server:
+          requires:
+            - build-server
+          filters:
+            branches:
+              only: master

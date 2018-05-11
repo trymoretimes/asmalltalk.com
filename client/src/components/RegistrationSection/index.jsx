@@ -1,9 +1,9 @@
 import React from 'react'
 import ClipboardJS from 'clipboard'
 
-import styles from '../../styles.css'
+import styles from './styles.css'
 import api from '../../api'
-import { maybeEmailAddress, getSiteAndUserId } from '../../utils'
+import { maybeEmailAddress } from '../../utils'
 import screenshot from './clip.svg'
 
 import { SubmitStatus } from '../../constants'
@@ -11,17 +11,6 @@ import SubmitButton from '../SubmitButton'
 import InputRow from '../InputRow'
 
 import TitleBox from '../TitleBox'
-
-const FlagText = ({ type, text }) => {
-  const classNames = {
-    error: styles.ErrorText,
-    success: styles.PassText,
-    inactive: styles.InactiveText
-  }
-  return (
-    <p className={classNames[type] || ''}> {text} </p>
-  )
-}
 
 const Indicator = ({ username, site }) => {
   const urls = {
@@ -34,7 +23,7 @@ const Indicator = ({ username, site }) => {
   }
 
   if (!username || !site) {
-    return <div></div>
+    return <div />
   }
 
   return (
@@ -56,12 +45,13 @@ class RegistrationSection extends React.Component {
       code: '',
 
       copied: false,
-      submitStatus: SubmitStatus.Default,
+      submitStatus: SubmitStatus.Default
     }
 
     this.onUserNameSubmit = this.onUserNameSubmit.bind(this)
     this.onEmailSubmit = this.onEmailSubmit.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleSiteClick = this.handleSiteClick.bind(this)
   }
 
   componentDidMount () {
@@ -75,9 +65,13 @@ class RegistrationSection extends React.Component {
     })
   }
 
-  async onUserNameSubmit (val) {
-    const [site, username] = getSiteAndUserId(val)
-    this.setState({ username, site })
+  async onUserNameSubmit (username) {
+    const { site } = this.state
+    if (!site) {
+      alert('you have to chose a site')
+    }
+
+    this.setState({ username })
     const valid = await api.isValidUser({ username, site })
     this.setState({ usernameIsValid: valid })
     return valid
@@ -123,6 +117,10 @@ class RegistrationSection extends React.Component {
     })
   }
 
+  handleSiteClick (site) {
+    this.setState({ site })
+  }
+
   render () {
     const {
       email,
@@ -142,14 +140,46 @@ class RegistrationSection extends React.Component {
     }
 
     const isReady = email.length > 0 && code.length > 0 && usernameIsValid
+
+    const sites = [
+      {
+        name: 'github',
+        url: ''
+      },
+      {
+        name: 'hackernews',
+        url: ''
+      },
+      {
+        name: 'v2ex',
+        url: ''
+      }
+    ]
+
+    const buttonStyle = styles.SiteButton + ' btn btn-sm btn-outline-secondary'
+    const buttonClickedStyle = buttonStyle + ` ${styles.SiteButtonClicked}`
     return (
       <div className={styles.RegistrationContainer}>
         <TitleBox title='开始你的小对话' />
+        <div className={styles.FormContainer + ` mb-3`}>
+          {
+            sites.map((s) => (
+              <button
+                type='button'
+                className={site === s.name ? buttonClickedStyle : buttonStyle}
+                onClick={() => this.handleSiteClick(s.name)}
+              >
+                {s.name}
+              </button>
+            ))
+          }
+        </div>
         <div className={styles.FormContainer}>
           <InputRow
             type='text'
-            label='输入你的 GitHub 或者 V2EX 用户名'
-            placeholder='v2ex/your-id or github/your-id'
+            label='输入在上面站点的 id'
+            placeholder='id'
+            disabled={!site}
             onSubmit={this.onUserNameSubmit}
           />
           <InputRow
