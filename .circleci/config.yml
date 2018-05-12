@@ -141,17 +141,13 @@ workflows:
             - build-client
           filters:
             branches:
-              only:
-                - master
-                - /stage/
+              only: /(^master$|(^fix))/
       - deploy-server:
           requires:
             - build-server
           filters:
             branches:
-              only:
-                - master
-                - /stage/
+              only: /(^master$|(^fix))/
       - test-api:
           requires:
             - setup
@@ -160,6 +156,4 @@ workflows:
             - test-api
           filters:
             branches:
-              only:
-                - master
-                - /stage/
+              only: /(^master$|(^fix))/
