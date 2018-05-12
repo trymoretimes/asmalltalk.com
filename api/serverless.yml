@@ -49,7 +49,7 @@ functions:
           method: put
           cors: true
   auth:
-    handler: handler.handle
+    handler: auth/handler.handle
     events:
       - http:
           path: /auth
