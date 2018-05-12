@@ -101,6 +101,18 @@ steps: &deploy-api
         cd api
         npm run deploy-staging
 
+steps: &deploy-api-production
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: deploy
+      command: |
+        cd api
+        npm run deploy-production
+
+
 version: 2
 jobs:
   setup:
@@ -124,6 +136,9 @@ jobs:
   deploy-api:
     <<: *defaults
     steps: *deploy-api
+  deploy-api-production:
+    <<: *defaults
+    steps: *deploy-api-production
 
 workflows:
   version: 2
@@ -157,3 +172,9 @@ workflows:
           filters:
             branches:
               only: /(^master$|(^fix))/
+      - deploy-api-production:
+          requires:
+            - test-api
+          filters:
+            branches:
+              only: production
