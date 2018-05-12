@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "deploy-testing": "serverless deploy -v --stage testing",
     "deploy-staging": "serverless deploy -v --stage staging",
     "deploy-production": "serverless deploy -v --stage production",
     "test": "jest"

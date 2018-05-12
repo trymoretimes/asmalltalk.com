@@ -5,20 +5,61 @@ provider:
   runtime: nodejs6.10
   stage: ${opt:stage}
   region: us-east-1
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
 
 package:
   include:
     - handler.js
-    - lib
+    - users/handler.js
     - node_modules/babel-runtime
     - node_modules/node-fetch
     - node_modules/@octokit/rest
 
 functions:
+  create-user:
+    handler: users/handler.create
+    events:
+      - http:
+          path: /users
+          method: post
+          cors: true
+  get-user:
+    handler: users/handler.get
+    events:
+      - http:
+          path: /users/{id}
+          method: get
+          cors: true
+  update-user:
+    handler: users/handler.update
+    events:
+      - http:
+          path: /users/{id}
+          method: put
+          cors: true
   auth:
     handler: handler.handle
     events:
       - http:
-          path: /
+          path: /auth
           method: get
           cors: true
+resources:
+  Resources:
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}

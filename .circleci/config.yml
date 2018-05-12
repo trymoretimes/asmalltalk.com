@@ -84,10 +84,11 @@ steps: &test-api
   - attach_workspace:
       at: *workspace
   - run:
-      name: deploy
+      name: test-api
       command: |
         cd api
-        npm run test
+        npm run deploy-testing
+        DYNAMODB_TABLE=asmalltalk-api-testing npm run test
 
 steps: &deploy-api
   - setup_remote_docker:
@@ -142,13 +143,15 @@ workflows:
             branches:
               only:
                 - master
-                - v1
+                - /stage/
       - deploy-server:
           requires:
             - build-server
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - /stage/
       - test-api:
           requires:
             - setup
@@ -157,4 +160,6 @@ workflows:
             - test-api
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - /stage/
