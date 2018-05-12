@@ -54,7 +54,7 @@ steps: &build-server
       command: |
         echo 'build done'
 
-steps: &deploy-client
+steps: &deploy-client-production
   - setup_remote_docker:
       docker_layer_caching: true
   - attach_workspace:
@@ -67,6 +67,22 @@ steps: &deploy-client
       command: |
         ls -al client/public
         aws s3 sync client/public s3://asmalltalk.com/ --delete --acl public-read
+        aws s3 sync client/public s3://www.asmalltalk.com/ --delete --acl public-read
+
+steps: &deploy-client-staging
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run: sudo apt-get update && sudo apt-get install -qq -y python-pip libpython-dev
+  - run: curl -O https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py
+  - run: sudo pip install -q awscli --upgrade
+  - run:
+      name: deploy
+      command: |
+        ls -al client/public
+        aws s3 sync client/public s3://staging.asmalltalk.com/ --delete --acl public-read
+        aws s3 sync client/public s3://www.staging.asmalltalk.com/ --delete --acl public-read
 
 steps: &deploy-server
   - setup_remote_docker:
@@ -90,7 +106,7 @@ steps: &test-api
         npm run deploy-testing
         DYNAMODB_TABLE=asmalltalk-api-testing npm run test
 
-steps: &deploy-api
+steps: &deploy-api-staging
   - setup_remote_docker:
       docker_layer_caching: true
   - attach_workspace:
@@ -124,18 +140,21 @@ jobs:
   build-server:
     <<: *defaults
     steps: *build-server
-  deploy-client:
+  deploy-client-production:
     <<: *defaults
-    steps: *deploy-client
+    steps: *deploy-client-production
+  deploy-client-staging:
+    <<: *defaults
+    steps: *deploy-client-staging
   deploy-server:
     <<: *defaults
     steps: *deploy-server
   test-api:
     <<: *defaults
     steps: *test-api
-  deploy-api:
+  deploy-api-staging:
     <<: *defaults
-    steps: *deploy-api
+    steps: *deploy-api-staging
   deploy-api-production:
     <<: *defaults
     steps: *deploy-api-production
@@ -151,12 +170,18 @@ workflows:
       - build-server:
           requires:
             - setup
-      - deploy-client:
+      - deploy-client-staging:
           requires:
             - build-client
           filters:
             branches:
               only: /(^master$|(^fix))/
+      - deploy-client-production:
+          requires:
+            - build-client
+          filters:
+            branches:
+              only: production
       - deploy-server:
           requires:
             - build-server
@@ -166,7 +191,7 @@ workflows:
       - test-api:
           requires:
             - setup
-      - deploy-api:
+      - deploy-api-staging:
           requires:
             - test-api
           filters:
