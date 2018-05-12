@@ -22,14 +22,14 @@ class API {
   }
 
   async updateInfo (payload) {
-    const { id, canHelp, needHelp, extraInfo } = payload
+    const { id, story } = payload
     const url = `${API_HOST}/users/${id}`
     const opt = {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ canHelp, needHelp, extraInfo })
+      body: JSON.stringify({ story })
     }
     const resp = await fetch(url, opt)
     return resp.status === 204
