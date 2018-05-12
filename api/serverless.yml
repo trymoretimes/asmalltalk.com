@@ -1,0 +1,24 @@
+service: asmalltalk-api
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  stage: ${opt:stage}
+  region: us-east-1
+
+package:
+  include:
+    - handler.js
+    - lib
+    - node_modules/babel-runtime
+    - node_modules/node-fetch
+    - node_modules/@octokit/rest
+
+functions:
+  auth:
+    handler: handler.handle
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true

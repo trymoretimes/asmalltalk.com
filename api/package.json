@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "deploy-staging": "serverless deploy -v --stage staging",
+    "deploy-production": "serverless deploy -v --stage production",
     "test": "jest"
   },
   "keywords": [],
@@ -14,6 +16,7 @@
     "snoowrap": "^1.15.2"
   },
   "devDependencies": {
-    "jest": "^22.4.3"
+    "jest": "^22.4.3",
+    "serverless": "^1.27.2"
   }
 }

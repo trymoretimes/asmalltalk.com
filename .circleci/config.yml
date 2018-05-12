@@ -18,6 +18,11 @@ steps: &setup
       command: |
         cd server
         npm install
+  - run:
+      name: install api deps
+      command: |
+        cd api
+        npm install
   - persist_to_workspace:
       root: .
       paths:
@@ -73,6 +78,28 @@ steps: &deploy-server
       command: |
         echo 'deploy server'
 
+steps: &test-api
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: deploy
+      command: |
+        cd api
+        npm run test
+
+steps: &deploy-api
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: deploy
+      command: |
+        cd api
+        npm run deploy-staging
+
 version: 2
 jobs:
   setup:
@@ -90,6 +117,12 @@ jobs:
   deploy-server:
     <<: *defaults
     steps: *deploy-server
+  test-api:
+    <<: *defaults
+    steps: *test-api
+  deploy-api:
+    <<: *defaults
+    steps: *deploy-api
 
 workflows:
   version: 2
@@ -113,6 +146,15 @@ workflows:
       - deploy-server:
           requires:
             - build-server
+          filters:
+            branches:
+              only: master
+      - test-api:
+          requires:
+            - setup
+      - deploy-api:
+          requires:
+            - test-api
           filters:
             branches:
               only: master
