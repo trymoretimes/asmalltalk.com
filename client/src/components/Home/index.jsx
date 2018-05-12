@@ -35,7 +35,7 @@ class Home extends React.Component {
         hashHistory.push('/notfound')
         callback(data.error, data)
       } else {
-        hashHistory.push(`/users/${data._id}`)
+        hashHistory.push(`/users/${data.id}`)
         callback(null, data)
       }
     } catch (e) {

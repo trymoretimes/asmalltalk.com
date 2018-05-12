@@ -18,13 +18,14 @@ const response = (err, data = {}, cb) => {
 }
 
 const create = function (event, ctx, cb) {
-  const email = event.email
-  const username = event.username
-  const site = event.site
-  const story = event.story
+  const data = JSON.parse(event.body)
+  const email = data.email
+  const username = data.username
+  const site = data.site
+  const story = data.story
 
   const id = uuid.v1()
-  const updatedAt =new Date().getTime()
+  const updatedAt = new Date().getTime()
 
   const params = {
     TableName: TableName,
@@ -40,7 +41,7 @@ const create = function (event, ctx, cb) {
 
   return dynamoDb.put(params, (error, data) => {
     response(error, params.Item, cb)
-  });
+  })
 }
 
 const get = function (event, ctx, cb) {
@@ -50,36 +51,36 @@ const get = function (event, ctx, cb) {
     Key: {
       id: id
     }
-  };
+  }
 
   return dynamoDb.get(params, (error, data) => {
     if (error) {
-      cb(error);
+      cb(error)
     }
-    response(error, data.Item, cb);
-  });
+    response(error, data.Item, cb)
+  })
 }
 
 const update = function (event, ctx, cb) {
-  const data = JSON.parse(event.body);
-  data.id = event.pathParameters.id;
-  data.updatedAt = new Date().getTime();
+  const data = JSON.parse(event.body)
+  data.id = event.pathParameters.id
+  data.updatedAt = new Date().getTime()
 
   const params = {
     TableName: TableName,
-    Item: data,
-  };
+    Item: data
+  }
 
   return dynamoDb.put(params, (error, data) => {
     if (error) {
-      cb(error);
+      cb(error)
     }
-    response(error, data.Item, cb);
-  });
+    response(error, data.Item, cb)
+  })
 }
 
 module.exports = {
   create: create,
   get: get,
-  update: update,
+  update: update
 }

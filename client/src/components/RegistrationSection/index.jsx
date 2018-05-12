@@ -15,11 +15,11 @@ import TitleBox from '../TitleBox'
 const Indicator = ({ username, site }) => {
   const urls = {
     'v2ex': 'https://www.v2ex.com/settings',
-    'github': 'https://github.com/settings/profile'
+    'github': 'https://github.com/metrue/asmalltalk/issues/66'
   }
   const messages = {
     'v2ex': 'V2EX 个人简介',
-    'github': 'GitHub 个人 Profile 的 Bio 字段'
+    'github': '小对话的 Github Repo'
   }
 
   if (!username || !site) {
@@ -28,7 +28,7 @@ const Indicator = ({ username, site }) => {
 
   return (
     <p>
-      复制下面 &darr; 的验证码, 保存到 <a target='_blank' href={urls[site]}>{ messages[site] } </a> 然后点击注册
+      复制下面 &darr; 的验证码, 评论到 <a target='_blank' href={urls[site]}>{ messages[site] } </a> 然后点击注册
     </p>
   )
 }

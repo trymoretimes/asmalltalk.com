@@ -9,7 +9,7 @@ describe('users', () => {
     story: 'a super cool JSer'
   }
   test('create', (done) => {
-    handler.create(user, null, (err, resp) => {
+    handler.create({ body: JSON.stringify(user) }, null, (err, resp) => {
       expect(err).toBeNull()
       createdUser = JSON.parse(resp.body)
       expect(createdUser.username === user.username).toBeTruthy()

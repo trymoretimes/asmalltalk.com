@@ -2,20 +2,8 @@ import fetch from 'isomorphic-fetch'
 import { API_HOST } from '../config'
 
 class API {
-  async query (qs = {}) {
-    const { username, email, id } = qs
-    let qsString = '?'
-    if (username) {
-      qsString += `username=${username}&`
-    }
-    if (email) {
-      qsString += `email=${email}&`
-    }
-    if (id) {
-      qsString += `_id=${id}&`
-    }
-
-    const url = `${API_HOST}/users${qsString}`
+  async query (id) {
+    const url = `${API_HOST}/users/${id}`
     const resp = await fetch(url)
     return resp.json()
   }
@@ -52,7 +40,8 @@ class API {
     const url = `${API_HOST}/users/valid?username=${username}&site=${site}`
     const resp = await fetch(url)
     const data = await resp.json()
-    return data.valid
+    // TODO fix this
+    return true
   }
 
   async getUserProfile (payload) {
@@ -66,15 +55,16 @@ class API {
     const { username, email, site } = payload
     const url = `${API_HOST}/users/code?username=${username}&email=${email}&site=${site}`
     const resp = await fetch(url)
-    return resp.json()
+    // TODO fix this
+    return { code: '小对话' + (Math.floor(Math.random() * 10000)) }
   }
 
   async verify (payload) {
     const { username, code, site } = payload
-    const url = `${API_HOST}/users/verifycode?username=${username}&code=${code}&site=${site}`
+    const url = `${API_HOST}/auth?username=${username}&code=${code}&site=${site}`
     const resp = await fetch(url)
     const data = await resp.json()
-    return data.verified
+    return data.ok
   }
 }
 

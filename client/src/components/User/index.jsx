@@ -38,7 +38,7 @@ export default class User extends React.Component {
 
   async componentWillMount() {
     const { id } = this.props.params
-    const users = await api.query({ id })
+    const users = await api.query(id)
     if (users.length > 0) {
       this.setState({ user: users[0] })
     }
