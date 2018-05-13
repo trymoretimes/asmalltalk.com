@@ -51,14 +51,14 @@ functions:
           method: put
           cors: true
   auth:
-    handler: auth/handler.handle
+    handler: auth/status/handler.handle
     events:
       - http:
-          path: /auth
+          path: /auth/status
           method: get
           cors: true
   is-v2-user:
-    handler: auth/v2ex/index.getUser
+    handler: auth/status/v2ex/index.getUser
     events:
       - http:
           path: auth/v2ex/user

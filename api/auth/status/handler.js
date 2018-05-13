@@ -4,7 +4,6 @@ const github = require('./github')
 const v2ex = require('./v2ex').auth
 const hackernews = require('./hackernews')
 
-
 exports.handle = function (event, ctx, cb) {
   const site = safeGet(event, ['queryStringParameters', 'site'])
   const username = safeGet(event, ['queryStringParameters', 'username'])
