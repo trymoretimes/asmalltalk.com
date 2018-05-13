@@ -187,6 +187,9 @@ workflows:
       - build-client-staging:
           requires:
             - setup
+          filters:
+            branches:
+              only: /(^master$|(^fix))/
       - deploy-client-staging:
           requires:
             - build-client-staging
