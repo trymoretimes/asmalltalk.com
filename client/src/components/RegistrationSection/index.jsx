@@ -12,6 +12,12 @@ import InputRow from '../InputRow'
 
 import TitleBox from '../TitleBox'
 
+const SiteEnum = {
+  V2ex: 'v2ex',
+  Github: 'Github',
+  HackerNews: 'hackernews'
+}
+
 const Indicator = ({ username, site }) => {
   const urls = {
     'v2ex': 'https://www.v2ex.com/settings',
@@ -71,9 +77,14 @@ class RegistrationSection extends React.Component {
       alert('you have to chose a site')
     }
 
-    this.setState({ username })
-    const valid = await api.isValidUser({ username, site })
-    this.setState({ usernameIsValid: valid })
+    let valid = false
+    if (site === SiteEnum.V2ex) {
+      valid = await api.isV2exUser({ username })
+    } else if (site === SiteEnum.Github) {
+      valid = await api.isGithubUser({ username })
+    }
+    this.setState({ username, usernameIsValid: valid })
+
     return valid
   }
 
@@ -143,15 +154,15 @@ class RegistrationSection extends React.Component {
 
     const sites = [
       {
-        name: 'github',
+        name: SiteEnum.Github,
         url: ''
       },
       {
-        name: 'hackernews',
+        name: SiteEnum.HackerNews,
         url: ''
       },
       {
-        name: 'v2ex',
+        name: SiteEnum.V2ex,
         url: ''
       }
     ]

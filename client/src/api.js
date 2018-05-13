@@ -44,6 +44,38 @@ class API {
     return true
   }
 
+  async isGithubUser (payload) {
+    const { username } = payload
+    const url = `https://api.github.com/users/${username}`
+    let valid = true
+    try {
+      const resp = await fetch(url)
+      const data = await resp.json()
+      valid = !(data.message === 'Not Found')
+    } catch (e) {
+      // TODO put log into log system
+      console.warn(e)
+      valid = false
+    }
+    return valid
+  }
+
+  async isV2exUser (payload) {
+    const { username } = payload
+    const url = `${API_HOST}/auth/v2ex/user?username=${username}`
+    let valid = true
+    try {
+      const resp = await fetch(url)
+      const data = await resp.json()
+      valid = !(data.status === 'notfound')
+    } catch (e) {
+      // TODO put log into log system
+      console.warn(e)
+      valid = false
+    }
+    return valid
+  }
+
   async getUserProfile (payload) {
     const { username } = payload
     const url = `${API_HOST}/users/valid?username=${username}`
