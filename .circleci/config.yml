@@ -182,6 +182,9 @@ workflows:
       - build-client-production:
           requires:
             - setup
+          filters:
+            branches:
+              only: production
       - build-client-staging:
           requires:
             - setup
