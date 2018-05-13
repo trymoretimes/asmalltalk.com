@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deploy-testing": "serverless deploy -v --stage testing",
-    "deploy-staging": "serverless deploy -v --stage staging",
-    "deploy-production": "serverless deploy -v --stage production",
+    "deploy-testing": "serverless deploy -v --stage testing --SENDGRID_API_KEY ${SENDGRID_API_KEY} --ASMALLTALK_EMAIL ${ASMALLTALK_EMAIL}",
+    "deploy-staging": "serverless deploy -v --stage staging --SENDGRID_API_KEY ${SENDGRID_API_KEY} --ASMALLTALK_EMAIL ${ASMALLTALK_EMAIL}",
+    "deploy-production": "serverless deploy -v --stage production --SENDGRID_API_KEY ${SENDGRID_API_KEY} --ASMALLTALK_EMAIL ${ASMALLTALK_EMAIL}",
     "test": "DYNAMODB_TABLE=asmalltalk-api-testing jest"
   },
   "keywords": [],
@@ -14,6 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "@octokit/rest": "^15.2.7",
+    "@sendgrid/mail": "^6.2.1",
+    "aws-sdk": "^2.238.1",
     "snoowrap": "^1.15.2"
   },
   "devDependencies": {

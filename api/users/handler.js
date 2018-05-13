@@ -1,9 +1,43 @@
+const sgMail = require('@sendgrid/mail')
 const AWS = require('aws-sdk')
+
 AWS.config.update({ region: 'us-east-1' })
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
 const dynamoDb = new AWS.DynamoDB.DocumentClient()
 const uuid = require('uuid')
 
 const TableName = process.env.DYNAMODB_TABLE
+
+function sendWelcomeEmail (to) {
+  const text = `
+Hi, ${to.username} \r\n\r\n
+
+感谢你使用 小对话, 你将会在24 小时之内收到你的第一个推荐好友，当然你及时的更新的个人信息，让 小对话 可以帮你更精确的找到好友。\r\n\r\n
+
+如果你对 小对话 有任何的意见和建议，欢迎你随时回复这封邮件. \r\n\r\n
+
+小对话团队 https://asmalltalk.com \r\n
+`
+  const html = `
+Hi, ${to.username} <br><br>
+
+感谢你使用 小对话, 你将会在24 小时之内收到你的第一个推荐好友，当然你及时的更新的个人信息，让 小对话 可以帮你更精确的找到好友。<br><br>
+
+如果你对 小对话 有任何的意见和建议，欢迎你随时回复这封邮件. <br><br>
+
+小对话团队 https://asmalltalk.com <br>
+`
+  const payload = {
+    to: to.email,
+    from: process.env.ASMALLTALK_EMAIL, // TODO our platform email here
+    replyTo: process.env.ASMALLTALK_EMAIL,
+    subject: `欢迎来到小对话`,
+    text,
+    html
+  }
+  sgMail.send(payload)
+}
 
 const response = (err, data = {}, cb) => {
   const resp = {
@@ -40,6 +74,9 @@ const create = function (event, ctx, cb) {
   }
 
   return dynamoDb.put(params, (error, data) => {
+    if (!error) {
+      sendWelcomeEmail({ username: username, email: email })
+    }
     response(error, params.Item, cb)
   })
 }

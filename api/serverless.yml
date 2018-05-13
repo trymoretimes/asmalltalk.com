@@ -7,6 +7,8 @@ provider:
   region: us-east-1
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    SENDGRID_API_KEY: ${opt:SENDGRID_API_KEY}
+    ASMALLTALK_EMAIL: ${opt:ASMALLTALK_EMAIL}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -27,6 +29,7 @@ package:
     - node_modules/babel-runtime
     - node_modules/node-fetch
     - node_modules/@octokit/rest
+    - node_modules/@sendgrid/mail
 
 functions:
   create-user:
