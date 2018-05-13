@@ -37,21 +37,6 @@ steps: &build-client
       name: build
       command: |
         cd client
-        NODE_ENV=production npm run build
-  - persist_to_workspace:
-      root: .
-      paths:
-        - '*'
-
-steps: &build-client-production
-  - setup_remote_docker:
-      docker_layer_caching: true
-  - attach_workspace:
-      at: *workspace
-  - run:
-      name: build
-      command: |
-        cd client
         cp prod.config.js config.js
         NODE_ENV=production npm run build
   - persist_to_workspace:
@@ -69,7 +54,7 @@ steps: &build-server
       command: |
         echo 'build done'
 
-steps: &deploy-client-production
+steps: &deploy-client
   - setup_remote_docker:
       docker_layer_caching: true
   - attach_workspace:
@@ -82,22 +67,6 @@ steps: &deploy-client-production
       command: |
         ls -al client/public
         aws s3 sync client/public s3://asmalltalk.com/ --delete --acl public-read
-        aws s3 sync client/public s3://www.asmalltalk.com/ --delete --acl public-read
-
-steps: &deploy-client-staging
-  - setup_remote_docker:
-      docker_layer_caching: true
-  - attach_workspace:
-      at: *workspace
-  - run: sudo apt-get update && sudo apt-get install -qq -y python-pip libpython-dev
-  - run: curl -O https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py
-  - run: sudo pip install -q awscli --upgrade
-  - run:
-      name: deploy
-      command: |
-        ls -al client/public
-        aws s3 sync client/public s3://staging.asmalltalk.com/ --delete --acl public-read
-        aws s3 sync client/public s3://www.staging.asmalltalk.com/ --delete --acl public-read
 
 steps: &deploy-server
   - setup_remote_docker:
@@ -119,9 +88,9 @@ steps: &test-api
       command: |
         cd api
         npm run deploy-testing
-        npm run test
+        DYNAMODB_TABLE=asmalltalk-api-testing npm run test
 
-steps: &deploy-api-staging
+steps: &deploy-api
   - setup_remote_docker:
       docker_layer_caching: true
   - attach_workspace:
@@ -132,18 +101,6 @@ steps: &deploy-api-staging
         cd api
         npm run deploy-staging
 
-steps: &deploy-api-production
-  - setup_remote_docker:
-      docker_layer_caching: true
-  - attach_workspace:
-      at: *workspace
-  - run:
-      name: deploy
-      command: |
-        cd api
-        npm run deploy-production
-
-
 version: 2
 jobs:
   setup:
@@ -152,30 +109,21 @@ jobs:
   build-client:
     <<: *defaults
     steps: *build-client
-  build-client-production:
-    <<: *defaults
-    steps: *build-client-production
   build-server:
     <<: *defaults
     steps: *build-server
-  deploy-client-production:
+  deploy-client:
     <<: *defaults
-    steps: *deploy-client-production
-  deploy-client-staging:
-    <<: *defaults
-    steps: *deploy-client-staging
+    steps: *deploy-client
   deploy-server:
     <<: *defaults
     steps: *deploy-server
   test-api:
     <<: *defaults
     steps: *test-api
-  deploy-api-staging:
+  deploy-api:
     <<: *defaults
-    steps: *deploy-api-staging
-  deploy-api-production:
-    <<: *defaults
-    steps: *deploy-api-production
+    steps: *deploy-api
 
 workflows:
   version: 2
@@ -188,18 +136,12 @@ workflows:
       - build-server:
           requires:
             - setup
-      - deploy-client-staging:
+      - deploy-client:
           requires:
             - build-client
           filters:
             branches:
               only: /(^master$|(^fix))/
-      - deploy-client-production:
-          requires:
-            - build-client-production
-          filters:
-            branches:
-              only: production
       - deploy-server:
           requires:
             - build-server
@@ -209,15 +151,9 @@ workflows:
       - test-api:
           requires:
             - setup
-      - deploy-api-staging:
+      - deploy-api:
           requires:
             - test-api
           filters:
             branches:
               only: /(^master$|(^fix))/
-      - deploy-api-production:
-          requires:
-            - test-api
-          filters:
-            branches:
-              only: production
