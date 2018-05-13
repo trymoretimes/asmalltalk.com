@@ -59,10 +59,11 @@ functions:
           cors: true
   is-v2-user:
     handler: auth/v2ex/index.getUser
-    - http:
-        path: auth/v2ex/user
-        method: get
-        cors: true
+    events:
+      - http:
+          path: auth/v2ex/user
+          method: get
+          cors: true
 
 resources:
   Resources:
