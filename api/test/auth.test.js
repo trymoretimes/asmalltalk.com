@@ -1,5 +1,6 @@
 const auth = require('../auth/handler').handle
 const getV2exUser = require('../auth/v2ex/index').getUser
+const createCode = require('../auth/create_code').handle
 
 describe('auth', () => {
   describe('v2ex', () => {
@@ -43,6 +44,20 @@ describe('auth', () => {
       expect(err).toBeNull()
       const data = JSON.parse(resp.body)
       expect(data.ok).toBeTruthy()
+      done()
+    })
+  }, 20000)
+
+  test('create code', (done) => {
+    const site = 'github'
+    const username = 'metrue'
+    const email = 'h.minghe@gmail.com'
+    createCode({ body: { site, username, email } }, null, (err, resp) => {
+      expect(err).toBeNull()
+      const data = JSON.parse(resp.body)
+      const base64Str = Buffer.from(site + username + email).toString('base64')
+      const expected = '#asmalltalk' + base64Str[2] + base64Str[0] + base64Str[1] + base64Str[4] + base64Str[6] + base64Str[6]
+      expect(data.code).toEqual(expected)
       done()
     })
   }, 20000)

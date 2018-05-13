@@ -85,10 +85,20 @@ class API {
 
   async getCode (payload) {
     const { username, email, site } = payload
-    const url = `${API_HOST}/users/code?username=${username}&email=${email}&site=${site}`
-    const resp = await fetch(url)
-    // TODO fix this
-    return { code: '小对话' + (Math.floor(Math.random() * 10000)) }
+    const opt = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username,
+        email,
+        site
+      })
+    }
+    const url = `${API_HOST}/auth/codes`
+    const resp = await fetch(url, opt)
+    return resp.json()
   }
 
   async verify (payload) {

@@ -14,7 +14,7 @@ import TitleBox from '../TitleBox'
 
 const SiteEnum = {
   V2ex: 'v2ex',
-  Github: 'Github',
+  Github: 'github',
   HackerNews: 'hackernews'
 }
 

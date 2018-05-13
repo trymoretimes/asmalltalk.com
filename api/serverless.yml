@@ -64,6 +64,13 @@ functions:
           path: auth/v2ex/user
           method: get
           cors: true
+  create-code:
+    handler: auth/create_code.handle
+    events:
+      - http:
+          path: auth/codes
+          method: post
+          cors: true
 
 resources:
   Resources:
