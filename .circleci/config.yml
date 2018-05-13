@@ -37,6 +37,21 @@ steps: &build-client
       name: build
       command: |
         cd client
+        NODE_ENV=production npm run build
+  - persist_to_workspace:
+      root: .
+      paths:
+        - '*'
+
+steps: &build-client-production
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: build
+      command: |
+        cd client
         cp prod.config.js config.js
         NODE_ENV=production npm run build
   - persist_to_workspace:
@@ -137,6 +152,9 @@ jobs:
   build-client:
     <<: *defaults
     steps: *build-client
+  build-client-production:
+    <<: *defaults
+    steps: *build-client-production
   build-server:
     <<: *defaults
     steps: *build-server
@@ -178,7 +196,7 @@ workflows:
               only: /(^master$|(^fix))/
       - deploy-client-production:
           requires:
-            - build-client
+            - build-client-production
           filters:
             branches:
               only: production
