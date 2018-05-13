@@ -43,7 +43,7 @@ steps: &build-client-staging
       paths:
         - '*'
 
-steps: &build-client
+steps: &build-client-production
   - setup_remote_docker:
       docker_layer_caching: true
   - attach_workspace:
@@ -69,7 +69,7 @@ steps: &build-server
       command: |
         echo 'build done'
 
-steps: &deploy-client
+steps: &deploy-client-production
   - setup_remote_docker:
       docker_layer_caching: true
   - attach_workspace:
@@ -146,18 +146,18 @@ jobs:
   setup:
     <<: *defaults
     steps: *setup
-  build-client:
+  build-client-production:
     <<: *defaults
-    steps: *build-client
+    steps: *build-client-production
   build-server:
     <<: *defaults
     steps: *build-server
   deploy-client-staging:
     <<: *defaults
     steps: *deploy-client-staging
-  deploy-client:
+  deploy-client-production:
     <<: *defaults
-    steps: *deploy-client
+    steps: *deploy-client-production
   build-client-staging:
     <<: *defaults
     steps: *build-client-staging
@@ -179,7 +179,7 @@ workflows:
   build-and-deploy:
     jobs:
       - setup
-      - build-client:
+      - build-client-production:
           requires:
             - setup
       - build-client-staging:
@@ -190,13 +190,13 @@ workflows:
             - setup
       - deploy-client-staging:
           requires:
-            - build-client
+            - build-client-staging
           filters:
             branches:
               only: /(^master$|(^fix))/
-      - deploy-client:
+      - deploy-client-production:
           requires:
-            - build-client
+            - build-client-production
           filters:
             branches:
               only: production
