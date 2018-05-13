@@ -97,16 +97,6 @@ steps: &deploy-client-staging
         ls -al client/public
         aws s3 sync client/public s3://staging.asmalltalk.com/ --delete --acl public-read
 
-steps: &deploy-server
-  - setup_remote_docker:
-      docker_layer_caching: true
-  - attach_workspace:
-      at: *workspace
-  - run:
-      name: deploy
-      command: |
-        echo 'deploy server'
-
 steps: &test-api
   - setup_remote_docker:
       docker_layer_caching: true
@@ -149,9 +139,6 @@ jobs:
   build-client-production:
     <<: *defaults
     steps: *build-client-production
-  build-server:
-    <<: *defaults
-    steps: *build-server
   deploy-client-staging:
     <<: *defaults
     steps: *deploy-client-staging
@@ -161,9 +148,6 @@ jobs:
   build-client-staging:
     <<: *defaults
     steps: *build-client-staging
-  deploy-server:
-    <<: *defaults
-    steps: *deploy-server
   test-api:
     <<: *defaults
     steps: *test-api
@@ -188,9 +172,6 @@ workflows:
       - build-client-staging:
           requires:
             - setup
-      - build-server:
-          requires:
-            - setup
       - deploy-client-staging:
           requires:
             - build-client-staging
@@ -203,12 +184,6 @@ workflows:
           filters:
             branches:
               only: production
-      - deploy-server:
-          requires:
-            - build-server
-          filters:
-            branches:
-              only: /(^master$|(^fix))/
       - test-api:
           requires:
             - setup
