@@ -216,7 +216,7 @@ class RegistrationSection extends React.Component {
                 <button
                   className='btn btn-outline-secondary clipboard'
                   type='button'
-                  disabled={!usernameIsValid || !email}
+                  disabled={!usernameIsValid || !email || !code}
                   data-clipboard-target='#MagicCode'
                   data-clipboard-action='copy'
                 >
