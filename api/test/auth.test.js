@@ -1,5 +1,5 @@
-const auth = require('../auth/handler').handle
-const getV2exUser = require('../auth/v2ex/index').getUser
+const auth = require('../auth/status/handler').handle
+const getV2exUser = require('../auth/status/v2ex/index').getUser
 const createCode = require('../auth/create_code').handle
 
 describe('auth', () => {

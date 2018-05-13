@@ -1,6 +1,6 @@
 const fetch = require('node-fetch')
-const safeGet = require('../../utils').safeGet
-const response = require('../../utils').response
+const safeGet = require('../../../utils').safeGet
+const response = require('../../../utils').response
 
 const matchReg = /#asmalltalk|#小对话/
 
@@ -25,13 +25,13 @@ function getCommentByUser (username) {
   })
 }
 
-function auth(username) {
+function auth (username) {
   return getCommentByUser(username).then((comments) => {
     return comments.find(c => c.content.match(matchReg) !== null) !== undefined
   })
 }
 
-function getUser(event, ctx, cb) {
+function getUser (event, ctx, cb) {
   const username = safeGet(event, ['queryStringParameters', 'username'])
   const url = `https://www.v2ex.com/api/members/show.json?username=${username}`
   return fetch(url)

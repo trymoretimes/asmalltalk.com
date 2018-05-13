@@ -1,5 +1,5 @@
-const safeGet = require('../utils').safeGet
-const response = require('../utils').response
+const safeGet = require('../../utils').safeGet
+const response = require('../../utils').response
 const github = require('./github')
 const v2ex = require('./v2ex').auth
 const hackernews = require('./hackernews')

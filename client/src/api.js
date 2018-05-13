@@ -103,7 +103,7 @@ class API {
 
   async verify (payload) {
     const { username, code, site } = payload
-    const url = `${API_HOST}/auth?username=${username}&code=${code}&site=${site}`
+    const url = `${API_HOST}/auth/status?username=${username}&code=${code}&site=${site}`
     const resp = await fetch(url)
     const data = await resp.json()
     return data.ok
