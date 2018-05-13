@@ -79,7 +79,7 @@ export default class User extends React.Component {
           <div className={styles.MainContainer}>
             <div className={styles.FormContainer}>
               <InputBox
-                placeholder='最近想开始入门区块链, 不知道如何开始呢'
+                placeholder='我是一个全沾工程师，目前任职于Udacity的Global Growth Engineering Team, 和又酷又好玩的工程师们做朋友是一件令人十分激动的事情，所以小对话就是为了这个目标而诞生的'
                 value={story}
                 label=''
                 onChange={this.onStoryChange}
