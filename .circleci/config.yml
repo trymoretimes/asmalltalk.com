@@ -28,6 +28,21 @@ steps: &setup
       paths:
         - '*'
 
+steps: &build-client-staging
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: build
+      command: |
+        cd client
+        NODE_ENV=production npm run build
+  - persist_to_workspace:
+      root: .
+      paths:
+        - '*'
+
 steps: &build-client
   - setup_remote_docker:
       docker_layer_caching: true
@@ -112,6 +127,9 @@ jobs:
   build-server:
     <<: *defaults
     steps: *build-server
+  deploy-client-staging:
+    <<: *defaults
+    steps: *deploy-client-staging
   deploy-client:
     <<: *defaults
     steps: *deploy-client
