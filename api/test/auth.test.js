@@ -52,7 +52,7 @@ describe('auth', () => {
     const site = 'github'
     const username = 'metrue'
     const email = 'h.minghe@gmail.com'
-    createCode({ body: { site, username, email } }, null, (err, resp) => {
+    createCode({ body: JSON.stringify({ site, username, email }) }, null, (err, resp) => {
       expect(err).toBeNull()
       const data = JSON.parse(resp.body)
       const base64Str = Buffer.from(site + username + email).toString('base64')
