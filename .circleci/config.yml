@@ -109,7 +109,7 @@ steps: &test-api
         npm run deploy-testing
         DYNAMODB_TABLE=asmalltalk-api-testing npm run test
 
-steps: &deploy-api
+steps: &deploy-api-staging
   - setup_remote_docker:
       docker_layer_caching: true
   - attach_workspace:
@@ -151,9 +151,9 @@ jobs:
   test-api:
     <<: *defaults
     steps: *test-api
-  deploy-api:
+  deploy-api-staging:
     <<: *defaults
-    steps: *deploy-api
+    steps: *deploy-api-staging
   deploy-api-production:
     <<: *defaults
     steps: *deploy-api-production
@@ -187,7 +187,7 @@ workflows:
       - test-api:
           requires:
             - setup
-      - deploy-api:
+      - deploy-api-staging:
           requires:
             - test-api
           filters:
