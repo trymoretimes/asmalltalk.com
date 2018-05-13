@@ -158,6 +158,9 @@ jobs:
   deploy-client:
     <<: *defaults
     steps: *deploy-client
+  build-client-staging:
+    <<: *defaults
+    steps: *build-client-staging
   deploy-server:
     <<: *defaults
     steps: *deploy-server
