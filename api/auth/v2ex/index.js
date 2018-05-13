@@ -1,4 +1,6 @@
 const fetch = require('node-fetch')
+const safeGet = require('../../utils').safeGet
+const response = require('../../utils').response
 
 const matchReg = /#asmalltalk|#小对话/
 
@@ -29,4 +31,27 @@ function auth(username) {
   })
 }
 
-module.exports = auth
+function getUser(event, ctx, cb) {
+  const username = safeGet(event, ['queryStringParameters', 'username'])
+  const url = `https://www.v2ex.com/api/members/show.json?username=${username}`
+  return fetch(url)
+    .then((resp) => {
+      if (resp.status !== 200) {
+        // TODO
+        throw new Error(`${url} --- ${resp.status} -- ${resp.statusText}`)
+      } else {
+        return resp.json()
+      }
+    })
+    .then((data) => {
+      response(null, 200, data, cb)
+    })
+    .catch((e) => {
+      response(e, 500, null, cb)
+    })
+}
+
+module.exports = {
+  auth: auth,
+  getUser: getUser,
+}

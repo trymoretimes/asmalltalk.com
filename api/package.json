@@ -7,7 +7,7 @@
     "deploy-testing": "serverless deploy -v --stage testing",
     "deploy-staging": "serverless deploy -v --stage staging",
     "deploy-production": "serverless deploy -v --stage production",
-    "test": "jest"
+    "test": "DYNAMODB_TABLE=asmalltalk-api-testing jest"
   },
   "keywords": [],
   "author": "",

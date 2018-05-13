@@ -104,7 +104,7 @@ steps: &test-api
       command: |
         cd api
         npm run deploy-testing
-        DYNAMODB_TABLE=asmalltalk-api-testing npm run test
+        npm run test
 
 steps: &deploy-api-staging
   - setup_remote_docker:
