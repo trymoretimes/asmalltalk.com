@@ -58,26 +58,44 @@ const create = function (event, ctx, cb) {
   const site = data.site
   const story = data.story
 
-  const id = uuid.v1()
-  const updatedAt = new Date().getTime()
-
   const params = {
     TableName: TableName,
-    Item: {
-      email: email,
-      username: username,
-      site: site,
-      story: story,
-      id: id,
-      updatedAt: updatedAt
+    FilterExpression: 'email = :email and username = :username and site = :site',
+    ExpressionAttributeValues: {
+      ':email': email,
+      ':username': username,
+      ':site': site
     }
   }
 
-  return dynamoDb.put(params, (error, data) => {
-    if (!error) {
-      sendWelcomeEmail({ username: username, email: email })
+  return dynamoDb.scan(params, (error, data) => {
+    if (error) {
+      cb(error)
+    } else if (data.Items.length > 0) {
+      response(error, data.Items[0], cb)
+    } else {
+      const id = uuid.v1()
+      const updatedAt = new Date().getTime()
+
+      const params = {
+        TableName: TableName,
+        Item: {
+          email: email,
+          username: username,
+          site: site,
+          story: story,
+          id: id,
+          updatedAt: updatedAt
+        }
+      }
+
+      return dynamoDb.put(params, (error, data) => {
+        if (!error) {
+          sendWelcomeEmail({ username: username, email: email })
+        }
+        response(error, params.Item, cb)
+      })
     }
-    response(error, params.Item, cb)
   })
 }
 
