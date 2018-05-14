@@ -9,6 +9,9 @@ provider:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
     SENDGRID_API_KEY: ${opt:SENDGRID_API_KEY}
     ASMALLTALK_EMAIL: ${opt:ASMALLTALK_EMAIL}
+    # TODO use oauth
+    GITHUB_USERNAME: ${opt:GITHUB_USERNAME}
+    GITHUB_PASSWORD: ${opt:GITHUB_PASSWORD}
   iamRoleStatements:
     - Effect: Allow
       Action:

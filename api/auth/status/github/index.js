@@ -6,8 +6,8 @@ const matchReg = /#asmalltalk|#小对话/
 // TODO remove credential info before release
 octokit.authenticate({
   type: 'basic',
-  username: 'metrue',
-  password: '***REMOVED***'
+  username: process.env.GITHUB_USERNAME,
+  password: process.env.GITHUB_PASSWORD
 })
 
 function listComments () {

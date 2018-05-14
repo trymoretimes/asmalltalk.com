@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deploy-testing": "serverless deploy -v --stage testing --SENDGRID_API_KEY ${SENDGRID_API_KEY} --ASMALLTALK_EMAIL ${ASMALLTALK_EMAIL}",
-    "deploy-staging": "serverless deploy -v --stage staging --SENDGRID_API_KEY ${SENDGRID_API_KEY} --ASMALLTALK_EMAIL ${ASMALLTALK_EMAIL}",
-    "deploy-production": "serverless deploy -v --stage production --SENDGRID_API_KEY ${SENDGRID_API_KEY} --ASMALLTALK_EMAIL ${ASMALLTALK_EMAIL}",
+    "deploy-testing": "./bin/deploy.sh testing",
+    "deploy-staging": "./bin/deploy.sh staging",
+    "deploy-production": "./bin/deploy.sh production",
     "test": "DYNAMODB_TABLE=asmalltalk-api-testing jest"
   },
   "keywords": [],
