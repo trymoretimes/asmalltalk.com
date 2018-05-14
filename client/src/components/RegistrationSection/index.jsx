@@ -90,6 +90,7 @@ class RegistrationSection extends React.Component {
 
   async getCode () {
     const { username, email, site } = this.state
+    this.setState({ code: 'Loading ...' })
     const { code } = await api.getCode({ username, email, site })
     this.setState({ code })
   }
@@ -188,15 +189,15 @@ class RegistrationSection extends React.Component {
         <div className={styles.FormContainer}>
           <InputRow
             type='text'
-            label='输入在上面站点的 id'
-            placeholder='id'
+            label='输入你在上面站点所使用的 ID'
+            placeholder='ID'
             disabled={!site}
             onSubmit={this.onUserNameSubmit}
           />
           <InputRow
             type='email'
-            label='输入你的 email'
-            placeholder='hello@asmalltalk.com'
+            label='输入你的 Email'
+            placeholder='Email'
             disabled={!usernameIsValid}
             onSubmit={this.onEmailSubmit}
           />
