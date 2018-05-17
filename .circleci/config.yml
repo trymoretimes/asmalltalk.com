@@ -14,11 +14,6 @@ steps: &setup
         cd client
         npm install
   - run:
-      name: install server deps
-      command: |
-        cd server
-        npm install
-  - run:
       name: install api deps
       command: |
         cd api
@@ -73,16 +68,6 @@ steps: &build-client-production
       root: .
       paths:
         - '*'
-
-steps: &build-server
-  - setup_remote_docker:
-      docker_layer_caching: true
-  - attach_workspace:
-      at: *workspace
-  - run:
-      name: build
-      command: |
-        echo 'build done'
 
 steps: &deploy-client-production
   - setup_remote_docker:
