@@ -4,7 +4,7 @@ const AWS = require('aws-sdk')
 AWS.config.update({ region: 'us-east-1' })
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient()
+const dynamoDb = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true })
 const uuid = require('uuid')
 
 const TableName = process.env.DYNAMODB_TABLE
