@@ -6,7 +6,6 @@ COPY devops/nginx.conf /etc/nginx/nginx.conf
 WORKDIR /opt/client
 
 COPY package.json .
-COPY prod.config.js config.js
 RUN npm install
 COPY . .
 COPY devops/run.sh .
