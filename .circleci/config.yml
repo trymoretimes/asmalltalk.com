@@ -139,7 +139,7 @@ steps: &deploy-services-staging
   - run:
       name: deploy
       command: |
-        ./bin/deploy-services.sh
+        ./bin/deploy-services.sh staging
 
 steps: &deploy-services-production
   - setup_remote_docker:
