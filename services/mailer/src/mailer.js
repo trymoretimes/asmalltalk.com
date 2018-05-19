@@ -1,14 +1,16 @@
-const mailer = require('./sendgrid')
+const sgMail = require('@sendgrid/mail')
 const buildBody = require('./builder')
-const { ourEmail } = require('../config.json')
 const { delay } = require('./utils')
 const API = require('./api')
 
 const CHECK_INTERVAL = 1 * 3600 * 1000
+const OUR_MAIL = 'asmalltalk@iiiii.li'
+
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 class Mailer {
   constructor (config = {}) {
-    this.api = new API(config)
+    this.api = new API()
     this.CHECK_INTERVAL = config.CHECK_INTERVAL || CHECK_INTERVAL
 
     this.stopped = false
@@ -53,9 +55,9 @@ class Mailer {
     try {
       if (matchee) {
         await this.mail(matcher, matchee)
+        await this.api.updateMailed(matcher._id, matchee._id)
         console.log(`mail sended to ${matcher.email} with ${matchee.email}`)
       }
-      await this.api.updateMailed(matcher._id, matchee._id)
     } catch (e) {
       console.log(e)
     }
@@ -69,15 +71,14 @@ class Mailer {
     const { text, html } = buildBody(reciver, matcher)
     const payload = {
       to: reciver.email,
-      from: ourEmail, // TODO our platform email here
+      from: OUR_MAIL, // TODO our platform email here
       replyTo: matcher.email,
       subject: `小对话：今天为你推荐 ${matcher.username}`,
       text,
       html
     }
 
-    await mailer.send(payload)
-    console.log(`mail send`)
+    await sgMail.send(payload)
   }
 }
 

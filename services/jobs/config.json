@@ -1,6 +1,0 @@
-{
-  "CHECK_INTERVAL": 3600000,
-  "ourEmail": "asmalltalk@iiiii.li",
-  "API_URL": "https://asmalltalk.com/v1/api",
-  "SENDGRID_API_KEY": "***REMOVED***"
-}

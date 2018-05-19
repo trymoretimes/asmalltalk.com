@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./bin/matcher",
+    "start": "./bin/mailer",
     "test": "jest test/mailer.test.js"
   },
   "keywords": [],

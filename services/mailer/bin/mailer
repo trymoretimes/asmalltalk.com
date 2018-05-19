@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+
+const Mailer = require('../src/mailer')
+const mailer = new Mailer()
+mailer.start()
