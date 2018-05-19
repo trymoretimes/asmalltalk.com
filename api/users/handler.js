@@ -60,11 +60,12 @@ const create = function (event, ctx, cb) {
 
   const params = {
     TableName: TableName,
-    FilterExpression: 'email = :email and username = :username and site = :site',
+    FilterExpression: 'email = :email and username = :username and site = :site and story = :story',
     ExpressionAttributeValues: {
       ':email': email,
       ':username': username,
-      ':site': site
+      ':site': site,
+      ':story': story
     }
   }
 
@@ -117,20 +118,46 @@ const get = function (event, ctx, cb) {
 }
 
 const update = function (event, ctx, cb) {
-  const data = JSON.parse(event.body)
-  data.id = event.pathParameters.id
-  data.updatedAt = new Date().getTime()
-
+  const id = event.pathParameters.id
+  const body = JSON.parse(event.body)
   const params = {
     TableName: TableName,
-    Item: data
+    FilterExpression: 'id = :id',
+    ExpressionAttributeValues: {
+      ':id': id
+    }
   }
 
-  return dynamoDb.put(params, (error, data) => {
+  return dynamoDb.scan(params, (error, data) => {
     if (error) {
       cb(error)
+    } else if (data.Items.length > 0) {
+      const item = data.Items[0]
+      const params = {
+        TableName: TableName,
+        Key: {
+          id: id
+        },
+        UpdateExpression: 'SET #story = :story, #updatedAt = :updatedAt',
+        ExpressionAttributeNames: {
+          '#story': 'story',
+          '#updatedAt': 'updatedAt'
+        },
+        ExpressionAttributeValues: {
+          ':story': body.story || item.story,
+          ':updatedAt': new Date().getTime()
+        },
+        ReturnValues: 'ALL_NEW'
+      }
+      return dynamoDb.update(params, (error, data) => {
+        if (error) {
+          cb(error)
+        }
+        response(error, data.Attributes, cb)
+      })
+    } else {
+      response(error, { message: 'no such item with ' + id })
     }
-    response(error, data.Item, cb)
   })
 }
 
