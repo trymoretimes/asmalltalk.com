@@ -6,7 +6,6 @@ const CHECK_INTERVAL = 1 * 3600 * 1000
 
 class Matcher {
   constructor (config = {}) {
-    this.API_URL = config.API_URL || 'https://asmalltalk.com/v1/api'
     this.CHECK_INTERVAL = config.CHECK_INTERVAL || CHECK_INTERVAL
 
     this.checkInterval = null
