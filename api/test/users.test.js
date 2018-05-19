@@ -18,6 +18,15 @@ describe('users', () => {
     })
   })
 
+  test.only('list', (done) => {
+    handler.list(null, null, (err, resp) => {
+      expect(err).toBeNull()
+      const data = JSON.parse(resp.body)
+      expect(data.length >= 1).toBeTruthy()
+      done()
+    })
+  })
+
   test('get', (done) => {
     handler.get({ pathParameters: { id: createdUser.id } }, null, (err, resp) => {
       expect(err).toBeNull()

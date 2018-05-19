@@ -42,6 +42,13 @@ functions:
           path: /users
           method: post
           cors: true
+  list-user:
+    handler: users/handler.list
+    events:
+      - http:
+          path: /users
+          method: get
+          cors: true
   get-user:
     handler: users/handler.get
     events:
