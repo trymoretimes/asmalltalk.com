@@ -5,17 +5,15 @@ describe('users', () => {
   const user = {
     email: 'a@a.com',
     username: 'a',
-    site: 'github',
-    story: 'a super cool JSer'
+    site: 'github'
   }
-  test('create', (done) => {
+  test.only('create', (done) => {
     handler.create({ body: JSON.stringify(user) }, null, (err, resp) => {
       expect(err).toBeNull()
       createdUser = JSON.parse(resp.body)
       expect(createdUser.username).toEqual(user.username)
       expect(createdUser.email).toEqual(user.email)
       expect(createdUser.site).toEqual(user.site)
-      expect(createdUser.story).toEqual(user.story)
       done()
     })
   })

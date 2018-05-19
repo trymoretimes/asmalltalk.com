@@ -60,12 +60,11 @@ const create = function (event, ctx, cb) {
 
   const params = {
     TableName: TableName,
-    FilterExpression: 'email = :email and username = :username and site = :site and story = :story',
+    FilterExpression: 'email = :email and username = :username and site = :site',
     ExpressionAttributeValues: {
       ':email': email,
       ':username': username,
-      ':site': site,
-      ':story': story
+      ':site': site
     }
   }
 
