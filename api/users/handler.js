@@ -4,14 +4,14 @@ const AWS = require('aws-sdk')
 AWS.config.update({ region: 'us-east-1' })
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient()
+const dynamoDb = new AWS.DynamoDB.DocumentClient({ convertEmptyValues: true })
 const uuid = require('uuid')
 
 const TableName = process.env.DYNAMODB_TABLE
 
 function sendWelcomeEmail (to) {
   const text = `
-Hi, ${to.username} \r\n\r\n
+Hello, 朋友\r\n\r\n
 
 感谢你使用 小对话, 你将会在24 小时之内收到你的第一个推荐好友，当然你及时的更新的个人信息，让 小对话 可以帮你更精确的找到好友。\r\n\r\n
 
@@ -20,7 +20,7 @@ Hi, ${to.username} \r\n\r\n
 小对话团队 https://asmalltalk.com \r\n
 `
   const html = `
-Hi, ${to.username} <br><br>
+Hello, 朋友 <br><br>
 
 感谢你使用 小对话, 你将会在24 小时之内收到你的第一个推荐好友，当然你及时的更新的个人信息，让 小对话 可以帮你更精确的找到好友。<br><br>
 
@@ -56,7 +56,7 @@ const create = function (event, ctx, cb) {
   const email = data.email
   const username = data.username
   const site = data.site
-  const story = data.story
+  const story = data.story || ''
 
   const params = {
     TableName: TableName,
@@ -117,20 +117,46 @@ const get = function (event, ctx, cb) {
 }
 
 const update = function (event, ctx, cb) {
-  const data = JSON.parse(event.body)
-  data.id = event.pathParameters.id
-  data.updatedAt = new Date().getTime()
-
+  const id = event.pathParameters.id
+  const body = JSON.parse(event.body)
   const params = {
     TableName: TableName,
-    Item: data
+    FilterExpression: 'id = :id',
+    ExpressionAttributeValues: {
+      ':id': id
+    }
   }
 
-  return dynamoDb.put(params, (error, data) => {
+  return dynamoDb.scan(params, (error, data) => {
     if (error) {
       cb(error)
+    } else if (data.Items.length > 0) {
+      const item = data.Items[0]
+      const params = {
+        TableName: TableName,
+        Key: {
+          id: id
+        },
+        UpdateExpression: 'SET #story = :story, #updatedAt = :updatedAt',
+        ExpressionAttributeNames: {
+          '#story': 'story',
+          '#updatedAt': 'updatedAt'
+        },
+        ExpressionAttributeValues: {
+          ':story': body.story || item.story,
+          ':updatedAt': new Date().getTime()
+        },
+        ReturnValues: 'ALL_NEW'
+      }
+      return dynamoDb.update(params, (error, data) => {
+        if (error) {
+          cb(error)
+        }
+        response(error, data.Attributes, cb)
+      })
+    } else {
+      response(error, { message: 'no such item with ' + id })
     }
-    response(error, data.Item, cb)
   })
 }
 

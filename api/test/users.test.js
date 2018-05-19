@@ -5,17 +5,15 @@ describe('users', () => {
   const user = {
     email: 'a@a.com',
     username: 'a',
-    site: 'github',
-    story: 'a super cool JSer'
+    site: 'github'
   }
-  test('create', (done) => {
+  test.only('create', (done) => {
     handler.create({ body: JSON.stringify(user) }, null, (err, resp) => {
       expect(err).toBeNull()
       createdUser = JSON.parse(resp.body)
-      expect(createdUser.username === user.username).toBeTruthy()
-      expect(createdUser.email === user.email).toBeTruthy()
-      expect(createdUser.site === user.site).toBeTruthy()
-      expect(createdUser.story === user.story).toBeTruthy()
+      expect(createdUser.username).toEqual(user.username)
+      expect(createdUser.email).toEqual(user.email)
+      expect(createdUser.site).toEqual(user.site)
       done()
     })
   })
@@ -24,17 +22,17 @@ describe('users', () => {
     handler.get({ pathParameters: { id: createdUser.id } }, null, (err, resp) => {
       expect(err).toBeNull()
       const data = JSON.parse(resp.body)
-      expect(data.username === user.username).toBeTruthy()
-      expect(data.email === user.email).toBeTruthy()
-      expect(data.site === user.site).toBeTruthy()
-      expect(data.story === user.story).toBeTruthy()
+      expect(data.username).toEqual(user.username)
+      expect(data.email).toEqual(user.email)
+      expect(data.site).toEqual(user.site)
+      expect(data.story).toEqual(user.story)
       done()
     })
   })
 
   test('update', (done) => {
     const body = {
-      username: 'change_to_this',
+      story: 'change_to_this',
     }
     handler.update({
       pathParameters: { id:  createdUser.id },
@@ -43,7 +41,8 @@ describe('users', () => {
       expect(err).toBeNull()
       handler.get({ pathParameters: { id: createdUser.id } }, null, (err, resp) => {
         const data = JSON.parse(resp.body)
-        expect(data.username).toEqual(body.username)
+        expect(data.story).toEqual(body.story)
+        expect(data.email).toEqual(createdUser.email)
         done()
       })
     })

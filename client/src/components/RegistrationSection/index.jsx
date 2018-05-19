@@ -34,7 +34,7 @@ const Indicator = ({ username, site }) => {
 
   return (
     <p>
-      复制下面 &darr; 的验证码, 评论到 <a target='_blank' href={urls[site]}>{ messages[site] } </a> 然后点击注册
+      复制下面 &darr; 的验证码到 <a target='_blank' href={urls[site]}>{ messages[site] } </a> 然后点击注册
     </p>
   )
 }
