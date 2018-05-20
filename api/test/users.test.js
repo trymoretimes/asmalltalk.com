@@ -42,6 +42,7 @@ describe('users', () => {
   test('update', (done) => {
     const body = {
       story: 'change_to_this',
+      match: 'c@c.com'
     }
     handler.update({
       pathParameters: { id:  createdUser.id },
@@ -52,6 +53,7 @@ describe('users', () => {
         const data = JSON.parse(resp.body)
         expect(data.story).toEqual(body.story)
         expect(data.email).toEqual(createdUser.email)
+        expect(data.match).toEqual(body.match)
         done()
       })
     })

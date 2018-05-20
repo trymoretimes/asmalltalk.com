@@ -155,14 +155,16 @@ const update = function (event, ctx, cb) {
         Key: {
           id: id
         },
-        UpdateExpression: 'SET #story = :story, #updatedAt = :updatedAt',
+        UpdateExpression: 'SET #story = :story, #updatedAt = :updatedAt, #match = :match',
         ExpressionAttributeNames: {
           '#story': 'story',
-          '#updatedAt': 'updatedAt'
+          '#updatedAt': 'updatedAt',
+          '#match': 'match'
         },
         ExpressionAttributeValues: {
           ':story': body.story || item.story,
-          ':updatedAt': new Date().getTime()
+          ':updatedAt': new Date().getTime(),
+          ':match': body.match || item.match
         },
         ReturnValues: 'ALL_NEW'
       }
