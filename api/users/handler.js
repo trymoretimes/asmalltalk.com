@@ -167,10 +167,10 @@ const update = function (event, ctx, cb) {
           '#emailed': 'emailed'
         },
         ExpressionAttributeValues: {
-          ':story': body.story || item.story,
+          ':story': body.story || item.story || '',
           ':updatedAt': new Date().getTime(),
-          ':match': body.match || item.match,
-          ':emailed': item.emailed
+          ':match': body.match || item.match || '',
+          ':emailed': item.emailed || []
         },
         ReturnValues: 'ALL_NEW'
       }
