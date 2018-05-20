@@ -50,9 +50,9 @@ describe('matcher', () => {
 
     expect(error).toEqual(null)
 
-    expect(users[0].match).toEqual('1@email.com')
-    expect(users[1].match).toEqual('0@email.com')
-    expect(users[2].match).toEqual('0@email.com')
+    expect(users[0].match).toEqual('1')
+    expect(users[1].match).toEqual('0')
+    expect(users[2].match).toEqual('0')
 
     matcher.stop()
     expect(matcher.stopped).toBeTruthy()
