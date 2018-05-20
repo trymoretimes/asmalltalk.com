@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
 const Mailer = require('../src/mailer')
-const mailer = new Mailer()
+const config = require('../config.json')
+const mailer = new Mailer(config)
 mailer.start()

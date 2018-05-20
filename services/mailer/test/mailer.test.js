@@ -1,4 +1,4 @@
-const Mailer = require('../src')
+const Mailer = require('../src/mailer')
 const config = require('../config.json')
 const { delay } = require('../src/utils')
 
@@ -8,23 +8,17 @@ describe('mailer', () => {
 
     // Mock interface
     const users = [{
-      _id: 0,
-      matchGuys: [1],
-      emailed: [],
-      canHelp: 'abc',
-      needHelp: 'def'
+      id: 0,
+      match: 1,
+      mailed: [],
     }, {
-      _id: 1,
-      matchGuys: [2],
-      emailed: [],
-      canHelp: 'def',
-      needHelp: 'ghi'
+      id: 1,
+      match: 2,
+      mailed: [],
     }, {
-      _id: 2,
-      matchGuys: [0],
-      emailed: [],
-      canHelp: 'ghi',
-      needHelp: 'abc'
+      id: 2,
+      match: 0,
+      mailed: [],
     }]
 
     mailer.api = {
@@ -33,36 +27,29 @@ describe('mailer', () => {
       },
 
       fetchUser: (id) => {
-        return users.find((u) => u._id === id)
+        return users.find((u) => u.id === id)
       },
 
-      updateUser: (id, obj) => {
-        const user = users.find((u) => u._id === id)
+      update: (id, obj) => {
+        const user = users.find((u) => u.id === id)
         Object.keys(obj).forEach((k) => {
-          user[k] = obj[k]
+          if (k === 'mailed') {
+            user[k] = [...user[k], obj[k]]
+          } else {
+            user[k] = obj[k]
+          }
         })
       },
-
-      updateMailed: (hostId, emailedId) => {
-        console.log('+++')
-        console.log(hostId, emailedId)
-        console.log('+++')
-        const { emailed } = mailer.api.fetchUser(hostId)
-        if (emailed.indexOf(emailedId) === -1) {
-          emailed.push(emailedId)
-        }
-        mailer.api.updateUser(hostId, { emailed })
-      }
     }
 
     mailer.mail = (reciver, matcher) => {
       // fake sending
-      console.log(`sending to ${reciver._id} with ${matcher._id}`)
+      console.log(`sending to ${reciver.id} with ${matcher.id}`)
     }
 
     expect(mailer.stopped).toBeFalsy()
     users.forEach((u) => {
-      expect(u.emailed).toEqual([])
+      expect(u.mailed).toEqual([])
     })
 
     let error = null
@@ -76,14 +63,14 @@ describe('mailer', () => {
 
     expect(error).toEqual(null)
 
-    expect(users[0].emailed).toEqual([1])
-    expect(users[1].emailed).toEqual([2])
-    expect(users[2].emailed).toEqual([0])
+    expect(users[0].mailed).toEqual([1])
+    expect(users[1].mailed).toEqual([2])
+    expect(users[2].mailed).toEqual([0])
 
     await delay(500)
-    expect(users[0].emailed).toEqual([1])
-    expect(users[1].emailed).toEqual([2])
-    expect(users[2].emailed).toEqual([0])
+    expect(users[0].mailed).toEqual([1])
+    expect(users[1].mailed).toEqual([2])
+    expect(users[2].mailed).toEqual([0])
 
     mailer.stop()
     expect(mailer.stopped).toBeTruthy()

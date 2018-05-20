@@ -10,7 +10,7 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 class Mailer {
   constructor (config = {}) {
-    this.api = new API()
+    this.api = new API(config)
     this.CHECK_INTERVAL = config.CHECK_INTERVAL || CHECK_INTERVAL
 
     this.stopped = false
@@ -35,17 +35,12 @@ class Mailer {
     // we send matchee info to matcher
     const users = await this.api.fetchUsers()
     for (const matcher of users) {
-      const { lastEmailAt } = matcher
+      const { lastEmailAt, match } = matcher
       if (!lastEmailAt || (now - lastEmailAt >= 24 * 3600 * 1000)) {
-        const matchGuys = matcher.matchGuys || []
         const mailed = matcher.emailed || []
-        for (let i = matchGuys.length - 1; i >= 0; --i) {
-          const guyId = matchGuys[i]
-          if (mailed.indexOf(guyId) === -1) {
-            const matchee = await this.api.fetchUser(guyId)
-            await this.connect(matcher, matchee)
-            break
-          }
+        if (mailed.indexOf(match) === -1) {
+          const matchee = await this.api.fetchUser(match)
+          await this.connect(matcher, matchee)
         }
       }
     }
@@ -55,16 +50,16 @@ class Mailer {
     try {
       if (matchee) {
         await this.mail(matcher, matchee)
-        await this.api.updateMailed(matcher._id, matchee._id)
-        console.log(`mail sended to ${matcher.email} with ${matchee.email}`)
+        const now = (new Date()).getTime()
+        const obj = {
+          mailed: matchee.id,
+          lastEmailAt: now
+        }
+        await this.api.update(matcher.id, obj)
       }
     } catch (e) {
       console.log(e)
     }
-  }
-
-  updateMailed (matcher, matchee) {
-    this.api.updateMailed(matcher._id, matchee._id)
   }
 
   async mail (reciver, matcher) {
