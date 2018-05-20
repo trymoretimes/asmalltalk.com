@@ -53,7 +53,7 @@ class Matcher {
           }
         }
         if (matchGuy) {
-          await this.api.update(source.id, matchGuy.email)
+          await this.api.update(source.id, matchGuy.id)
         }
       }
     } catch (e) {
