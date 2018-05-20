@@ -20,8 +20,8 @@ done
 # build client image and push to docker hub
 cd ${ROOT_DIR}/client
 if [[ ${stage} == "production" ]];then
-  if [ -e prod.config.json ];then
-    cp prod.config.json config.json
+  if [ -e prod.config.js ];then
+    cp prod.config.js config.js
   fi
 fi
 docker build -f devops/dockerfile -t metrue/asmalltalk.client.${stage}:latest .
