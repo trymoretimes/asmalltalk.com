@@ -1,4 +1,4 @@
-const Matcher = require('../src')
+const Matcher = require('../src/matcher')
 const config = require('../config.json')
 const { delay } = require('../src/utils')
 
@@ -8,20 +8,17 @@ describe('matcher', () => {
 
     // Mock interface
     const users = [{
-      _id: 0,
-      matchGuys: [],
-      canHelp: 'abc',
-      needHelp: 'def'
+      id: 0,
+      story: 'aa, cc',
+      email: '0@email.com'
     }, {
-      _id: 1,
-      matchGuys: [],
-      canHelp: 'def',
-      needHelp: 'ghi'
+      id: 1,
+      story: 'c, dd',
+      email: '1@email.com'
     }, {
-      _id: 2,
-      matchGuys: [],
-      canHelp: 'ghi',
-      needHelp: 'abc'
+      id: 2,
+      story: 'dd, aa',
+      email: '2@email.com'
     }]
 
     matcher.api = {
@@ -29,30 +26,17 @@ describe('matcher', () => {
         return users
       },
 
-      updateUser: (id, obj) => {
-        const user = users.find((u) => u._id === id)
-        Object.keys(obj).forEach((k) => {
-          user[k] = obj[k]
-        })
-      },
-
-      getUserMatcher: (id) => {
-        const user = users.find((u) => u._id === id)
-        return user.matchGuys
-      },
-
-      updateUserMatchGuys: (hostId, matchGuyId) => {
-        const matchGuys = matcher.api.getUserMatcher(hostId)
-        if (matchGuys.indexOf(matchGuyId) === -1) {
-          matchGuys.push(matchGuyId)
+      update: (id, match) => {
+        const user = users.find((u) => u.id === id)
+        if (user) {
+          user.match = match
         }
-        matcher.api.updateUser(hostId, { matchGuys })
-      }
+      },
     }
 
     expect(matcher.stopped).toBeFalsy()
     users.forEach((u) => {
-      expect(u.matchGuys).toEqual([])
+      expect(u.match).toEqual(undefined)
     })
 
     let error = null
@@ -66,14 +50,9 @@ describe('matcher', () => {
 
     expect(error).toEqual(null)
 
-    expect(users[0].matchGuys).toEqual([1])
-    expect(users[1].matchGuys).toEqual([2])
-    expect(users[2].matchGuys).toEqual([0])
-
-    await delay(500)
-    expect(users[0].matchGuys).toEqual([1, 2])
-    expect(users[1].matchGuys).toEqual([2, 0])
-    expect(users[2].matchGuys).toEqual([0, 1])
+    expect(users[0].match).toEqual('1@email.com')
+    expect(users[1].match).toEqual('0@email.com')
+    expect(users[2].match).toEqual('0@email.com')
 
     matcher.stop()
     expect(matcher.stopped).toBeTruthy()

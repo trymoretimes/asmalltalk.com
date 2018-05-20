@@ -2,7 +2,7 @@ const fetch = require('node-fetch')
 
 class API {
   constructor (config = {}) {
-    this.base = config.API_URL || 'https://asmalltalk.com/v1/api'
+    this.base = config.API_URL
   }
 
   async createUser (obj) {
@@ -16,7 +16,7 @@ class API {
     }
     const resp = await fetch(url, opt)
     if (resp.status !== 201) {
-        throw new Error(`create user exception: ${resp.status}`)
+      throw new Error(`create user exception: ${resp.status}`)
     }
     return resp.json()
   }
@@ -32,7 +32,6 @@ class API {
 
   async fetchUser (id) {
     const url = `${this.base}/users/${id}`
-    console.log(url)
     const resp = await fetch(url)
     if (resp.status !== 200) {
       throw new Error(`fetch match guys failed: ${resp.statusText}`)
@@ -40,35 +39,19 @@ class API {
     return resp.json()
   }
 
-  async getUserMatcher (id) {
-    const user = await this.fetchUser(id)
-    // TODO hot fix --- to clean soon
-    return user.matchGuys || []
-  }
-
-  async updateUser (id, obj) {
+  async update (id, match) {
     const url = `${this.base}/users/${id}`
     const opt = {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(obj)
+      body: JSON.stringify({ match: match })
     }
     const resp = await fetch(url, opt)
-    if (resp.status !== 204) {
+    if (resp.status !== 200) {
       throw new Error(`update user failed: ${resp.statusText}`)
     }
-  }
-
-  async updateUserMatchGuys (hostId, matchGuyId) {
-    const user = await this.fetchUser(hostId)
-    const matchGuys = user.matchGuys || []
-    if (matchGuys.indexOf(matchGuyId) === -1) {
-      matchGuys.push(matchGuyId)
-    }
-
-    await this.updateUser(hostId, { matchGuys })
   }
 }
 
