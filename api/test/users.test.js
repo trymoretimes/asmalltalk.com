@@ -4,10 +4,10 @@ describe('users', () => {
   let createdUser
   const user = {
     email: 'a@a.com',
-    username: 'a',
+    username: new Date().getTime() + '',
     site: 'github'
   }
-  test.only('create', (done) => {
+  test('create', (done) => {
     handler.create({ body: JSON.stringify(user) }, null, (err, resp) => {
       expect(err).toBeNull()
       createdUser = JSON.parse(resp.body)
@@ -18,7 +18,7 @@ describe('users', () => {
     })
   })
 
-  test.only('list', (done) => {
+  test('list', (done) => {
     handler.list(null, null, (err, resp) => {
       expect(err).toBeNull()
       const data = JSON.parse(resp.body)
@@ -34,7 +34,6 @@ describe('users', () => {
       expect(data.username).toEqual(user.username)
       expect(data.email).toEqual(user.email)
       expect(data.site).toEqual(user.site)
-      expect(data.story).toEqual(user.story)
       done()
     })
   })
@@ -42,7 +41,8 @@ describe('users', () => {
   test('update', (done) => {
     const body = {
       story: 'change_to_this',
-      match: 'c@c.com'
+      match: 'c@c.com',
+      emailed: 'd@d.com'
     }
     handler.update({
       pathParameters: { id:  createdUser.id },
@@ -54,6 +54,7 @@ describe('users', () => {
         expect(data.story).toEqual(body.story)
         expect(data.email).toEqual(createdUser.email)
         expect(data.match).toEqual(body.match)
+        expect(data.emailed.indexOf(body.emailed) != -1).toEqual(true)
         done()
       })
     })

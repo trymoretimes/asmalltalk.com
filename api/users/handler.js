@@ -150,21 +150,27 @@ const update = function (event, ctx, cb) {
       cb(error)
     } else if (data.Items.length > 0) {
       const item = data.Items[0]
+      if (body.emailed) {
+        item.emailed = item.emailed || []
+        item.emailed.push(body.emailed)
+      }
       const params = {
         TableName: TableName,
         Key: {
           id: id
         },
-        UpdateExpression: 'SET #story = :story, #updatedAt = :updatedAt, #match = :match',
+        UpdateExpression: 'SET #story = :story, #updatedAt = :updatedAt, #match = :match, #emailed = :emailed',
         ExpressionAttributeNames: {
           '#story': 'story',
           '#updatedAt': 'updatedAt',
-          '#match': 'match'
+          '#match': 'match',
+          '#emailed': 'emailed'
         },
         ExpressionAttributeValues: {
           ':story': body.story || item.story,
           ':updatedAt': new Date().getTime(),
-          ':match': body.match || item.match
+          ':match': body.match || item.match,
+          ':emailed': item.emailed
         },
         ReturnValues: 'ALL_NEW'
       }
