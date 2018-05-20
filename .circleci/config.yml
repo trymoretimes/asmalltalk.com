@@ -18,6 +18,21 @@ steps: &setup
       command: |
         cd api
         npm install
+  - run:
+      name: install mailer deps
+      command: |
+        cd services/mailer
+        npm install
+  - run:
+      name: install worker deps
+      command: |
+        cd services/worker
+        npm install
+  - run:
+      name: install matcher deps
+      command: |
+        cd services/matcher
+        npm install
   - persist_to_workspace:
       root: .
       paths:
@@ -109,6 +124,39 @@ steps: &test-api
         npm run deploy-testing
         DYNAMODB_TABLE=asmalltalk-api-testing npm run test
 
+steps: &test-mailer
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: test-mailer
+      command: |
+        cd services/mailer
+        npm test
+
+steps: &test-worker
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: test-worker
+      command: |
+        cd services/worker
+        npm test
+
+steps: &test-matcher
+  - setup_remote_docker:
+      docker_layer_caching: true
+  - attach_workspace:
+      at: *workspace
+  - run:
+      name: test-macher
+      command: |
+        cd services/matcher
+        npm test
+
 steps: &deploy-api-staging
   - setup_remote_docker:
       docker_layer_caching: true
@@ -171,6 +219,15 @@ jobs:
   test-api:
     <<: *defaults
     steps: *test-api
+  test-mailer:
+    <<: *defaults
+    steps: *test-mailer
+  test-matcher:
+    <<: *defaults
+    steps: *test-matcher
+  test-worker:
+    <<: *defaults
+    steps: *test-worker
   deploy-api-staging:
     <<: *defaults
     steps: *deploy-api-staging
@@ -216,6 +273,15 @@ workflows:
       - test-api:
           requires:
             - setup
+      - test-mailer:
+          requires:
+            - setup
+      - test-worker:
+          requires:
+            - setup
+      - test-matcher:
+          requires:
+            - setup
       - deploy-api-staging:
           requires:
             - test-api
@@ -230,13 +296,17 @@ workflows:
               only: production
       - deploy-services-staging:
           requires:
-            - test-api
+            - test-mailer
+            - test-worker
+            - test-matcher
           filters:
             branches:
               only: /(^master$|(^fix))/
       - deploy-services-production:
           requires:
-            - test-api
+            - test-mailer
+            - test-worker
+            - test-matcher
           filters:
             branches:
               only: production
