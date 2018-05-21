@@ -35,15 +35,6 @@ class API {
     return resp.status === 204
   }
 
-  async isValidUser (payload) {
-    const { username, site } = payload
-    const url = `${API_HOST}/users/valid?username=${username}&site=${site}`
-    const resp = await fetch(url)
-    const data = await resp.json()
-    // TODO fix this
-    return true
-  }
-
   async isGithubUser (payload) {
     const { username } = payload
     const url = `https://api.github.com/users/${username}`
@@ -68,6 +59,22 @@ class API {
       const resp = await fetch(url)
       const data = await resp.json()
       valid = !(data.status === 'notfound')
+    } catch (e) {
+      // TODO put log into log system
+      console.warn(e)
+      valid = false
+    }
+    return valid
+  }
+
+  async isHackernewsUser (payload) {
+    const { username } = payload
+    const url = `https://hacker-news.firebaseio.com/v0/user/${username}.json`
+    let valid = true
+    try {
+      const resp = await fetch(url)
+      const data = await resp.json()
+      valid = data.id === username
     } catch (e) {
       // TODO put log into log system
       console.warn(e)

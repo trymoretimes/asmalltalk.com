@@ -3,7 +3,6 @@ const octokit = require('@octokit/rest')({
 })
 const matchReg = /#asmalltalk|#小对话/
 
-// TODO remove credential info before release
 octokit.authenticate({
   type: 'basic',
   username: process.env.GITHUB_USERNAME,
@@ -24,13 +23,13 @@ function getCommentByUser (id) {
   return listComments()
     .then((comments) => {
       return comments.filter((comment) => {
-        const { user, body } = comment
+        const { user } = comment
         if (user.login === id) {
           return true
         }
         return false
       })
-  })
+    })
 }
 
 function auth (username) {

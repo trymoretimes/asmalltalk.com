@@ -37,7 +37,7 @@ describe('auth', () => {
     })
   })
 
-  test.skip('hackernews', (done) => {
+  test('hackernews', (done) => {
     const site = 'hackernews'
     const username = 'anoncoward778'
     auth({ queryStringParameters: { site, username } }, null, (err, resp) => {
@@ -46,7 +46,7 @@ describe('auth', () => {
       expect(data.ok).toBeTruthy()
       done()
     })
-  }, 20000)
+  })
 
   test('create code', (done) => {
     const site = 'github'

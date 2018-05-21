@@ -82,6 +82,8 @@ class RegistrationSection extends React.Component {
       valid = await api.isV2exUser({ username })
     } else if (site === SiteEnum.Github) {
       valid = await api.isGithubUser({ username })
+    } else if (site === SiteEnum.HackerNews) {
+      valid = await api.isHackernewsUser({ username })
     }
     this.setState({ username, usernameIsValid: valid })
 
