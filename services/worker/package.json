@@ -4,7 +4,8 @@
   "description": "",
   "main": "a.js",
   "scripts": {
-    "start": "./bin/worker"
+    "start": "./bin/worker",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -12,5 +13,8 @@
   "dependencies": {
     "jsdom": "^11.8.0",
     "node-fetch": "^2.1.2"
+  },
+  "devDependencies": {
+    "jest": "^22.4.4"
   }
 }

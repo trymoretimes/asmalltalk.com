@@ -34,27 +34,14 @@ class JobInfoUpdator {
   async run () {
     const users = await this.api.fetchUsers()
     for (const user of users) {
-      const { _id, username } = user
-      const company = await this.getCompay(username)
-      this.api.updateUser(_id, { company })
+      const { id, username, site } = user
+      const profile = await this.api.fetchProfile(username, site)
+      this.api.update(id, {
+        extra: JSON.stringify({ profile })
+      })
     }
   }
 
-  async getCompay (username) {
-    const url = `https://www.v2ex.com/member/${username}`
-    let company = null
-    try {
-      const dom = await JSDOM.fromURL(url)
-      const val = dom.window.document.querySelectorAll('.box .cell table td span')[1].textContent || ''
-      if (val.length < 30) {
-        company = val
-      }
-    } catch (e) {
-      console.log(`could get compay of ${username}: ${e}`)
-    }
-
-    return company
-  }
 }
 
 module.exports = JobInfoUpdator

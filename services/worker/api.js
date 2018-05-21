@@ -2,7 +2,7 @@ const fetch = require('node-fetch')
 
 class API {
   constructor (config = {}) {
-    this.base = config.API_URL || 'https://asmalltalk.com/v1/api'
+    this.base = config.API_URL
   }
 
   async createUser (obj) {
@@ -24,7 +24,6 @@ class API {
   async fetchUsers () {
     const url = `${this.base}/users`
     const resp = await fetch(url)
-    console.log(url)
     if (resp.status !== 200) {
       throw new Error(`fetch users failure: ${resp.statusText}`)
     }
@@ -33,7 +32,6 @@ class API {
 
   async fetchUser (id) {
     const url = `${this.base}/users/${id}`
-    console.log(url)
     const resp = await fetch(url)
     if (resp.status !== 200) {
       throw new Error(`fetch match guys failed: ${resp.statusText}`)
@@ -41,13 +39,7 @@ class API {
     return resp.json()
   }
 
-  async getUserMatcher (id) {
-    const user = await this.fetchUser(id)
-    // TODO hot fix --- to clean soon
-    return user.matchGuys || []
-  }
-
-  async updateUser (id, obj) {
+  async update (id, obj) {
     const url = `${this.base}/users/${id}`
     const opt = {
       method: 'PUT',
@@ -57,33 +49,24 @@ class API {
       body: JSON.stringify(obj)
     }
     const resp = await fetch(url, opt)
-    if (resp.status !== 204) {
+    if (resp.status !== 200) {
       throw new Error(`update user failed: ${resp.statusText}`)
     }
   }
 
-  async updateUserMatchGuys (hostId, matchGuyId) {
-    const user = await this.fetchUser(hostId)
-    const matchGuys = user.matchGuys || []
-    if (matchGuys.indexOf(matchGuyId) === -1) {
-      matchGuys.push(matchGuyId)
+  async fetchProfile(username, site) {
+    const apis = {
+      v2ex: `https://www.v2ex.com/api/members/show.json?username=${username}`,
+      github: `https://api.github.com/users/${username}`
     }
-
-    await this.updateUser(hostId, { matchGuys })
-  }
-
-  async updateMailed (hostId, mailedId) {
-    const user = await this.fetchUser(hostId)
-    const emaileds = user.emailed || []
-    if (emaileds.indexOf(mailedId) === -1) {
-      emaileds.push(mailedId)
+    const url = apis[site]
+    if (url) {
+      const resp = await fetch(url)
+      if (resp.status === 200) {
+        return resp.json()
+      }
     }
-
-    const now = (new Date()).getTime()
-    await this.updateUser(hostId, {
-      emailed: emaileds,
-      lastEmailAt: now
-    })
+    return {}
   }
 }
 
