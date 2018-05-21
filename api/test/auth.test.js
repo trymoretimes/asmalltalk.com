@@ -37,9 +37,9 @@ describe('auth', () => {
     })
   })
 
-  test('hackernews', (done) => {
+  test.only('hackernews', (done) => {
     const site = 'hackernews'
-    const username = 'anoncoward778'
+    const username = 'metrue'
     auth({ queryStringParameters: { site, username } }, null, (err, resp) => {
       expect(err).toBeNull()
       const data = JSON.parse(resp.body)
@@ -60,5 +60,5 @@ describe('auth', () => {
       expect(data.code).toEqual(expected)
       done()
     })
-  }, 20000)
+  })
 })

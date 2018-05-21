@@ -1,42 +1,43 @@
 const fetch = require('node-fetch')
+const HttpsProxyAgent = require('https-proxy-agent')
 
 const matchReg = /#asmalltalk|#小对话/
 
-function fetchComment(id) {
+let HTTP_AGENT = {
+  agent: new HttpsProxyAgent('http://127.0.0.1:1087')
+}
+if (!process.env.RUN_ON_LOCAL) {
+  HTTP_AGENT = {}
+}
+
+function fetchComment (id) {
   const commentUrl = `https://hacker-news.firebaseio.com/v0/item/${id}.json`
-  return fetch(commentUrl).then((commentReq) => {
-    if (commentReq.status === 200) {
-      commentReq.json().then((data) => {
-        return data
-      })
-    }
-  })
+  return fetch(commentUrl, HTTP_AGENT)
 }
 
 function listComments () {
   // TODO replace id with created id
-  const url = 'https://hacker-news.firebaseio.com/v0/item/16997962.json'
-  return fetch(url).then((resp) => {
+  const url = 'https://hacker-news.firebaseio.com/v0/item/17118109.json'
+  return fetch(url, HTTP_AGENT).then((resp) => {
     if (resp.status !== 200) {
       throw new Error(`${url} --- ${resp.status} -- ${resp.statusText}`)
     }
-    resp.json().then((data) => {
+    return resp.json().then((data) => {
       const commentIds = data.kids || []
-
-      const comments = []
+      const commentReqs = []
       for (const id of commentIds) {
-        fetchComment(id).then((comment) => {
-          comments.push(comment)
-        })
+        commentReqs.push(fetchComment(id))
       }
-      return comments
+      return Promise.all(commentReqs)
     })
   })
 }
 
 function getCommentByUser (id) {
   return listComments().then((comments) => {
-    return comments.filter(c => c.by === id)
+    return Promise.all(comments.map(c => c.json()))
+  }).then((cs) => {
+    return cs.filter(c => c.by === id)
   })
 }
 

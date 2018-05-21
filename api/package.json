@@ -19,6 +19,7 @@
     "snoowrap": "^1.15.2"
   },
   "devDependencies": {
+    "https-proxy-agent": "^2.2.1",
     "jest": "^22.4.3",
     "serverless": "^1.27.2"
   },
