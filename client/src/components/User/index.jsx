@@ -7,6 +7,7 @@ import SubmitButton from '../SubmitButton'
 import { SubmitStatus } from '../../constants'
 import LogoBox from '../../components/LogoBox'
 import AboutSection from '../../components/AboutSection'
+import text from '../../res/i18n.json'
 
 const InputBox = ({label, value, placeholder, onChange}) => (
   <div className='form-group'>
@@ -65,17 +66,27 @@ export default class User extends React.Component {
     const { user, submitStatus } = this.state
     const { id, story } = user
 
-    let message = '提交'
+    const lang = window.navigator.language || 'en-US'
+    const {
+      site_name,
+      update_button_text,
+      updating,
+      update_ok,
+      update_failed,
+      site_subtitle_story
+    } = text[lang]
+
+    let message = update_button_text
     if (submitStatus === SubmitStatus.Submitting) {
-      message = '正在更新'
+      message = updating
     } else if (submitStatus === SubmitStatus.Succeed) {
-      message = '更新成功'
+      message = update_ok
     } else if (submitStatus === SubmitStatus.Failed) {
-      message = '更新失败'
+      message = update_failed
     }
     return (
         <div className={styles.MainContainer}>
-          <LogoBox subTitle='说点啥吧' />
+          <LogoBox title={site_name} subTitle={site_subtitle_story} />
           <div className={styles.MainContainer}>
             <div className={styles.FormContainer}>
               <InputBox

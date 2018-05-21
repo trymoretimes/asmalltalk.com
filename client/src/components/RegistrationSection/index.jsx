@@ -11,7 +11,9 @@ import SubmitButton from '../SubmitButton'
 import InputRow from '../InputRow'
 
 import TitleBox from '../TitleBox'
+import text from '../../res/i18n.json'
 
+const LANG = window.navigator.language
 const SiteEnum = {
   V2ex: 'v2ex',
   Github: 'github',
@@ -19,13 +21,23 @@ const SiteEnum = {
 }
 
 const Indicator = ({ username, site }) => {
+  // TODO update following IDs with real one before release
   const urls = {
-    'v2ex': 'https://www.v2ex.com/settings',
-    'github': 'https://github.com/metrue/asmalltalk/issues/66'
+    'v2ex': 'https://www.v2ex.com/t/448655',
+    'github': 'https://github.com/metrue/asmalltalk/issues/66',
+    'hackernews': 'https://news.ycombinator.com/item?id=17118109'
   }
+  const {
+    v2ex_post,
+    github_issue,
+    hackernews_post,
+    note_how_to,
+    note_register
+  } = text[LANG]
   const messages = {
-    'v2ex': 'V2EX 个人简介',
-    'github': '小对话的 Github Repo'
+    'v2ex': v2ex_post,
+    'github': github_issue,
+    'hackernews': hackernews_post
   }
 
   if (!username || !site) {
@@ -34,7 +46,7 @@ const Indicator = ({ username, site }) => {
 
   return (
     <p>
-      复制下面 &darr; 的验证码到 <a target='_blank' href={urls[site]}>{ messages[site] } </a> 然后点击注册
+      {note_how_to} <a target='_blank' href={urls[site]}>{ messages[site] } </a> {note_register}
     </p>
   )
 }
@@ -144,13 +156,25 @@ class RegistrationSection extends React.Component {
       code,
       submitStatus
     } = this.state
-    let message = '注册'
+
+    const {
+      home_title,
+      registration_button_text,
+      registering,
+      registration_ok,
+      registration_failed,
+      input_id_note_text_id,
+      input_email_note_text_id,
+      verify_code
+    } = text[LANG]
+
+    let message = registration_button_text
     if (submitStatus === SubmitStatus.Submitting) {
-      message = '正在提交'
+      message = registering
     } else if (submitStatus === SubmitStatus.Succeed) {
-      message = '注册成功'
+      message = registration_ok
     } else if (submitStatus === SubmitStatus.Failed) {
-      message = '注册失败'
+      message = registration_failed
     }
 
     const isReady = email.length > 0 && code.length > 0 && usernameIsValid
@@ -169,12 +193,11 @@ class RegistrationSection extends React.Component {
         url: ''
       }
     ]
-
     const buttonStyle = styles.SiteButton + ' btn btn-sm btn-outline-secondary'
     const buttonClickedStyle = buttonStyle + ` ${styles.SiteButtonClicked}`
     return (
       <div className={styles.RegistrationContainer}>
-        <TitleBox title='开始你的小对话' />
+        <TitleBox title={home_title} />
         <div className={styles.FormContainer + ` mb-3`}>
           {
             sites.map((s) => (
@@ -191,14 +214,14 @@ class RegistrationSection extends React.Component {
         <div className={styles.FormContainer}>
           <InputRow
             type='text'
-            label='输入你在上面站点所使用的 ID'
+            label={input_id_note_text_id}
             placeholder='ID'
             disabled={!site}
             onSubmit={this.onUserNameSubmit}
           />
           <InputRow
             type='email'
-            label='输入你的 Email'
+            label={input_email_note_text_id}
             placeholder='Email'
             disabled={!usernameIsValid}
             onSubmit={this.onEmailSubmit}
@@ -208,8 +231,8 @@ class RegistrationSection extends React.Component {
             <div className='input-group mb-3'>
               <input
                 className='form-control'
-                placeholder='验证码'
-                aria-label='验证码'
+                placeholder={verify_code}
+                aria-label={verify_code}
                 type='text'
                 id='MagicCode'
                 value={code}

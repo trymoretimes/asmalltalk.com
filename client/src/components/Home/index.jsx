@@ -8,6 +8,7 @@ import { SubmitStatus } from '../../constants'
 import LogoBox from '../../components/LogoBox'
 import AboutSection from '../../components/AboutSection'
 import RegistrationSection from '../../components/RegistrationSection'
+import text from '../../res/i18n.json'
 
 import { hashHistory } from 'react-router'
 
@@ -44,9 +45,11 @@ class Home extends React.Component {
   }
 
   render () {
+    const lang = window.navigator.language
+    const { site_subtitle, site_name } = text[lang]
     return (
       <div className={styles.MainContainer}>
-        <LogoBox subTitle='很高兴认识你' />
+        <LogoBox title={site_name} subTitle={site_subtitle} />
         <RegistrationSection onSubmit={this.handleSubmit} />
         <AboutSection />
       </div>
