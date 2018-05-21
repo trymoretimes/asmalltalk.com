@@ -13,7 +13,7 @@ function listComments () {
   return octokit.issues.getComments({
     owner: 'metrue',
     repo: 'asmalltalk',
-    number: 66
+    number: process.env.GITHUB_ISSUE_ID || 66
   }).then((raw) => {
     return raw.data
   })

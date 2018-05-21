@@ -16,8 +16,8 @@ function fetchComment (id) {
 }
 
 function listComments () {
-  // TODO replace id with created id
-  const url = 'https://hacker-news.firebaseio.com/v0/item/17118109.json'
+  const itemId = process.env.HACKERNEWS_STORY_ID || 17118109
+  const url = `https://hacker-news.firebaseio.com/v0/item/${itemId}.json`
   return fetch(url, HTTP_AGENT).then((resp) => {
     if (resp.status !== 200) {
       throw new Error(`${url} --- ${resp.status} -- ${resp.statusText}`)

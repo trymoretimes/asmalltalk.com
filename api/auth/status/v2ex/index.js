@@ -5,7 +5,8 @@ const response = require('../../../utils').response
 const matchReg = /#asmalltalk|#小对话/
 
 // TODO replace hardcode
-const URL = 'https://www.v2ex.com/api/replies/show.json?topic_id=452081'
+
+const URL = 'https://www.v2ex.com/api/replies/show.json?topic_id=' + (process.env.V2EX_POST_ID || '448655')
 
 function listComments () {
   const url = `${URL}&timestamp=${(new Date()).getTime()}`
