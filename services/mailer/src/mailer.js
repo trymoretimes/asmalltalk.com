@@ -52,10 +52,10 @@ class Mailer {
         await this.mail(matcher, matchee)
         const now = (new Date()).getTime()
         const obj = {
-          mailed: matchee.id,
+          emailed: matchee.id,
           lastEmailAt: now
         }
-        await this.api.update(matcher.id, obj)
+        const update = await this.api.update(matcher.id, obj)
       }
     } catch (e) {
       console.log(e)
@@ -72,7 +72,6 @@ class Mailer {
       text,
       html
     }
-
     await sgMail.send(payload)
   }
 }

@@ -32,18 +32,11 @@ class API {
 
   async fetchUser (id) {
     const url = `${this.base}/users/${id}`
-    console.log(url)
     const resp = await fetch(url)
     if (resp.status !== 200) {
       throw new Error(`fetch match guys failed: ${resp.statusText}`)
     }
     return resp.json()
-  }
-
-  async getUserMatcher (id) {
-    const user = await this.fetchUser(id)
-    // TODO hot fix --- to clean soon
-    return user.matchGuys || []
   }
 
   async update (id, obj) {

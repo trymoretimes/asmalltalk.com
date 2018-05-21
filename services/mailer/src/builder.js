@@ -3,41 +3,34 @@ const MailTypes = {
   Html: 'html'
 }
 
-const buildSocialAccounts = (user, type = MailTypes.Plain) => {
-  const { email, company, canHelp, needHelp } = user
+const buildBody = (user, type = MailTypes.Plain) => {
+  const { email, company, story } = user
   const { profile } = user
   const newLine = type === MailTypes.Plain ? '\r\n' : '<br>'
 
-  const types = ['website', 'twitter', 'facebook', 'github']
   let body = `Email: ${email}${newLine}`
-  types.forEach((t) => {
-    if (profile[t]) {
-      body += `${t}: ${profile[t]}${newLine}`
-    }
-  })
-  if (canHelp && canHelp.length > 0) {
-    body += `${profile.username || profile.login} 擅长: ${user.canHelp}${newLine}`
-  }
-  if (needHelp && needHelp.length > 0) {
-    body += `${profile.username || profile.login} 希望: ${user.needHelp}${newLine}`
-  }
-
   if (company) {
     body += `公司及职位：${company}`
   }
 
-  if (profile.login) {
-    body += `个人档案：https://github.com/${profile.login}${newLine}${newLine}`
-  } else {
-    body += `个人档案：https://www.v2ex.com/member/${profile.username}${newLine}${newLine}`
+  if (profile) {
+    if (profile.login) {
+      body += `个人档案：https://github.com/${profile.login}${newLine}${newLine}`
+    } else {
+      body += `个人档案：https://www.v2ex.com/member/${profile.username}${newLine}${newLine}`
+    }
+  }
+
+  if (story.length > 0) {
+    body += `关于: ${story}`
   }
 
   return body
 }
 
 const build = (reciver, matcher) => {
-  const textBody = buildSocialAccounts(matcher, MailTypes.Plain)
-  const htmlBody = buildSocialAccounts(matcher, MailTypes.Html)
+  const textBody = buildBody(matcher, MailTypes.Plain)
+  const htmlBody = buildBody(matcher, MailTypes.Html)
   return {
     text: `
 Hi ${reciver.username}，\r\n
