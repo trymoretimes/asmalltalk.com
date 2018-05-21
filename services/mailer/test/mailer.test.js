@@ -10,15 +10,15 @@ describe('mailer', () => {
     const users = [{
       id: 0,
       match: 1,
-      mailed: [],
+      emailed: [],
     }, {
       id: 1,
       match: 2,
-      mailed: [],
+      emailed: [],
     }, {
       id: 2,
       match: 0,
-      mailed: [],
+      emailed: [],
     }]
 
     mailer.api = {
@@ -33,7 +33,7 @@ describe('mailer', () => {
       update: (id, obj) => {
         const user = users.find((u) => u.id === id)
         Object.keys(obj).forEach((k) => {
-          if (k === 'mailed') {
+          if (k === 'emailed') {
             user[k] = [...user[k], obj[k]]
           } else {
             user[k] = obj[k]
@@ -49,7 +49,7 @@ describe('mailer', () => {
 
     expect(mailer.stopped).toBeFalsy()
     users.forEach((u) => {
-      expect(u.mailed).toEqual([])
+      expect(u.emailed).toEqual([])
     })
 
     let error = null
@@ -63,14 +63,14 @@ describe('mailer', () => {
 
     expect(error).toEqual(null)
 
-    expect(users[0].mailed).toEqual([1])
-    expect(users[1].mailed).toEqual([2])
-    expect(users[2].mailed).toEqual([0])
+    expect(users[0].emailed).toEqual([1])
+    expect(users[1].emailed).toEqual([2])
+    expect(users[2].emailed).toEqual([0])
 
     await delay(500)
-    expect(users[0].mailed).toEqual([1])
-    expect(users[1].mailed).toEqual([2])
-    expect(users[2].mailed).toEqual([0])
+    expect(users[0].emailed).toEqual([1])
+    expect(users[1].emailed).toEqual([2])
+    expect(users[2].emailed).toEqual([0])
 
     mailer.stop()
     expect(mailer.stopped).toBeTruthy()
