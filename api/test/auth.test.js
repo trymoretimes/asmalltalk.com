@@ -37,7 +37,7 @@ describe('auth', () => {
     })
   })
 
-  test.only('hackernews', (done) => {
+  test('hackernews', (done) => {
     const site = 'hackernews'
     const username = 'metrue'
     auth({ queryStringParameters: { site, username } }, null, (err, resp) => {
