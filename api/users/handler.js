@@ -164,7 +164,8 @@ const update = function (event, ctx, cb) {
           '#updatedAt': 'updatedAt',
           '#match': 'match',
           '#emailed': 'emailed',
-          '#lastEmailAt': 'lastEmailAt'
+          '#lastEmailAt': 'lastEmailAt',
+          '#extra': 'extra'
         },
         ExpressionAttributeValues: {
           ':story': body.story || item.story || '',
@@ -172,8 +173,9 @@ const update = function (event, ctx, cb) {
           ':match': body.match || item.match || '',
           ':emailed': item.emailed || [],
           ':lastEmailAt': body.lastEmailAt || item.lastEmailAt || (new Date('1988-11-14')).getTime(),
+          ':extra': body.extra || item.extra || '',
         },
-        UpdateExpression: 'SET #story = :story, #updatedAt = :updatedAt, #match = :match, #emailed = :emailed, #lastEmailAt = :lastEmailAt',
+        UpdateExpression: 'SET #story = :story, #updatedAt = :updatedAt, #match = :match, #emailed = :emailed, #lastEmailAt = :lastEmailAt, #extra = :extra',
         ReturnValues: 'ALL_NEW'
       }
       return dynamoDb.update(params, (error, data) => {

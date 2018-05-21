@@ -73,4 +73,19 @@ describe('users', () => {
       })
     })
   })
+
+  test('update extra', (done) => {
+    const body = { extra: '{company: udactiy}'}
+    handler.update({
+      pathParameters: { id: createdUser.id },
+      body: JSON.stringify(body)
+    }, null, (err, resp) => {
+      expect(err).toBeNull()
+      handler.get({ pathParameters: { id: createdUser.id }}, null, (err, resp) => {
+        const data = JSON.parse(resp.body)
+        expect(data.extra).toEqual(body.extra)
+        done()
+      })
+    })
+  })
 })
