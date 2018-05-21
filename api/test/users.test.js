@@ -38,11 +38,9 @@ describe('users', () => {
     })
   })
 
-  test('update', (done) => {
+  test('update story', (done) => {
     const body = {
       story: 'change_to_this',
-      match: 'c@c.com',
-      emailed: 'd@d.com'
     }
     handler.update({
       pathParameters: { id:  createdUser.id },
@@ -52,11 +50,27 @@ describe('users', () => {
       handler.get({ pathParameters: { id: createdUser.id } }, null, (err, resp) => {
         const data = JSON.parse(resp.body)
         expect(data.story).toEqual(body.story)
-        expect(data.email).toEqual(createdUser.email)
-        expect(data.match).toEqual(body.match)
-        expect(data.emailed.indexOf(body.emailed) != -1).toEqual(true)
         done()
       })
     })
-  }, 20000)
+  })
+
+  test('update mailed', (done) => {
+    const body = {
+      emailed: '5bcc74b0-58de-11e8-9bd7-7b2aa546922e',
+      lastEmailAt: 1526874268771,
+    }
+    handler.update({
+      pathParameters: { id: createdUser.id },
+      body: JSON.stringify(body)
+    }, null, (err, resp) => {
+      expect(err).toBeNull()
+      handler.get({ pathParameters: { id: createdUser.id }}, null, (err, resp) => {
+        const data = JSON.parse(resp.body)
+        expect(data.emailed).toEqual([body.emailed])
+        expect(data.lastEmailAt).toEqual(body.lastEmailAt)
+        done()
+      })
+    })
+  })
 })
