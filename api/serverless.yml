@@ -13,7 +13,7 @@ provider:
     GITHUB_USERNAME: ${opt:GITHUB_USERNAME}
     GITHUB_PASSWORD: ${opt:GITHUB_PASSWORD}
     # github issue id, hacknew story id, v2ex post id
-    GITHUB_ISSUE_ID: ${opt:GITHUB_ISSUE_ID}
+    # GITHUB_ISSUE_ID: ${opt:GITHUB_ISSUE_ID}
     HACKERNEWS_STORY_ID: ${opt:HACKERNEWS_STORY_ID}
     V2EX_POST_ID: ${opt:V2EX_POST_ID}
   iamRoleStatements:
