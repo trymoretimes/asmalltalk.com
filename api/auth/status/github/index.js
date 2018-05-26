@@ -1,6 +1,9 @@
 const octokit = require('@octokit/rest')({
   debug: true
 })
+// en: https://github.com/metrue/asmalltalk.com/issues/66
+// zh: https://github.com/metrue/asmalltalk.com/issues/103
+const WELCOME_ISSUE_IDS = [66, 103]
 const matchReg = /#asmalltalk|#小对话/
 
 octokit.authenticate({
@@ -9,27 +12,33 @@ octokit.authenticate({
   password: process.env.GITHUB_PASSWORD
 })
 
-function listComments () {
+function listComments (issueId) {
   return octokit.issues.getComments({
     owner: 'metrue',
     repo: 'asmalltalk',
-    number: process.env.GITHUB_ISSUE_ID || 66
+    number: issueId
   }).then((raw) => {
     return raw.data
   })
 }
 
 function getCommentByUser (id) {
-  return listComments()
-    .then((comments) => {
-      return comments.filter((comment) => {
-        const { user } = comment
-        if (user.login === id) {
-          return true
-        }
-        return false
-      })
+  const listPromises = WELCOME_ISSUE_IDS.map(i => listComments(i))
+  return Promise.all(listPromises).then(values => {
+    const comments = []
+    values.forEach((val) => {
+      comments.push(val[0])
     })
+    return comments
+  }).then((comments) => {
+    return comments.filter((comment) => {
+      const { user } = comment
+      if (user.login === id) {
+        return true
+      }
+      return false
+    })
+  })
 }
 
 function auth (username) {
