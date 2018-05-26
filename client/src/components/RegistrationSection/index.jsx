@@ -25,7 +25,7 @@ const Indicator = ({ username, site }) => {
   const urls = {
     'v2ex': 'https://www.v2ex.com/t/448655',
     'github': 'https://github.com/metrue/asmalltalk/issues/66',
-    'hackernews': 'https://news.ycombinator.com/item?id=17118109'
+    'hackernews': 'https://news.ycombinator.com/item?id=17160588'
   }
   const {
     v2ex_post,
