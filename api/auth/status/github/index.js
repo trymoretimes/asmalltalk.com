@@ -24,12 +24,14 @@ function listComments (issueId) {
 
 function getCommentByUser (id) {
   const listPromises = WELCOME_ISSUE_IDS.map(i => listComments(i))
-  return Promise.all(listPromises).then(values => {
-    const comments = []
-    values.forEach((val) => {
-      comments.push(val[0])
+  return Promise.all(listPromises).then(results => {
+    const all = []
+    results.forEach((comments) => {
+      comments.forEach((comment) => {
+        all.push(comment)
+      })
     })
-    return comments
+    return all
   }).then((comments) => {
     return comments.filter((comment) => {
       const { user } = comment
