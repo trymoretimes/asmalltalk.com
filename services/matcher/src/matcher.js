@@ -62,7 +62,7 @@ class Matcher {
   }
 
   calculate (source, target) {
-    return lcsSubStr(source.story, target.story)
+    return lcsSubStr(source.story || '', target.story || '')
   }
 }
 
