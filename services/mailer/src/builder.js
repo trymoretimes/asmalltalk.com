@@ -21,7 +21,7 @@ const buildBody = (user, type = MailTypes.Plain) => {
     }
   }
 
-  if (story.length > 0) {
+  if (story && story.length > 0) {
     body += `关于: ${story}`
   }
 
